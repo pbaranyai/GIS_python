@@ -94,7 +94,7 @@ echo End Running Religon_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
 ::::::::::::::::::::::: Run Transportation Data Spreader (Transportation_Data_Spreader.py ) :::::::::::::::::::::::
 ::
-echo _Start Religon Data Spreader, %date%, %time% >> %batLog% 
+echo _Start Transportation Data Spreader, %date%, %time% >> %batLog% 
 ::
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
@@ -113,6 +113,17 @@ echo Start Utilities_Data_Spreader.py , %date%, %time% >> %prgLog%
 call %wrkspce%\Utilities_Data_Spreader.py >> %prgLog%
 ::
 echo End Utilities Data Spreader %date%, %time% >> %prgLog%
+::
+::::::::::::::::::::::: Run Judicial Data Spreader (Judicial_Data_Spreader.py ) :::::::::::::::::::::::
+::
+echo _Start Judicial Data Spreader, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
+::
+echo Start Judicial_Data_Spreader.py , %date%, %time% >> %prgLog%
+call %wrkspce%\Judicial_Data_Spreader.py >> %prgLog%
+::
+echo End Running Judicial_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
 echo _Finish Miscellaneous_Master_Updater, %date%, %time% >> %batLog%
 ::
