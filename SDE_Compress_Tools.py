@@ -17,9 +17,10 @@
 #
 # Author: Phil Baranyai/Crawford County GIS Manager
 # Created: 5/16/2019
-# Last Edited: 7/16/2019
+# Last Edited: 4/26/2021
 # ---------------------------------------------------------------------------
 
+from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import arcpy
 from arcpy import env
@@ -27,7 +28,12 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
+
+try:
+    import urllib2  # Python 2
+except ImportError:
+    import urllib.request as urllib2  # Python 3
+
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -62,7 +68,7 @@ try:
 except:
     print ("No ArcInfo (ArcAdvanced) license available")
     write_log("!!No ArcInfo (ArcAdvanced) license available!!", logfile)
-    logging.exception('Got exception on importing ArcInfo (ArcAdvanced) license logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on importing ArcInfo (ArcAdvanced) license logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
 
@@ -75,16 +81,17 @@ try:
 except:
     print ("\n Unable to delete Version_logfile, need to delete existing FGDB manually and/or close program locking the tables")
     write_log("\n Unable to create new Version_logfile, need to delete existing FGDB manually and/or close program locking the tables", logfile)
-    logging.exception('Got exception on delete Version_logfile logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on delete Version_logfile logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()    
 
 # Get list of database connections
 def sdeConnections():
     appdata = os.getenv('APPDATA')
-    arcgisVersion = "10.7"
-    #arcgisVersion = arcpy.GetInstallInfo()['Version']
-    arcCatalogPath = os.path.join(appdata ,'ESRI',u'Desktop'+arcgisVersion, 'ArcCatalog')
+    #arcgisVersion = "10.7"
+    arcgisVersion = arcpy.GetInstallInfo()['Version']
+    #arcCatalogPath = os.path.join(appdata ,'ESRI',u'Desktop'+arcgisVersion, 'ArcCatalog')
+    arcCatalogPath = "E:\\ArcGIS_Pro\\Projects\\ArcServer"
     sdeConnections = []
     for file in os.listdir(arcCatalogPath):
         fileIsSdeConnection = file.lower().endswith("ccsde.sde")
@@ -109,8 +116,8 @@ for DBConnection in DB_LIST:
     write_log(DBConnection, logfile)
 
 # Set the connections folder -- Toggle depending on which machine the script is runnning, default should be CCORBWEAVER
-DB_Connections = r'C:\\Users\\arcadmin\\AppData\\Roaming\\ESRI\\Desktop10.7\\ArcCatalog'   #--CCORBWEAVER
-#DB_Connections = r'C:\\Users\\pbaranyai\\AppData\\Roaming\\ESRI\\Desktop10.7\\ArcCatalog'  #--GIS01
+DB_Connections = r'E:\\ArcGIS_Pro\\Projects\\ArcServer'   #--CCORBWEAVER
+#DB_Connections = r'C:\\Users\\pbaranyai\\AppData\\Roaming\\Esri\\ArcGISPro\\Favorites'  #--GIS01
 
 # Set the workspaces
 arcpy.env.workspace = DB_Connections + '\\SDE@ccsde.sde'
@@ -121,10 +128,14 @@ defaultVersion = "sde.DEFAULT"
 AGOL_EDIT_CONNECTION = DB_Connections + "\\agol_edit@ccsde.sde"
 AGOL_EDIT_PUB_CONNECTION = DB_Connections + "\\agol_edit_pub@ccsde.sde"
 AST_CONNECTION = DB_Connections + "\\AST@ccsde.sde"
+AUTOWKSP_CONNECTION = DB_Connections + "\\auto_workspace@ccsde.sde"
 CONSV_DIST_CONNECTION = DB_Connections + "\\CONSV_DIST@ccsde.sde"
+CRAW_INTERNAL_CONNECTION = DB_Connections + "\\craw_internal@ccsde.sde"
 GIS_CONNECTION = DB_Connections + "\\GIS@ccsde.sde"
 PLAN_CONNECTION = DB_Connections + "\\PLANNING@ccsde.sde"
+PUB_OD_CONNECTION = DB_Connections + "\\public_od@ccsde.sde"
 PS_CONNECTION = DB_Connections + "\\PUBLIC_SAFETY@ccsde.sde"
+PUBLIC_WEB_CONNECTION = DB_Connections + "\\public_web@ccsde.sde"
 SDE_CONNECTION = DB_Connections + "\\SDE@ccsde.sde"
 
 print ("\n============================================================================")
@@ -145,7 +156,7 @@ try:
 except:
     print ("Unable to get list of connected users")
     write_log("\n Unable to get list of connected users", logfile)
-    logging.exception('Got exception on get list of connected users logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on get list of connected users logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
@@ -168,7 +179,7 @@ try:
 except:
     print ("\n Unable to block new connections to the database")
     write_log("Unable to block new connections to the database", logfile)
-    logging.exception('Got exception on block new connections to the database logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on block new connections to the database logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
@@ -178,12 +189,12 @@ try:
 except:
     print ("\n Unable to disconnect all users from the database")
     write_log("Unable to disconnect all users from the database", logfile)
-    logging.exception('Got exception on disconnect all users from the database logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on disconnect all users from the database logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Blocking new connections to database, then disconnecting all users completed")
-write_log("       Blocking new connections to database, then disconnecting all users completed", logfile)
+print ("       Blocking new connections to database, then disconnecting all users completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Blocking new connections to database, then disconnecting all users completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Reconcile and Post all public database versions, then deletion of versions")
 write_log("\n Reconcile and Post all public database versions, then deletion of versions", logfile)
@@ -199,42 +210,42 @@ try:
 except:
     print ("\n Unable to obtain a list of versions from database")
     write_log("Unable to obtain a list of versions from database", logfile)
-    logging.exception('Got exception on obtain a list of versions from database logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on obtain a list of versions from database logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
 try:
     # Execute the ReconcileVersions tool.
-    arcpy.ReconcileVersions_management(SDE_CONNECTION, "ALL_VERSIONS", "sde.DEFAULT", versionList, "LOCK_ACQUIRED", "NO_ABORT", "BY_OBJECT", "FAVOR_TARGET_VERSION", "POST", "DELETE_VERSION", Version_logfile)
+    arcpy.management.ReconcileVersions(SDE_CONNECTION, "ALL_VERSIONS", "sde.DEFAULT", versionList, "LOCK_ACQUIRED", "NO_ABORT", "BY_OBJECT", "FAVOR_TARGET_VERSION", "POST", "DELETE_VERSION", Version_logfile)
     print ("\n  Log of reconcile and post written to "+Version_logfile)
     write_log("\n  Log of reconcile and post written to "+Version_logfile,logfile)
 except:
     print ("\n Unable to reconcile and post versions from database, then delete them")
     write_log("Unable to reconcile and post versions from database, then delete them", logfile)
-    logging.exception('Got exception on reconcile and post versions from database, then delete them logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on reconcile and post versions from database, then delete them logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Reconcile and Post all public database versions, then deletion of versions completed")
-write_log("       Reconcile and Post all public database versions, then deletion of versions completed", logfile)
+print ("       Reconcile and Post all public database versions, then deletion of versions completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Reconcile and Post all public database versions, then deletion of versions completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Compression of SDE database")
 write_log("\n Compression of SDE database", logfile)
 
 try:
     # Run the compress tool.
-    arcpy.Compress_management('Database Connections\\SDE@ccsde.sde')
+    arcpy.management.Compress(SDE_CONNECTION)
 except:
     print ("\n Unable to compress SDE database")
     write_log("Unable to compress SDE database", logfile)
-    logging.exception('Got exception on compress SDE database logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on compress SDE database logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Compression of SDE database completed")
-write_log("       Compression of SDE database completed", logfile)
+print ("       Compression of SDE database completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Compression of SDE database completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
-print "\n Allow incoming connections to database again"
+print ("\n Allow incoming connections to database again")
 write_log("\n Allow incoming connections to database again", logfile)
 
 try:
@@ -243,86 +254,582 @@ try:
 except:
     print ("\n Unable to allow incoming connections to database again")
     write_log("Unable to allow incoming connections to database again", logfile)
-    logging.exception('Got exception on allow incoming connections to database again logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on allow incoming connections to database again logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Allow incoming connections to database again completed")
-write_log("       Allow incoming connections to database again completed", logfile)
+print ("       Allow incoming connections to database again completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Allow incoming connections to database again completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
-print ("\n Rebuild indexes on all datasets")
-write_log("\n Rebuild indexes on all datasets", logfile)
+print ("\n Rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on AGOL_EDIT_CONNECTION all datasets", logfile)
 
 # Get a list of datasets owned by the admin user
 try:
-    # First, get all the stand alone tables, feature classes and rasters.
-    dataList = arcpy.ListTables() + arcpy.ListFeatureClasses() + arcpy.ListRasters()
-
-    # Next, for feature datasets get all of the datasets and featureclasses
-    # from the list and add them to the master list.
-    for dataset in arcpy.ListDatasets("", "Feature"):
-        arcpy.env.workspace = os.path.join(workspace,dataset)
-        dataList += arcpy.ListFeatureClasses() + [os.path.join(dataset, d) for d in arcpy.ListDatasets()]
-
     # reset the workspace
-    arcpy.env.workspace = workspace
+    arcpy.env.workspace = AGOL_EDIT_CONNECTION
+    workspace = arcpy.env.workspace
 
     # Get the user name for the workspace
-    userName = arcpy.Describe(workspace).connectionProperties.user.lower()
+    userName = arcpy.Describe(workspace).connectionProperties.user
 
-    # remove any datasets that are not owned by the connected user.
-    userDataList = [ds for ds in dataList if ds.lower().find(".%s." % userName) > -1]
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
 
-    # Execute rebuild indexes
-    # Note: to use the "SYSTEM" option the workspace user must be an administrator.
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
     arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
-    print ((dataList))
-    write_log(dataList,logfile)
+    print ("\n Rebuild index on AGOL_EDIT_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on AGOL_EDIT_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
 except:
-    print ("\n Unable to rebuild indexes on all datasets")
-    write_log("Unable to rebuild indexes on all datasets", logfile)
-    logging.exception('Got exception on rebuild indexes on all datasets logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON AGOL_EDIT_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Rebuild indexes on all datasets completed")
-write_log("       Rebuild indexes on all datasets completed", logfile)
+print ("       Rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
-print ("\n Analyze all datasets")
-write_log("\n Analyze all datasets", logfile)
+print ("\n Rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_PUB_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on AGOL_EDIT_PUB_CONNECTION all datasets", logfile)
 
+# Get a list of datasets owned by the admin user
 try:
-    # First, get all the stand alone tables, feature classes and rasters.
-    dataList = arcpy.ListTables() + arcpy.ListFeatureClasses() + arcpy.ListRasters()
-
-    # Next, for feature datasets get all of the datasets and featureclasses from the list and add them to the master list.
-    for dataset in arcpy.ListDatasets("", "Feature"):
-        arcpy.env.workspace = os.path.join(workspace,dataset)
-        dataList += arcpy.ListFeatureClasses() + [os.path.join(dataset, d) for d in arcpy.ListDatasets()]
-
     # reset the workspace
-    arcpy.env.workspace = workspace
+    arcpy.env.workspace = AGOL_EDIT_PUB_CONNECTION
+    workspace = arcpy.env.workspace
 
     # Get the user name for the workspace
-    userName = arcpy.Describe(workspace).connectionProperties.user.lower()
+    userName = arcpy.Describe(workspace).connectionProperties.user
 
-    # remove any datasets that are not owned by the connected user.
-    userDataList = [ds for ds in dataList if ds.lower().find(".%s." % userName) > -1]
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
 
-    # Execute analyze datasets
-    # Note: to use the "SYSTEM" option the workspace user must be an administrator.
-    arcpy.AnalyzeDatasets_management(workspace, "SYSTEM", dataList, "ANALYZE_BASE","ANALYZE_DELTA","ANALYZE_ARCHIVE")
-    print ((dataList))
-    write_log(dataList, logfile)
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on AGOL_EDIT_PUB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on AGOL_EDIT_PUB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
 except:
-    print ("\n Unable to analyze all datasets")
-    write_log("Unable to analyze all datasets", logfile)
-    logging.exception('Got exception on analyze all datasets logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_PUB_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_PUB_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON AGOL_EDIT_PUB_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Analyze all datasets completed")
-write_log("       Analyze all datasets completed", logfile)
+print ("       Rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_PUB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on AGOL_EDIT_PUB_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on AST_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on AST_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = AST_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on AST_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on AST_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on AST_CONNECTION at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on AST_CONNECTION at " + time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON AST_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on AST_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on AST_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on AUTOWKSP_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on AUTOWKSP_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = AUTOWKSP_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on AUTOWKSP_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on AUTOWKSP_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on AUTOWKSP_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on AUTOWKSP_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON AUTOWKSP_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on AUTOWKSP_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on AUTOWKSP_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on CONSV_DIST_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on CONSV_DIST_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = CONSV_DIST_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on CONSV_DIST_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on CONSV_DIST_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on CONSV_DIST_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on CONSV_DIST_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON CONSV_DIST_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on CONSV_DIST_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on CONSV_DIST_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on CRAW_INTERNAL_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on CRAW_INTERNAL_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = CRAW_INTERNAL_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on CRAW_INTERNAL_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on CRAW_INTERNAL_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on CRAW_INTERNAL_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on CRAW_INTERNAL_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON CRAW_INTERNAL_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on CRAW_INTERNAL_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on CRAW_INTERNAL_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on GIS_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on GIS_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = GIS_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on GIS_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on GIS_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on GIS_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on GIS_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON GIS_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on GIS_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on GIS_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on PLAN_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on PLAN_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = PLAN_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on PLAN_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on PLAN_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on PLAN_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on PLAN_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON PLAN_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on PLAN_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on PLAN_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on PUB_OD_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on PUB_OD_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = PUB_OD_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on PUB_OD_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on PUB_OD_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on PUB_OD_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on PUB_OD_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON PUB_OD_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on PUB_OD_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on PUB_OD_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on PS_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on PS_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = PS_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on PS_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on PS_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on PS_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on PS_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON PS_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on PS_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on PS_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on PUBLIC_WEB_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = PUBLIC_WEB_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on PUBLIC_WEB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on PUBLIC_WEB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON PUBLIC_WEB_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Rebuild indexes and analyze datasets on all datasets on SDE CONNNECTION")
+write_log("\n Rebuild indexes and analyze datasets on SDE CONNNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = SDE_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+    
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "SYSTEM", "", "ALL")
+    print ("\n Rebuild index on SDE CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on SDE CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "SYSTEM", "", "NO_ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on SDE CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on SDE CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON SDE CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on SDE CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on SDE CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Rebuild versions that existed prior to SDE compress")
 write_log("\n Rebuild versions that existed prior to SDE compress", logfile)
@@ -331,31 +838,31 @@ write_log("\n Rebuild versions that existed prior to SDE compress", logfile)
 try:
     for version in versionList:
 ##        if version.startswith("agol_edit"):
-##            arcpy.CreateVersion_management(AGOL_EDIT_CONNECTION,defaultVersion, version[10:], "PUBLIC")
+##            arcpy.management.CreateVersion(AGOL_EDIT_CONNECTION,defaultVersion, version[10:], "PUBLIC")
 ##            print ("Created version {0}".format(version))
 ##            write_log("Created version {0}".format(version),logfile)
 ##        elif version.startswith("agol_edit_pub"):
-##            arcpy.CreateVersion_management(AGOL_EDIT_PUB_CONNECTION,defaultVersion, version[14:], "PUBLIC")
+##            arcpy.management.CreateVersion(AGOL_EDIT_PUB_CONNECTION,defaultVersion, version[14:], "PUBLIC")
 ##            print ("Created version {0}".format(version))
 ##            write_log("Created version {0}".format(version),logfile)
 ##        elif version.startswith("CONSV_DIST"):
-##            arcpy.CreateVersion_management(CONSV_DIST_CONNECTION,defaultVersion, version[11:], "PUBLIC")
+##            arcpy.management.CreateVersion(CONSV_DIST_CONNECTION,defaultVersion, version[11:], "PUBLIC")
 ##            print ("Created version {0}".format(version))
 ##            write_log("Created version {0}".format(version),logfile)
         if version.startswith("GIS"):
-            arcpy.CreateVersion_management(GIS_CONNECTION,defaultVersion, version[4:], "PUBLIC")
+            arcpy.management.CreateVersion(GIS_CONNECTION,defaultVersion, version[4:], "PUBLIC")
             print ("Created version {0}".format(version))
             write_log("Created version {0}".format(version),logfile)
         elif version.startswith("PUBLIC_SAFETY"):
-            arcpy.CreateVersion_management(PS_CONNECTION,defaultVersion, version[14:], "PUBLIC")
+            arcpy.management.CreateVersion(PS_CONNECTION,defaultVersion, version[14:], "PUBLIC")
             print ("Created version {0}".format(version))
             write_log("Created version {0}".format(version),logfile)
         elif version.startswith("AST"):
-            arcpy.CreateVersion_management(AST_CONNECTION,defaultVersion, version[4:], "PUBLIC")
+            arcpy.management.CreateVersion(AST_CONNECTION,defaultVersion, version[4:], "PUBLIC")
             print ("Created version {0}".format(version))
             write_log("Created version {0}".format(version),logfile)
         elif version.startswith("PLANNING"):
-            arcpy.CreateVersion_management(PLAN_CONNECTION,defaultVersion, version[9:], "PUBLIC")
+            arcpy.management.CreateVersion(PLAN_CONNECTION,defaultVersion, version[9:], "PUBLIC")
             print ("Created version {0}".format(version))
             write_log("Created version {0}".format(version),logfile)
         else:
@@ -364,12 +871,12 @@ try:
 except:
     print ("\n Unable to rebuild versions")
     write_log("Unable to rebuild versions", logfile)
-    logging.exception('Got exception on rebuild versions logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on rebuild versions logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Rebuild versions completed")
-write_log("       Rebuild versions completed", logfile)
+print ("       Rebuild versions completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild versions completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
@@ -379,9 +886,10 @@ print ("==============================================================")
 print ("\n ALL SDE COMPRESS PROCESSES HAVE COMPLETED: " + str(Day) + " " + str(end_time))
 write_log("\n ALL SDE COMPRESS PROCESSES HAVE COMPLETED: " + str(Day) + " " + str(end_time), logfile)
 
-print ("Elapsed time: " + time.strftime(" %H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time))
-write_log("Elapsed time: " + str (time.strftime(" %H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)), logfile)
-print ("==============================================================")
+print ("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: "  +time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("Elapsed time: " + (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " +time.strftime("%I:%M:%S %p", time.localtime())), logfile)
+print ("===========================================================")
+write_log("===========================================================",logfile)
 
 
 write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#", logfile)

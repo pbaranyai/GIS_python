@@ -56,13 +56,11 @@ except:
 #Database variables:
 CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
 OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
 GIS = "Database Connections\\GIS@ccsde.sde"
 
 # Local variables:
 SCHOOL_DISTRICTS_GIS = GIS + "\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS"
 SCHOOL_DISTRICTS_INTERNAL = CRAW_INTERNAL + "\\CRAW_INTERNAL.Education\\CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL"
-SCHOOL_DISTRICTS_WEB = PUBLIC_WEB + "\\PUBLIC_WEB.Education\\PUBLIC_WEB.SCHOOL_DISTRICTS_WEB"
 SCHOOL_LOCATIONS_GIS = GIS + "\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_LOCATIONS"
 SCHOOL_LOCATIONS_INTERNAL = CRAW_INTERNAL + "\\CRAW_INTERNAL.Education\\CRAW_INTERNAL.SCHOOL_LOCATIONS_INTERNAL"
 
@@ -73,7 +71,7 @@ print (("Updating Education feature classes: "+ str(Day) + " " + str(Time)))
 print ("Will update the following:")
 print ("\nSchool Districts")
 print ("School Locations")
-print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("\n From source to CRAW_INTERNAL")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -81,7 +79,7 @@ write_log("Updating Education feature classes: "+ str(Day) + " " + str(Time), lo
 write_log("Will update the following:", logfile)
 write_log("\nSchool Districts", logfile)  
 write_log("School Locations", logfile) 
-write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)", logfile)
+write_log("\n From source to CRAW_INTERNAL", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating School Districts - CRAW_INTERNAL from GIS")
@@ -99,7 +97,7 @@ except:
 
 try:  
     # Append School Districts - CRAW_INTERNAL from GIS
-    arcpy.Append_management(SCHOOL_DISTRICTS_GIS, SCHOOL_DISTRICTS_INTERNAL, "NO_TEST", 'DISTRICT_NAME "DISTRICT NAME" true true false 100 Text 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,DISTRICT_NAME,-1,-1;ADMINISTRATIVE_ADDRESS "ADMINISTRATIVE ADDRESS" true true false 75 Text 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,ADMINISTRATIVE_ADDRESS,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,UPDATE_DATE,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,SHAPE.STArea(),-1,-1;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,SHAPE.STLength(),-1,-1', "")
+    arcpy.Append_management(SCHOOL_DISTRICTS_GIS, SCHOOL_DISTRICTS_INTERNAL, "NO_TEST", 'DISTRICT_NAME "DISTRICT NAME" true true false 100 Text 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,DISTRICT_NAME,-1,-1;ADMINISTRATIVE_ADDRESS "ADMINISTRATIVE ADDRESS" true true false 75 Text 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,ADMINISTRATIVE_ADDRESS,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,UPDATE_DATE,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SCHOOL_DISTRICT_CODE "School District Code" true true false 8 Double 8 38 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,SCHOOL_DISTRICT_CODES,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,SHAPE.STArea(),-1,-1;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#,Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS,SHAPE.STLength(),-1,-1', "")
     SchoolDistrict_Internal_result = arcpy.GetCount_management(SCHOOL_DISTRICTS_INTERNAL)
     print (('{} has {} records'.format(SCHOOL_DISTRICTS_INTERNAL, SchoolDistrict_Internal_result[0])))
 except:
@@ -109,36 +107,8 @@ except:
     raise
     sys.exit ()
 
-print ("       Updating School Districts - CRAW_INTERNAL from GIS completed")
-write_log("       Updating School Districts - CRAW_INTERNAL from GIS completed", logfile)
-
-print ("\n Updating School Districts - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating School Districts - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete rows from School Districts - PUBLIC_WEB
-    arcpy.DeleteRows_management(SCHOOL_DISTRICTS_WEB)
-except:
-    print ("\n Unable to delete rows from School Districts - PUBLIC_WEB")
-    write_log("Unable to delete rows from School Districts - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from School Districts - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try: 
-    # Append School Districts - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(SCHOOL_DISTRICTS_INTERNAL, SCHOOL_DISTRICTS_WEB, "NO_TEST", 'DISTRICT_NAME "DISTRICT NAME" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,DISTRICT_NAME,-1,-1;ADMINISTRATIVE_ADDRESS "ADMINISTRATIVE ADDRESS" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,ADMINISTRATIVE_ADDRESS,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,UPDATE_DATE,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Education\\CCSDE.CRAW_INTERNAL.SCHOOL_DISTRICTS_INTERNAL,SHAPE.STLength(),-1,-1', "")
-    SchoolDistrict_Web_result = arcpy.GetCount_management(SCHOOL_DISTRICTS_WEB)
-    print (('{} has {} records'.format(SCHOOL_DISTRICTS_WEB, SchoolDistrict_Web_result[0])))
-except:
-    print ("\n Unable to append School Districts - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append School Districts - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append School Districts - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating School Districts - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating School Districts - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
+print ("       Updating School Districts - CRAW_INTERNAL from GIS completed at "+time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating School Districts - CRAW_INTERNAL from GIS completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Updating School Locations - CRAW_INTERNAL from GIS")
 write_log("\n Updating School Locations - CRAW_INTERNAL from GIS", logfile)
@@ -165,8 +135,8 @@ except:
     raise
     sys.exit ()
 
-print ("       Updating School Locations - CRAW_INTERNAL from GIS completed")
-write_log("       Updating School Locations - CRAW_INTERNAL from GIS completed", logfile)
+print ("       Updating School Locations - CRAW_INTERNAL from GIS completed at "+time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating School Locations - CRAW_INTERNAL from GIS completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
@@ -175,9 +145,10 @@ print ("==============================================================")
 print (("\n ALL EDUCATION FEATURE CLASS UPDATES ARE COMPLETED: " + str(Day) + " " + str(end_time)))
 write_log("\n ALL EDUCATION FEATURE CLASS UPDATES ARE COMPLETED: " + str(Day) + " " + str(end_time), logfile)
 
-print (("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)))
-write_log("Elapsed time: " + str (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)), logfile)
-print ("==============================================================")
+print ("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: "  +time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("Elapsed time: " + (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " +time.strftime("%I:%M:%S %p", time.localtime())), logfile)
+print ("===========================================================")
+write_log("===========================================================",logfile)
 
 
 write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#", logfile)

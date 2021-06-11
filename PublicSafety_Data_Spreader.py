@@ -522,7 +522,7 @@ except:
 
 try:
     # Dissolve FIRE DEPT COVERAGE from PUBLIC_SAFETY // ESZ_ALL (dissolve ESZ_ALL polygons based on fire department fields to make fire department polygons)
-    FIRE_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/FIRE_DEPT_COVERAGE_DISSOLVE", "FIRE_DEPT;FIRE_FDID;FIRE_NUM;COUNTY_NAME;COUNTY_FIPS", "", "MULTI_PART", "DISSOLVE_LINES")
+    FIRE_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/FIRE_DEPT_COVERAGE_DISSOLVE", "FIRE_DEPT;FIRE_FDID;FIRE_NUM;COUNTY_NAME;COUNTY_FIPS;DiscrpAgID;STATE", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
     print ("\n Unable to dissolve Fire Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL")
     write_log("Unable to dissolve Fire Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL", logfile)
@@ -532,7 +532,7 @@ except:
 
 try:
     # Make Feature layer from FIRE_DEPT_COVERAGE_DISSOLVE - in_memory (make temporary layer of dissolve from last step, to append in next step)
-    FIRE_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(FIRE_DEPT_COVERAGE_DISSOLVE, "FIRE_DEPT_DISSOLVE_Layer", "", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;FIRE_DEPT FIRE_DEPT VISIBLE NONE;FIRE_FDID FIRE_FDID VISIBLE NONE;FIRE_NUM FIRE_NUM VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
+    FIRE_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(FIRE_DEPT_COVERAGE_DISSOLVE, "FIRE_DEPT_DISSOLVE_Layer", "", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;FIRE_DEPT FIRE_DEPT VISIBLE NONE;FIRE_FDID FIRE_FDID VISIBLE NONE;FIRE_NUM FIRE_NUM VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
 except:
     print ("\n Unable to make Feature layer from FIRE_DEPT_COVERAGE_DISSOLVE - in_memory")
     write_log("Unable to make Feature layer from FIRE_DEPT_COVERAGE_DISSOLVE - in_memory", logfile)
@@ -542,7 +542,7 @@ except:
     
 try:
     # Append FIRE DEPT COVERAGE- CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL (append from temporary layer created from last step)
-    arcpy.Append_management(FIRE_DEPT_DISSOLVE_Layer, FIRE_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'FIRE_DEPT "FIRE DEPARTMENT" true true false 50 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,FIRE_DEPT,-1,-1;FIRE_FDID "FIRE DEPARTMENT FDID CODE" true true false 15 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,FIRE_FDID,-1,-1;FIRE_NUM "FIRE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,FIRE_NUM,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,FIRE_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
+    arcpy.Append_management(FIRE_DEPT_DISSOLVE_Layer, FIRE_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'FIRE_DEPT "FIRE DEPARTMENT" true true false 50 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,FIRE_DEPT,-1,-1;FIRE_FDID "FIRE DEPARTMENT FDID CODE" true true false 15 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,FIRE_FDID,-1,-1;FIRE_NUM "FIRE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,FIRE_NUM,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,FIRE_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,FIRE_DEPT_DISSOLVE_Layer,STATE,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
     FireDept_Internal_result = arcpy.GetCount_management(FIRE_DEPT_COVERAGE_INTERNAL)
     print ('{} has {} records'.format(FIRE_DEPT_COVERAGE_INTERNAL, FireDept_Internal_result[0]))
     write_log('{} has {} records'.format(FIRE_DEPT_COVERAGE_INTERNAL, FireDept_Internal_result[0]), logfile)
@@ -610,7 +610,7 @@ except:
 
 try:
     # Dissolve BLS_Dept_Coverage from filtered layer of PUBLIC_SAFETY // ESZ_ALL (dissolve ESZ_ALL polygons based on BLS department fields to make BLS department polygons)
-    BLS_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/BLS_COVERAGE_DISSOLVE", "EMS_DEPT;EMS_NUM;EMS_EMSID;COUNTY_NAME;COUNTY_FIPS", "", "MULTI_PART", "DISSOLVE_LINES")
+    BLS_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/BLS_COVERAGE_DISSOLVE", "EMS_DEPT;EMS_NUM;EMS_EMSID;COUNTY_NAME;COUNTY_FIPS;DiscrpAgID;STATE","", "MULTI_PART", "DISSOLVE_LINES")
 except:
     print ("\n Unable to dissolve BLS Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY")
     write_log("Unable to dissolve BLS Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY", logfile)
@@ -620,7 +620,7 @@ except:
 
 try:
     # Make feature layer from BLS_COVERAGE_DISSOLVE - in_memory, filtering only COUNTY_FIPS = 42039  (make temporary layer of dissolve filtering out 42039, to only include areas in Crawford County, from last step, to append in next step)
-    BLS_COVERAGE_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(BLS_COVERAGE_DISSOLVE, "BLS_COVERAGE_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;EMS_DEPT EMS_DEPT VISIBLE NONE;EMS_NUM EMS_NUM VISIBLE NONE;EMS_EMSID EMS_EMSID VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
+    BLS_COVERAGE_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(BLS_COVERAGE_DISSOLVE, "BLS_COVERAGE_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;EMS_DEPT EMS_DEPT VISIBLE NONE;EMS_NUM EMS_NUM VISIBLE NONE;EMS_EMSID EMS_EMSID VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
 except:
     print ("\n Unable to create feature layer from BLS_COVERAGE_DISSOLVE - in memory, filtering only COUNTY_FIPS = 42039")
     write_log("Unable to create feature layer from BLS_COVERAGE_DISSOLVE - in memory, filtering only COUNTY_FIPS = 42039", logfile)
@@ -630,7 +630,7 @@ except:
     
 try:
     # Append BLS DEPT COVERAGE - CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL (append from temporary layer created from last step)
-    arcpy.Append_management(BLS_COVERAGE_DISSOLVE_Layer, BLS_COVERAGE_INTERNAL, "NO_TEST", 'EMS_DEPT "BLS/EMS DEPARTMENT" true true false 50 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,EMS_DEPT,-1,-1;EMS_NUM "BLS/EMS DEPARTMENT #" true true false 10 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,EMS_NUM,-1,-1;EMS_EMSID "EMS ID CODE" true true false 10 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,EMS_EMSID,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
+    arcpy.Append_management(BLS_COVERAGE_DISSOLVE_Layer, BLS_COVERAGE_INTERNAL, "NO_TEST", 'EMS_DEPT "BLS/EMS DEPARTMENT" true true false 50 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,EMS_DEPT,-1,-1;EMS_NUM "BLS/EMS DEPARTMENT #" true true false 10 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,EMS_NUM,-1,-1;EMS_EMSID "EMS ID CODE" true true false 10 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,EMS_EMSID,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,BLS_COVERAGE_DISSOLVE_Layer,STATE,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
     BLSDept_Internal_result = arcpy.GetCount_management(BLS_COVERAGE_INTERNAL)
     print ('{} has {} records'.format(BLS_COVERAGE_INTERNAL, BLSDept_Internal_result[0]))
     write_log('{} has {} records'.format(BLS_COVERAGE_INTERNAL, BLSDept_Internal_result[0]), logfile)
@@ -698,7 +698,7 @@ except:
 
 try:
     # Dissolve_QRS_DEPT_COVERAGE from filtered layer of PUBLIC_SAFETY // ESZ_ALL (dissolve ESZ_ALL polygons based on QRS department fields to make QRS department polygons)
-    QRS_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/QRS_DEPT_COVERAGE_DISSOLVE", "QRS_FDID;COUNTY_NAME;COUNTY_FIPS;QRS_DEPT;QRS_NUM", "", "MULTI_PART", "DISSOLVE_LINES")
+    QRS_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/QRS_DEPT_COVERAGE_DISSOLVE", "QRS_FDID;COUNTY_NAME;COUNTY_FIPS;QRS_DEPT;QRS_NUM;DiscrpAgID;STATE", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
     print ("\n Unable to dissolve QRS Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY")
     write_log("Unable to dissolve QRS Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY", logfile)
@@ -708,7 +708,7 @@ except:
 
 try:
     # Make Feature Layer from QRS_DEPT_COVERAGE_DISSOLVE - in_memory (make temporary layer of dissolve from last step, to append in next step)
-    QRS_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(QRS_DEPT_COVERAGE_DISSOLVE, "QRS_DEPT_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;QRS_FDID QRS_FDID VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;QRS_DEPT QRS_DEPT VISIBLE NONE;QRS_NUM QRS_NUM VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
+    QRS_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(QRS_DEPT_COVERAGE_DISSOLVE, "QRS_DEPT_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;QRS_FDID QRS_FDID VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;QRS_DEPT QRS_DEPT VISIBLE NONE;QRS_NUM QRS_NUM VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
 except:
     print ("\n Unable to make feature layer from QRS_DEPT_COVERAGE_DISSOLVE - in_memory")
     write_log("Unable to make feature layer from QRS_DEPT_COVERAGE_DISSOLVE - in_memory", logfile)
@@ -718,7 +718,7 @@ except:
     
 try:
     # Append QRS DEPT COVERAGE - CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL (append from temporary layer created from last step)
-    arcpy.Append_management(QRS_DEPT_DISSOLVE_Layer, QRS_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'QRS_FDID "QUICK RESPONSE SERVICE DEPARTMENT FDID CODE" true true false 15 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,QRS_FDID,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,QRS_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;QRS_DEPT "QUICK RESPONSE SERVICE DEPARTMENT NAME" true true false 50 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,QRS_DEPT,-1,-1;QRS_NUM "QUICK RESPONSE SERVICE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,QRS_NUM,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
+    arcpy.Append_management(QRS_DEPT_DISSOLVE_Layer, QRS_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'QRS_FDID "QUICK RESPONSE SERVICE DEPARTMENT FDID CODE" true true false 15 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,QRS_FDID,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,QRS_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;QRS_DEPT "QUICK RESPONSE SERVICE DEPARTMENT NAME" true true false 50 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,QRS_DEPT,-1,-1;QRS_NUM "QUICK RESPONSE SERVICE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,QRS_NUM,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,QRS_DEPT_DISSOLVE_Layer,STATE,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
     QRSDept_Internal_result = arcpy.GetCount_management(QRS_DEPT_COVERAGE_INTERNAL)
     print ('{} has {} records'.format(QRS_DEPT_COVERAGE_INTERNAL, QRSDept_Internal_result[0]))
     write_log('{} has {} records'.format(QRS_DEPT_COVERAGE_INTERNAL, QRSDept_Internal_result[0]), logfile)
@@ -786,7 +786,7 @@ except:
 
 try:
     # Dissolve_POLICE_DEPT_COVERAGE from filtered layer of PUBLIC_SAFETY // ESZ_ALL (dissolve ESZ_ALL polygons based on police department fields to make police department polygons)
-    POLICE_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/POLICE_DEPT_COVERAGE_DISSOLVE", "POLICE_DEPT;POLICE_DISTRICT;POLICE_ORI;COUNTY_NAME;COUNTY_FIPS;POLICE_ID", "", "MULTI_PART", "DISSOLVE_LINES")
+    POLICE_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/POLICE_DEPT_COVERAGE_DISSOLVE", "POLICE_DEPT;POLICE_DISTRICT;POLICE_ORI;COUNTY_NAME;COUNTY_FIPS;POLICE_ID;DiscrpAgID;STATE", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
     print ("\n Unable to dissolve Police Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY")
     write_log("Unable to dissolve Police Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY", logfile)
@@ -796,7 +796,7 @@ except:
 
 try:
     # Make Feature Layer from POLICE_DEPT_COVERAGE_DISSOLVE - in_memory (make temporary layer of dissolve from last step, to append in next step)
-    POLICE_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(POLICE_DEPT_COVERAGE_DISSOLVE,"POLICE_DEPT_DISSOLVE_Layer","COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;POLICE_DEPT POLICE_DEPT VISIBLE NONE;POLICE_DISTRICT POLICE_DISTRICT VISIBLE NONE;POLICE_ORI POLICE_ORI VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;POLICE_ID POLICE_ID VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
+    POLICE_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(POLICE_DEPT_COVERAGE_DISSOLVE, "POLICE_DEPT_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;POLICE_DEPT POLICE_DEPT VISIBLE NONE;POLICE_DISTRICT POLICE_DISTRICT VISIBLE NONE;POLICE_ORI POLICE_ORI VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;POLICE_ID POLICE_ID VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
 except:
     print ("\n Unable to make Feature Layer from POLICE_DEPT_COVERAGE_DISSOLVE - in_memory")
     write_log("Unable to make Feature Layer from POLICE_DEPT_COVERAGE_DISSOLVE - in_memory", logfile)
@@ -806,7 +806,7 @@ except:
 
 try:
     # Append POLICE DEPT COVERAGE - CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL (append from temporary layer created from last step)
-    arcpy.Append_management(POLICE_DEPT_DISSOLVE_Layer, POLICE_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'POLICE_DEPT "POLICE DEPARTMENT" true true false 50 Text 0 0 ,First,#,POLICE_DEPT_DISSOLVE_Layer,POLICE_DEPT,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,POLICE_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,POLICE_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;POLICE_ID "POLICE_ID" true true false 4 Long 0 10 ,First,#,POLICE_DEPT_DISSOLVE_Layer,POLICE_ID,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
+    arcpy.Append_management(POLICE_DEPT_DISSOLVE_Layer, POLICE_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'POLICE_DEPT "POLICE DEPARTMENT" true true false 50 Text 0 0 ,First,#,POLICE_DEPT_DISSOLVE_Layer,POLICE_DEPT,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,POLICE_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,POLICE_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;POLICE_ID "POLICE_ID" true true false 4 Long 0 10 ,First,#,POLICE_DEPT_DISSOLVE_Layer,POLICE_ID,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,POLICE_DEPT_DISSOLVE_Layer,DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,POLICE_DEPT_DISSOLVE_Layer,STATE,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
     PoliceDept_Internal_result = arcpy.GetCount_management(POLICE_DEPT_COVERAGE_INTERNAL)
     print ('{} has {} records'.format(POLICE_DEPT_COVERAGE_INTERNAL, PoliceDept_Internal_result[0]))
     write_log('{} has {} records'.format(POLICE_DEPT_COVERAGE_INTERNAL, PoliceDept_Internal_result[0]), logfile)
@@ -874,7 +874,7 @@ except:
 
 try:
     # Dissolve_RESCUE_DEPT_COVERAGE from filtered layer of PUBLIC_SAFETY // ESZ_ALL (dissolve ESZ_ALL polygons based on rescue department fields to make rescue department polygons)
-    RESCUE_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/RESCUE_DEPT_COVERAGE_DISSOLVE", "RESCUE_DEPT;RESCUE_NUM;COUNTY_NAME;COUNTY_FIPS;RESCUE_FDID", "", "MULTI_PART", "DISSOLVE_LINES")
+    RESCUE_DEPT_COVERAGE_DISSOLVE = arcpy.Dissolve_management(ESZ_ALL_PS, "in_memory/RESCUE_DEPT_COVERAGE_DISSOLVE", "RESCUE_DEPT;RESCUE_NUM;COUNTY_NAME;COUNTY_FIPS;RESCUE_FDID;DiscrpAgID;STATE", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
     print ("\n Unable to dissolve Rescue Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY")
     write_log("Unable to dissolve Rescue Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY", logfile)
@@ -884,7 +884,7 @@ except:
 
 try:
     # Make Feature Layer from RESCUE_DEPT_COVERAGE_DISSOLVE - in_memory (make temporary layer of dissolve from last step, to append in next step)
-    RESCUE_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(RESCUE_DEPT_COVERAGE_DISSOLVE, "RESCUE_DEPT_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;RESCUE_DEPT RESCUE_DEPT VISIBLE NONE;RESCUE_NUM RESCUE_NUM VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;RESCUE_FDID RESCUE_FDID VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
+    RESCUE_DEPT_DISSOLVE_Layer = arcpy.MakeFeatureLayer_management(RESCUE_DEPT_COVERAGE_DISSOLVE, "RESCUE_DEPT_DISSOLVE_Layer", "COUNTY_FIPS = 42039", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;RESCUE_DEPT RESCUE_DEPT VISIBLE NONE;RESCUE_NUM RESCUE_NUM VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;RESCUE_FDID RESCUE_FDID VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE;SHAPE_Area SHAPE_Area VISIBLE NONE")
 except:
     print ("\n Unable to make Feature Layer from RESCUE_DEPT_COVERAGE_DISSOLVE - in_memory, filtered for COUNTY_FIPS = 42039")
     write_log("Unable to make Feature Layer from RESCUE_DEPT_COVERAGE_DISSOLVE - in_memory, filtered for COUNTY_FIPS = 42039", logfile)
@@ -894,7 +894,7 @@ except:
 
 try:
     # Process: Append RESCUE DEPT COVERAGE - CRAW_INTERNAL from PUBLIC_SAFETY // ESZ_ALL (append from temporary layer created from last step)
-    arcpy.Append_management(RESCUE_DEPT_DISSOLVE_Layer, RESCUE_DEPT_COVERAGE_INTERNAL, "NO_TEST",'RESCUE_DEPT "RESCUE DEPARTMENT" true true false 50 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,RESCUE_DEPT,-1,-1;RESCUE_NUM "RESCUE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,RESCUE_NUM,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;RESCUE_FDID "RESCUE_FDID" true true false 50 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,RESCUE_FDID,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
+    arcpy.Append_management(RESCUE_DEPT_DISSOLVE_Layer, RESCUE_DEPT_COVERAGE_INTERNAL, "NO_TEST", 'RESCUE_DEPT "RESCUE DEPARTMENT" true true false 50 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,RESCUE_DEPT,-1,-1;RESCUE_NUM "RESCUE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,RESCUE_NUM,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,COUNTY_FIPS,-1,-1;RESCUE_FDID "RESCUE_FDID" true true false 50 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,RESCUE_FDID,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,DiscrpAgID,-1,-1;STATE "STATE" true true false 2 Text 0 0 ,First,#,RESCUE_DEPT_DISSOLVE_Layer,STATE,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#', "")
     RescueDept_Internal_result = arcpy.GetCount_management(RESCUE_DEPT_COVERAGE_INTERNAL)
     print ('{} has {} records'.format(RESCUE_DEPT_COVERAGE_INTERNAL, RescueDept_Internal_result[0]))
     write_log('{} has {} records'.format(RESCUE_DEPT_COVERAGE_INTERNAL, RescueDept_Internal_result[0]), logfile)

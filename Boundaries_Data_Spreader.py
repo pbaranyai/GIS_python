@@ -13,6 +13,9 @@
 #  Zipcodes
 #  Assessor Areas
 #  Surrounding County Boundaries
+#  Crawford County Municipal Boundaries
+#  Crawford County Municipal Boundaries Relate
+#  Address Points Web Relate
 #
 #   All processes have general components, delete rows, append from another source - due to most layers are connected to services
 # ---------------------------------------------------------------------------
@@ -64,24 +67,29 @@ except:
 AST = "Database Connections\\AST@ccsde.sde"
 CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
 OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
+PLANNING = "Database Connections\\PLANNING@ccsde.sde"
 PUBLIC_SAFETY = "Database Connections\\PUBLIC_SAFETY@ccsde.sde"
 PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
 
 # Local variables:
 ASSESSOR_AREAS_AST = AST + "\\CCSDE.AST.Assessor_Responsibilities\\CCSDE.AST.Assessor_Areas"
 ASSESSOR_AREAS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_ASSESSOR_AREAS_INTERNAL"
+ADDRESS_POINTS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB"
+ADDRESS_POINTS_WEB_RELATE = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Boundaries\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB_RELATE"
 COUNTY_ADJ_MUNI_BOUND_PUBLIC_SAFETY = "Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES"
 COUNTY_ADJ_MUNI_BOUND_INTERNAL = "Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL"
-COUNTY_ADJ_MUNI_BOUND_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Boundaries\\CCSDE.PUBLIC_WEB.COUNTY_ADJ_MUNI_BOUND_WEB"
 COUNTY_BOUNDARY_CL_XY_PUBLIC_SAFETY = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_BOUNDARY_CL_XY"
 COUNTY_BOUNDARY_CL_XY_OD = OPEN_DATA + "\\CCSDE.PUBLIC_OD.Boundaries\\CCSDE.PUBLIC_OD.COUNTY_BOUNDARY_CL_XY_OD"
+CRAWFORD_COUNTY_MUNI_PLANNING = PLANNING + "\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES"
+CRAWFORD_COUNTY_MUNI_INTERNAL = "Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL"
+CRAWFORD_COUNTY_MUNI_WEB_RELATE = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Boundaries\\CCSDE.PUBLIC_WEB.CRAWFORD_MUNICIPAL_BOUNDARIES_WEB_RELATE"
 SURROUNDING_CNTY_BOUND_PUBLIC_SAFETY = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.SURROUNDING_COUNTY_BOUNDARIES"
 SURROUNDING_CNTY_BOUND_PUBLIC_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Boundaries\\CCSDE.PUBLIC_WEB.SURROUNDING_COUNTY_BNDRY_WEB"
 ZIPCODES_PUBLIC_SAFETY = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.ZIPCODES"
 ZIPCODES_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL"
-ZIPCODES_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Boundaries\\CCSDE.PUBLIC_WEB.ZIPCODES_WEB"
 
 start_time = time.time()
+elapsed_time = time.time() - start_time
 
 print ("===============================================================================================")
 print (("UPDATING COUNTY BOUNDARIES: " + str(Day) + " " + str(Time)))
@@ -91,6 +99,9 @@ print ("County Boundary CL XY Boundary Points Feature Class")
 print ("Zipcodes Feature Class")
 print ("Assessor Areas Feature Class")
 print ("Surrounding County Boundaries")
+print ("Crawford County Municpal Boundaries")
+print ("Crawford County Municpal Boundaries Relate")
+print ("Address Point Web Relate")
 print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB -> PUBLIC_OD (where applicable)")
 print ("===============================================================================================")
 
@@ -101,13 +112,16 @@ write_log("\n County Adjusted Municipal Boundary Feature Class", logfile)
 write_log("County Boundary CL XY Boundary Points Feature Class", logfile) 
 write_log("Zipcodes Feature Class", logfile)
 write_log("Assessor Areas Feature Class", logfile)
-write_log("Surrounding County Boundaries", logfile) 
+write_log("Surrounding County Boundaries", logfile)
+write_log("Crawford County Municpal Boundaries", logfile)
+write_log("Crawford County Municpal Boundaries Relate", logfile)
+write_log("Address Points Web Relate", logfile)
 write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB -> PUBLIC_OD (where applicable)", logfile)
 write_log("============================================================================", logfile)
 
 
 print ("\n Updating CRAW_INTERNAL County Adjusted Municipal Boundaries from PUBLIC_SAFETY")
-write_log("Updating CRAW_INTERNAL County Adjusted Municipal Boundaries from PUBLIC_SAFETY: " + str(Day) + " " + str(Time), logfile)
+write_log("Updating CRAW_INTERNAL County Adjusted Municipal Boundaries from PUBLIC_SAFETY: " + time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 try:
     # Delete rows from Crawford Adjusted Municipal Boundaries - CRAW_INTERNAL
@@ -115,53 +129,24 @@ try:
 except:
     print ("\n Unable to delete rows from Crawford Adjusted Municipal Boundaries - CRAW_INTERNAL")
     write_log("Unable to delete rows from Crawford Adjusted Municipal Boundaries - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on delete rows from Crawford Adjusted Municipal Boundaries - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on delete rows from Crawford Adjusted Municipal Boundaries - CRAW_INTERNAL logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
 try:
     # Append County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY
-    arcpy.Append_management(COUNTY_ADJ_MUNI_BOUND_PUBLIC_SAFETY, COUNTY_ADJ_MUNI_BOUND_INTERNAL, "NO_TEST", "MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNICIPALITY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,UPDATE_DATE,-1,-1;GLOBALID \"GLOBALID\" false false false 38 GlobalID 0 0 ,First,#;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,SHAPE.STLength(),-1,-1", "")
+    arcpy.Append_management(COUNTY_ADJ_MUNI_BOUND_PUBLIC_SAFETY, COUNTY_ADJ_MUNI_BOUND_INTERNAL, "NO_TEST", 'MUNI_NAME "MUNICIPALITY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,MUNI_NAME,-1,-1;MUNI_FIPS "MUNICIPALITY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,MUNI_FIPS,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,UPDATE_DATE,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#;STATE "State" true true false 2 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,STATE,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,DiscrpAgID,-1,-1;COUNTRY "Country" true true false 2 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,COUNTRY,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,SHAPE.STArea(),-1,-1;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Boundaries\\CCSDE.PUBLIC_SAFETY.COUNTY_ADJ_MUNI_BOUNDARIES,SHAPE.STLength(),-1,-1', "")
     AdjMuniBound_Internal_result = arcpy.GetCount_management(COUNTY_ADJ_MUNI_BOUND_INTERNAL)
     print (('{} has {} records'.format(COUNTY_ADJ_MUNI_BOUND_INTERNAL, AdjMuniBound_Internal_result[0])))
 except:
     print ("\n Unable to append County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY")
     write_log("Unable to append County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY", logfile)
-    logging.exception('Got exception on append County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on append County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Updating County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY completed")
-write_log("       Updating County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY completed", logfile)
-    
-print ("\n Updating PUBLIC_WEB County Adjusted Municipal Boundaries from CRAW_INTERNAL")
-write_log("\n Updating PUBLIC_WEB County Adjusted Municipal Boundaries from CRAW_INTERNAL", logfile)
-
-
-try:
-    # Delete rows County Adjusted Municipal Boundaries - PUBLIC_WEB
-    arcpy.DeleteRows_management(COUNTY_ADJ_MUNI_BOUND_WEB)
-except:
-    print ("\n Unable to delete rows County Adjusted Municipal Boundaries - PUBLIC_WEB")
-    write_log("Unable to delete rows County Adjusted Municipal Boundaries - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows County Adjusted Municipal Boundaries - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:    
-    # Append County Adjusted Municipal Boundaries - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(COUNTY_ADJ_MUNI_BOUND_INTERNAL, COUNTY_ADJ_MUNI_BOUND_WEB, "NO_TEST", "MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNICIPALITY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,UPDATE_DATE,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    AdjMuniBound_Web_result = arcpy.GetCount_management(COUNTY_ADJ_MUNI_BOUND_WEB)
-    print (('{} has {} records'.format(COUNTY_ADJ_MUNI_BOUND_WEB, AdjMuniBound_Web_result[0])))
-except:
-    print ("\n Unable to append County Adjusted Municipal Boundaries - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append County Adjusted Municipal Boundaries - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append County Adjusted Municipal Boundaries - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating County Adjusted Municipal Boundaries - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating County Adjusted Municipal Boundaries - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
+print ("       Updating County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY completed at "+time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating County Adjusted Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
     
 print ("\n Updating Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY")
 write_log("\n Updating Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY", logfile)
@@ -172,7 +157,7 @@ try:
 except:
     print ("\n Unable to delete rows Zipcodes - CRAW_INTERNAL")
     write_log("Unable to delete rows Zipcodes - CRAW_INTERNAL from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on delete rows Zipcodes - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on delete rows Zipcodes - CRAW_INTERNAL logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
@@ -184,40 +169,12 @@ try:
 except:
     print ("\n Unable to append Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY")
     write_log("Unable to append Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY", logfile)
-    logging.exception('Got exception on append Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on append Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Updating Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY completed")
-write_log("       Updating Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY completed", logfile)
-
-print ("\n Updating Zipcodes - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Zipcodes - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete rows Zipcodes - PUBLIC_WEB
-    arcpy.DeleteRows_management(ZIPCODES_WEB)
-except:
-    print ("\n Unable to delete rows Zipcodes - PUBLIC_WEB")
-    write_log("Unable to delete rows Zipcodes - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows Zipcodes - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append Zipcodes - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(ZIPCODES_INTERNAL, ZIPCODES_WEB, "NO_TEST", "POST_OFFICE \"POST OFFICE\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,POST_OFFICE,-1,-1;ZIPCODE \"ZIPCODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,ZIPCODE,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE_DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,UPDATE_DATE,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    Zipcode_Web_result = arcpy.GetCount_management(ZIPCODES_WEB)
-    print (('{} has {} records'.format(ZIPCODES_WEB, Zipcode_Web_result[0])))
-except:
-    print ("\n Unable to append Zipcodes - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Zipcodes - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Zipcodes - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Zipcodes - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Zipcodes - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
+print ("       Updating Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating Zipcodes - CRAW_INTERNAL from PUBLIC_SAFETY completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Updating Assessor Areas - CRAW_INTERNAL from AST")
 write_log("\n Updating Assessor Areas - CRAW_INTERNAL from AST", logfile)
@@ -228,7 +185,7 @@ try:
 except:
     print ("\n Unable to delete rows Assessor Areas - CRAW_INTERNAL")
     write_log("Unable to delete rows Assessor Areas - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on delete rows Assessor Areas - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on delete rows Assessor Areas - CRAW_INTERNAL logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
@@ -240,12 +197,12 @@ try:
 except:
     print ("\n Unable to append Assessor Areas - CRAW_INTERNAL from AST")
     write_log("Unable to append Assessor Areas - CRAW_INTERNAL from AST", logfile)
-    logging.exception('Got exception on append Assessor Areas - CRAW_INTERNAL from AST logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on append Assessor Areas - CRAW_INTERNAL from AST logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Updating Assessor Areas - CRAW_INTERNAL from AST completed")
-write_log("       Updating Assessor Areas - CRAW_INTERNAL from AST completed", logfile)
+print ("       Updating Assessor Areas - CRAW_INTERNAL from AST completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating Assessor Areas - CRAW_INTERNAL from AST completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Updating County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY")
 write_log("\n Updating County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY", logfile)
@@ -256,7 +213,7 @@ try:
 except:
     print ("\n Unable to delete rows County Boundary Centerline XY Snap Points - PUBLIC_OD")
     write_log("Unable to delete rows County Boundary Centerline XY Snap Points - PUBLIC_OD", logfile)
-    logging.exception('Got exception on delete rows County Boundary Centerline XY Snap Points - PUBLIC_OD logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on delete rows County Boundary Centerline XY Snap Points - PUBLIC_OD logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
@@ -268,12 +225,12 @@ try:
 except:
     print ("\n Unable to append County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY")
     write_log("Unable to append County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY", logfile)
-    logging.exception('Got exception on append County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on append County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Updating County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY completed")
-write_log("       Updating County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY completed", logfile)
+print ("       Updating County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating County Boundary Centerline XY Snap Points - PUBLIC_OD from PUBLIC_SAFETY completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Updating Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY")
 write_log("\n Updating Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY", logfile)
@@ -283,8 +240,8 @@ try:
     arcpy.DeleteRows_management(SURROUNDING_CNTY_BOUND_PUBLIC_WEB)
 except:
     print ("\n Unable to delete rows Surrounding County Boundaries - PUBLIC_WEB")
-    write_log("Unable to delete rows Surrounding County Boundaries - PUBLIC_WEBL", logfile)
-    logging.exception('Got exception on delete rows Surrounding County Boundaries - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    write_log("Unable to delete rows Surrounding County Boundaries - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on delete rows Surrounding County Boundaries - PUBLIC_WEB logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
@@ -296,12 +253,97 @@ try:
 except:
     print ("\n Unable to append Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY")
     write_log("Unable to append Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY", logfile)
-    logging.exception('Got exception on append Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY logged at:' + str(Day) + " " + str(Time))
+    logging.exception('Got exception on append Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
 
-print ("       Updating Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY completed")
-write_log("       Updating Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY completed", logfile)
+print ("       Updating Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating Surrounding County Boundaries - PUBLIC_WEB from PUBLIC_SAFETY completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Updating CRAW_INTERNAL Crawford County Municipal Boundaries from PLANNING")
+write_log("Updating CRAW_INTERNAL Crawford County Municipal Boundaries from PLANNING: " + time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+try:
+    # Delete rows from Crawford County Municipal Boundaries - CRAW_INTERNAL
+    arcpy.DeleteRows_management(CRAWFORD_COUNTY_MUNI_INTERNAL)
+except:
+    print ("\n Unable to delete rows from Crawford County Municipal Boundaries - CRAW_INTERNAL")
+    write_log("Unable to delete rows from Crawford County Municipal Boundaries - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on delete rows from Crawford County Municipal Boundaries - CRAW_INTERNAL logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Append Crawford County Municipal Boundaries - CRAW_INTERNAL from PLANNING
+    arcpy.Append_management(CRAWFORD_COUNTY_MUNI_PLANNING, CRAWFORD_COUNTY_MUNI_INTERNAL, "NO_TEST", 'Municipality "Municipality Name" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,MUNI_NAME,-1,-1;FIPS "Municipal FIPS Code" true true false 8 Double 8 38 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,MUNI_FIPS,-1,-1;COUNTY_NAME "County Name" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,COUNTY_NAME,-1,-1;COUNTY_FIPS "County FIPS Code" true true false 8 Double 8 38 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,COUNTY_FIPS,-1,-1;UPDATE_DATE "Last Update Date" true true false 8 Date 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,UPDATE_DATE,-1,-1;GlobalID "GlobalID" false false false 38 GlobalID 0 0 ,First,#;MAILING_STREET_ADDRESS "Mailing Street Address" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,MAILING_STREET_ADDRESS,-1,-1;MAILING_CITY_ADDRESS "Mailing Address City" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,MAILING_CITY_ADDRESS,-1,-1;MAILING_ZIP_ADDRESS "Mailing Address Zipcode" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,MAILING_ZIP_ADDRESS,-1,-1;PHYSICAL_STREET_ADDRESS "Physical Street Address" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,PHYSICAL_STREET_ADDRESS,-1,-1;PHYSICAL_CITY_ADDRESS "Physical Address City" true true false 50 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,PHYSICAL_CITY_ADDRESS,-1,-1;PHYSICAL_ZIP_ADDRESS "Physical Address Zipcode" true true false 8 Double 8 38 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,PHYSICAL_ZIP_ADDRESS,-1,-1;EMAIL_ADDRESS "Email address" true true false 100 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,EMAIL_ADDRESS,-1,-1;WEBSITE "Website" true true false 150 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,WEBSITE,-1,-1;OFFICE_HOURS "Office Hours" true true false 75 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,OFFICE_HOURS,-1,-1;OFFICE_PHONE "Office Phone #" true true false 60 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,OFFICE_PHONE,-1,-1;ZONING_ORDINANCE "Zoning ordinance available?" true true false 5 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,ZONING_ORDINANCE,-1,-1;SALDO "SALDO available?" true true false 5 Text 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,SALDO,-1,-1;Shape.STArea() "Shape.STArea()" false false true 0 Double 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,Shape.STArea(),-1,-1;Shape.STLength() "Shape.STLength()" false false true 0 Double 0 0 ,First,#,Database Connections\\PLANNING@ccsde.sde\\CCSDE.PLANNING.Crawford_Co_Data\\CCSDE.PLANNING.CRAWFORD_MUNICIPAL_BOUNDARIES,Shape.STLength(),-1,-1', "")
+    CCMuniBound_Internal_result = arcpy.GetCount_management(CRAWFORD_COUNTY_MUNI_INTERNAL)
+    print (('{} has {} records'.format(CRAWFORD_COUNTY_MUNI_INTERNAL, CCMuniBound_Internal_result[0])))
+except:
+    print ("\n Unable to append Crawford County Municipal Boundaries - CRAW_INTERNAL from PLANNING")
+    write_log("Unable to append Crawford County Municipal Boundaries - CRAW_INTERNAL from PLANNING", logfile)
+    logging.exception('Got exception on append Crawford County Municipal Boundaries - CRAW_INTERNAL from PUBLIC_SAFETY logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Updating Crawford County Municipal Boundaries - CRAW_INTERNAL from PLANNING completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating Crawford County Municipal Boundaries - CRAW_INTERNAL from PLANNING completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Updating PUBLIC_WEB Crawford County Municipal Boundaries Relate from CRAW_INTERNAL")
+write_log("Updating PUBLIC_WEB Crawford County Municipal Boundaries Relate from CRAW_INTERNAL: " + time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+try:
+    # Delete rows from Crawford County Municipal Boundaries Relate - PUBLIC_WEB
+    arcpy.DeleteRows_management(CRAWFORD_COUNTY_MUNI_WEB_RELATE)
+except:
+    print ("\n Unable to delete rows from Crawford County Municipal Boundaries Relate - PUBLIC_WEB")
+    write_log("Unable to delete rows from Crawford County Municipal Boundaries Relate - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on delete rows from Crawford County Municipal Boundaries Relate - PUBLIC_WEB logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Append Crawford County Municipal Boundaries Relate - PUBLIC_WEB from CRAW_INTERNAL
+    arcpy.Append_management(CRAWFORD_COUNTY_MUNI_INTERNAL, CRAWFORD_COUNTY_MUNI_WEB_RELATE, "NO_TEST", 'MUNI_NAME "MUNICIPALITY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS "MUNICIPALITY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,UPDATE_DATE,-1,-1;MAILING_STREET_ADDRESS "Mailing Street Address" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,MAILING_STREET_ADDRESS,-1,-1;MAILING_CITY_ADDRESS "Mailing Address City" true true false 255 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,MAILING_CITY_ADDRESS,-1,-1;MAILING_ZIP_ADDRESS "Mailing Address Zipcode" true true false 255 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,MAILING_ZIP_ADDRESS,-1,-1;PHYSICAL_STREET_ADDRESS "Physical Street Address" true true false 255 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,PHYSICAL_STREET_ADDRESS,-1,-1;PHYSICAL_CITY_ADDRESS "Physical Address City" true true false 255 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,PHYSICAL_CITY_ADDRESS,-1,-1;PHYSICAL_ZIP_ADDRESS "Physical Address Zipcode" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,PHYSICAL_ZIP_ADDRESS,-1,-1;EMAIL_ADDRESS "Email Address" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,EMAIL_ADDRESS,-1,-1;WEBSITE "Website" true true false 150 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,WEBSITE,-1,-1;OFFICE_HOURS "Office Hours" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,OFFICE_HOURS,-1,-1;OFFICE_PHONE "Office Phone #" true true false 60 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,OFFICE_PHONE,-1,-1;GlobalID "GlobalID" false false false 38 GlobalID 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,GlobalID,-1,-1;SHAPE.STArea() "SHAPE.STArea()" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.CRAWFORD_MUNICIPAL_BOUNDARIES_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Boundaries\\CCSDE.PUBLIC_WEB.CRAWFORD_MUNICIPAL_BOUNDARIES_WEB,SHAPE.STLength(),-1,-1', "")
+    CCMuniBoundRelate_Web_result = arcpy.GetCount_management(CRAWFORD_COUNTY_MUNI_WEB_RELATE)
+    print (('{} has {} records'.format(CRAWFORD_COUNTY_MUNI_WEB_RELATE, CCMuniBoundRelate_Web_result[0])))
+except:
+    print ("\n Unable to append Crawford County Municipal Boundaries Relate - PUBLIC_WEB from CRAW_INTERNAL")
+    write_log("Unable to append Crawford County Municipal Boundaries Relate - PUBLIC_WEB from CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on append Crawford County Municipal Boundaries Relate - PUBLIC_WEB from CRAW_INTERNAL logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Updating Crawford County Municipal Boundaries Relate - PUBLIC_WEB from CRAW_INTERNAL completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating Crawford County Municipal Boundaries Relate - PUBLIC_WEB from CRAW_INTERNAL completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
+print ("\n Updating Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB")
+write_log("\n Updating Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB", logfile)
+
+try:
+    # Delete rows from Address Points Web Relate FC - PUBLIC_WEB
+    arcpy.DeleteRows_management(ADDRESS_POINTS_WEB_RELATE)
+except:
+    print ("\n Unable to delete rows from Address Points Web Relate FC - PUBLIC_WEB")
+    write_log("Unable to delete rows from Address Points Web Relate FC - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on delete rows from Address Points Web Relate FC - PUBLIC_WEB logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:    
+    # Append Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB
+    arcpy.Append_management(ADDRESS_POINTS_WEB, ADDRESS_POINTS_WEB_RELATE, "NO_TEST", 'AD_STRU_NUM "UNIQUE STRUCTURE NUMBER" true true false 8 Double 8 38 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_STRU_NUM,-1,-1;AD_ADD_DATE "ADD DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_ADD_DATE,-1,-1;AD_HSENUMBER "HOUSE NUMBER" true true false 8 Double 8 38 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_HSENUMBER,-1,-1;AD_ADD_EXT "ADDRESS EXT" true true false 5 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_ADD_EXT,-1,-1;AD_ADD_SUF "ADDRESS SUFFIX" true true false 10 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_ADD_SUF,-1,-1;AD_PRE_MOD "PREFIX MODIFIER" true true false 15 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_PRE_MOD,-1,-1;AD_PRE_DIR "PREFIX DIRECTIONAL" true true false 4 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_PRE_DIR,-1,-1;AD_STREETNAME "STREET NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_STREETNAME,-1,-1;AD_STREET_SUF "STREET SUFFIX" true true false 5 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_STREET_SUF,-1,-1;AD_POST_DIR "POST DIRECTIONAL" true true false 4 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_POST_DIR,-1,-1;AD_POST_MOD "POST MODIFIER" true true false 100 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_POST_MOD,-1,-1;AD_STREET "STREET FULL NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_STREET,-1,-1;AD_MUNI "MUNICIPALITY" true true false 50 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_MUNI,-1,-1;AD_ST_MUNI "STREET | MUNICIPALITY" true true false 80 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_ST_MUNI,-1,-1;AD_HSE_STREET "911 ADDRESS" true true false 120 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_HSE_STREET,-1,-1;AD_LAST_NAME "LAST NAME" true true false 80 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_LAST_NAME,-1,-1;AD_FIRST_NAME "FIRST NAME" true true false 60 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_FIRST_NAME,-1,-1;AD_RR_TYPE "RURAL ROUTE TYPE" true true false 2 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_RR_TYPE,-1,-1;AD_RR_NUM "RURAL ROUTE #" true true false 5 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_RR_NUM,-1,-1;AD_RR_BOX "RURAL ROUTE BOX" true true false 7 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_RR_BOX,-1,-1;AD_PO_BOX "PO BOX" true true false 7 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_PO_BOX,-1,-1;AD_POST_OFFICE "POST OFFICE" true true false 22 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_POST_OFFICE,-1,-1;AD_STATE "STATE" true true false 2 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_STATE,-1,-1;AD_ZIPCODE "ZIPCODE" true true false 8 Double 8 38 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_ZIPCODE,-1,-1;AD_TYPE "ADDRESS TYPE" true true false 8 Double 8 38 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_TYPE,-1,-1;AD_OLD_ADD "OLD ADDRESS" true true false 120 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_OLD_ADD,-1,-1;AD_PUB_EXEMPT "PUBLIC WEB EXEMPT" true true false 1 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_PUB_EXEMPT,-1,-1;AD_COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_COUNTY_NAME,-1,-1;AD_COUNTY_FIPS "COUNTY FIPS" true true false 8 Double 8 38 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_COUNTY_FIPS,-1,-1;AD_UPD_CODE "UPDATE CODE" true true false 8 Double 8 38 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_UPD_CODE,-1,-1;AD_EDIT_DATE "EDIT DATE" true true false 8 Date 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_EDIT_DATE,-1,-1;AD_ESN "ESN" true true false 2 Short 0 5 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_ESN,-1,-1;AD_TEMP_ADDR_EXPIRATION "TEMP ADDRESS EXPIRATION" true true false 8 Date 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,AD_TEMP_ADDR_EXPIRATION,-1,-1;GlobalID "GlobalID" false false false 38 GlobalID 0 0 ,First,#,Database Connections\\public_web@ccsde.sde\\CCSDE.PUBLIC_WEB.Land_Records\\CCSDE.PUBLIC_WEB.ADDRESS_POINTS_WEB,GlobalID,-1,-1', "")
+    AddressPoint_WebRelate_result = arcpy.GetCount_management(ADDRESS_POINTS_WEB_RELATE)
+    print (('{} has {} records'.format(ADDRESS_POINTS_WEB_RELATE, AddressPoint_WebRelate_result[0])))
+    write_log('{} has {} records'.format(ADDRESS_POINTS_WEB_RELATE, AddressPoint_WebRelate_result[0]), logfile)
+except:
+    print ("\n Unable to append Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB")
+    write_log("Unable to append Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on append Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB logged at: ' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Updating Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Updating Address Points FC - PUBLIC_WEB from Address Points Web Relate FC - PUBLIC_WEB completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
@@ -311,8 +353,8 @@ print (("       ALL BOUNDARY UPDATES HAVE COMPLETED: " + str(Day) + " " + str(en
 write_log("       ALL BOUNDARY UPDATES HAVE COMPLETED: " + str(Day) + " " + str(end_time), logfile)
 write_log("===========================================================",logfile)
 
-print (("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)))
-write_log("Elapsed time: " + str (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)), logfile)
+print ("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: "  +time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("Elapsed time: " + (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " +time.strftime("%I:%M:%S %p", time.localtime())), logfile)
 print ("===========================================================")
 write_log("===========================================================",logfile)
 

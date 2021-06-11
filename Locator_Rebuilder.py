@@ -20,7 +20,7 @@
 #  CC_Name_Locator
 #       ADDR_Name_CCLocator // BuildingOnly_Name_CCLocator
 #       BuildingOnly_ADDR1 // TaxParcel_ADDR1_CCLocator
-#       TaxParcel_Name_CCLocator
+#       TaxParcel_Name_CCLocator // ADDR_FName_CCLocator
 #  CC_Address_Search
 #       ADDR_PriAdd_CCLocator // ADDR_OldAdd_CCLocator
 #       BuildingOnly_ADDR1_CCLocator // ADDR_HSESTREET_CCLocator
@@ -36,7 +36,7 @@
 #  Crawford_Name_Locator
 #       ADDR_Name_PubLocator // BuildingOnly_Name_PubLocator
 #       BuildingOnly_ADDR1_PubLocator // TaxParcel_ADDR1_PubLocator
-#       TaxParcel_Name_PubLocator
+#       TaxParcel_Name_PubLocator // ADDR_FName_PubLocator
 #  Crawford_Address_Search
 #       ADDR_PriAdd_PubLocator // ADDR_OldAdd_PubLocator
 #       BuildingOnly_ADDR1_PubLocator // ADDR_HSESTREET_PubLocator
@@ -122,6 +122,7 @@ CL_Name_CCLocator = Locators + "\\Intranet_Locators\\Locator_workspace\\CL_Name_
 ADDR_PriAdd_CCLocator = Locators + "\\Intranet_Locators\\Locator_workspace\\ADDR_PriAdd_CCLocator"
 ADDR_OldAdd_CCLocator = Locators + "\\Intranet_Locators\\Locator_workspace\\ADDR_OldAdd_CCLocator"
 ADDR_Name_CCLocator = Locators + "\\Intranet_Locators\\Locator_workspace\\ADDR_Name_CCLocator"
+ADDR_FName_CCLocator = Locators + "\\Intranet_Locators\\Locator_workspace\\ADDR_FName_CCLocator"
 ADDR_HSESTREET_CCLocator = Locators + "\\Intranet_Locators\\Locator_workspace\\ADDR_HSESTREET_CCLocator"
 Crawford_Roads_Locator = Locators + "\\Public_Locators\\Crawford_Roads_Locator"
 Crawford_Parcel_Locator = Locators + "\\Public_Locators\\Crawford_Parcel_Locator"
@@ -149,6 +150,7 @@ CL_Name_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\CL_Name_P
 ADDR_PriAdd_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_PriAdd_PubLocator"
 ADDR_OldAdd_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_OldAdd_PubLocator"
 ADDR_Name_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_Name_PubLocator"
+ADDR_FName_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_FName_PubLocator"
 ADDR_HSESTREET_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_HSESTREET_PubLocator"
 
 # Publishing variables
@@ -282,6 +284,22 @@ except:
     print ("\n Unable to rebuild ADDR_Name Locator from Address_Points - PUBLIC_WEB")
     write_log("\n Unable to rebuild ADDR_Name Locator from Address_Points - PUBLIC_WEB", logfile)
     logging.exception('Got exception on rebuild ADDR_Name Locator from Address_Points - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding ADDR_HSESTREET Locator from Address_Points - PUBLIC_WEB completed")
+write_log("       Rebuilding ADDR_HSESTREET Locator from Address_Points - PUBLIC_WEB completed", logfile)
+
+print ("\n Rebuilding ADDR_FName Locator from Address_Points - PUBLIC_WEB")
+write_log("\n Rebuilding ADDR_FName Locator from Address_Points - PUBLIC_WEB ", logfile)
+
+try:
+    # Rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB
+    arcpy.RebuildAddressLocator_geocoding(ADDR_FName_PubLocator)
+except:
+    print ("\n Unable to rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB")
+    write_log("\n Unable to rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
@@ -732,6 +750,22 @@ except:
 
 print ("       Rebuilding ADDR_NAME_INTRA Locator from Address_Points - CRAW_INTERNAL completed")
 write_log("       Rebuilding ADDR_NAME_INTRA Locator from Address_Points - CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding ADDR_FNAME_INTRA from Address_Points - CRAW_INTERNAL")
+write_log("\n Rebuilding ADDR_FNAME_INTRA from Address_Points - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL
+    arcpy.RebuildAddressLocator_geocoding(ADDR_FName_CCLocator)
+except:
+    print "\n Unable to rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL"
+    write_log("\n Unable to rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL completed")
+write_log("       Rebuilding ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL completed", logfile)
 
 print ("\n Rebuilding ADDR_OldAdd_INTRA from Address_Points - CRAW_INTERNAL")
 write_log("\n Rebuilding ADDR_OldAdd_INTRA from Address_Points - CRAW_INTERNAL", logfile)
