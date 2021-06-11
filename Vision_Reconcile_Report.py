@@ -66,6 +66,7 @@ ASMT_REPORT= ASMT_REPORT_FLDR + "\\Total_Assessment_Reconcile_Report.xls"
 ASMT_RECONCILE_TBL = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.VISION_TTLASSMT_RECONCILE_TBL"
 ASMT_TEMP_FGDB = ASMT_REPORT_FLDR + "\\Assessment_Report_TempFGDB.gdb"
 
+
 # Local variables - tables:
 VISION_OTHER_TBL_SDE = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.VISION_OTHER_TBL"
 
@@ -118,7 +119,7 @@ except:
 
 try:
     # Make temp table of VISION_VIEW in ASMT_TEMP_FGDB (export REAL_PROP.PARCEL table to temp FGDB for manipulation in steps below, only PID and TTL_ASSESS fields)
-    VISION_PARCEL_TBL_TEMP = arcpy.TableToTable_conversion(PARCEL_VISION, ASMT_TEMP_FGDB, "PARCEL_TBL_TEMP", "", 'PRC_PID "PRC_PID" false false false 4 Long 0 9 ,First,#,Database Connections\Vision_Database.sde\VISION.REAL_PROP.PARCEL,PRC_PID,-1,-1;PRC_TTL_15 "PRC_TTL_15" false true false 8 Double 0 12 ,First,#,Database Connections\Vision_Database.sde\VISION.REAL_PROP.PARCEL,PRC_TTL_ASSESS,-1,-1;PRC_COST_D "PRC_COST_D" false true false 8 Date 0 0 ,First,#,Database Connections\Vision_Database.sde\VISION.REAL_PROP.PARCEL,PRC_COST_DATE,-1,-1', "")
+    VISION_PARCEL_TBL_TEMP = arcpy.TableToTable_conversion(PARCEL_VISION, ASMT_TEMP_FGDB, "PARCEL_TBL_TEMP", "", 'PRC_PID "PRC_PID" false false false 4 Long 0 9 ,First,#,'+PARCEL_VISION+',PRC_PID,-1,-1;PRC_TTL_15 "PRC_TTL_15" false true false 8 Double 0 12 ,First,#,'+PARCEL_VISION+',PRC_TTL_ASSESS,-1,-1;PRC_COST_D "PRC_COST_D" false true false 8 Date 0 0 ,First,#,'+PARCEL_VISION+',PRC_COST_DATE,-1,-1', "")
     print ("  ASMT_RECONCILE_TBL cleared, joining most current Assessment values...")
     write_log("  ASMT_RECONCILE_TBL cleared, joining most current Assessment values...",logfile)
 except:
