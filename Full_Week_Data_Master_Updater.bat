@@ -1,27 +1,29 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Assessment_Reports_Master_bat.log
+echo. > R:\GIS\GIS_LOGS\BatchLogs\Full_Week_Master_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set PYwrkspce=R:\GIS\ArcAutomations\Assessment\Python
+::Set PYwrkspce=R:\GIS\ArcAutomations\Assessment\Python
 ::
 Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
 ::
-Set batLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
+Set batLog=%batLogwrkspce%\Full_Week_Master_Updater_bat.log
 ::
-::::::::::::::::::::::: Run Vision Reconcile Report (Vision_Reconcile_Report.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run New address request - Assessment (NewAddressRequest_Assessment.py) :::::::::::::::::::::::
 ::
-echo _Assessment_Reports_Master_bat, %date%, %time% >> %batLog% 
+echo _Full_Week_Master_Updater_bat, %date%, %time% >> %batLog% 
 ::
-Set prgLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
+Set prgLog=%batLogwrkspce%\Full_Week_Master_Updater_bat.log
 ::
-echo Start Running Vision_Reconcile_Report.py >> %prgLog% 
-call %wrkspce%\Vision_Reconcile_Report.py >> %prgLog%
+echo Start Running NewAddressRequest_Assessment.py >> %prgLog% 
+call %PYwrkspce%\NewAddressRequest_Assessment.py >> %prgLog%
 ::
-echo End Running Vision_Reconcile_Report.py %date%, %time% >> %prgLog%
+echo End Running NewAddressRequest_Assessment.py %date%, %time% >> %prgLog%
+::
+echo _Finish Full Week Master Updater, %date%, %time% >> %batLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

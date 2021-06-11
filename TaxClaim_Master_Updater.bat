@@ -5,8 +5,8 @@ date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set SVRwrkspce=E:\
-::Set SVRwrkspce=E:\
+Set SVRwrkspce=\\ccdeploy\gss
+::Set SVRwrkspce=\\ccdeploy\gss
 ::
 Set PYwrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
 ::Set PYwrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python

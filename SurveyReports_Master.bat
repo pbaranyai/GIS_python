@@ -26,27 +26,16 @@ call %ASTwrkspce%\AssessmentReview_Reports.py >> %prgLog%
 ::
 echo End AssessmentReview_Reports.py %date%, %time% >> %prgLog%
 ::
-::::::::::::::::::::::: Run BuildingPermits_PictometryFlags Updater (BuildingPermitOnly_Updater.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run Public Safety survey report (PS_Survey_Report.py) :::::::::::::::::::::::
 ::
 echo _SurveyReports_Master_bat, %date%, %time% >> %batLog% 
 ::
 Set prgLog=%batLogwrkspce%\SurveyReports_Master_bat.log
 ::
-echo Start Running BuildingPermitOnly_Updater.py >> %prgLog% 
-call %ASTwrkspce%\BuildingPermitOnly_Updater.py >> %prgLog%
+echo Start Running PS_Survey_Report.py >> %prgLog% 
+call %PSwrkspce%\PS_Survey_Report.py >> %prgLog%
 ::
-echo End BuildingPermitOnly_Updater.py %date%, %time% >> %prgLog%
-::
-::::::::::::::::::::::: Run New 911 address report (New_address_report.py) :::::::::::::::::::::::
-::
-echo _SurveyReports_Master_bat, %date%, %time% >> %batLog% 
-::
-Set prgLog=%batLogwrkspce%\SurveyReports_Master_bat.log
-::
-echo Start Running New_address_report.py >> %prgLog% 
-call %PSwrkspce%\New_address_report.py >> %prgLog%
-::
-echo End Running New_address_report.py %date%, %time% >> %prgLog%
+echo End Running PS_Survey_Report.py %date%, %time% >> %prgLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

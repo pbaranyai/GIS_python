@@ -1,27 +1,29 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Assessment_Reports_Master_bat.log
+echo. > R:\GIS\GIS_LOGS\BatchLogs\Daily_data_Master_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set PYwrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
+::Set PYwrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
 ::
 Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
 ::
-Set batLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
+Set batLog=%batLogwrkspce%\Daily_data_Master_Updater_bat.log
 ::
-::::::::::::::::::::::: Run Vision Reconcile Report (Vision_Reconcile_Report.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run Daily Land Records Data Spreader (Daily_Land_Records_Data_Spreader.py) :::::::::::::::::::::::
 ::
-echo _Assessment_Reports_Master_bat, %date%, %time% >> %batLog% 
+echo _Daily_data_Master_Updater_bat, %date%, %time% >> %batLog% 
 ::
-Set prgLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
+Set prgLog=%batLogwrkspce%\Daily_data_Master_Updater_bat.log
 ::
-echo Start Running Vision_Reconcile_Report.py >> %prgLog% 
-call %wrkspce%\Vision_Reconcile_Report.py >> %prgLog%
+echo Start Running Daily_Land_Records_Data_Spreader.py >> %prgLog% 
+call %PYwrkspce%\Daily_Land_Records_Data_Spreader.py >> %prgLog%
 ::
-echo End Running Vision_Reconcile_Report.py %date%, %time% >> %prgLog%
+echo End Running Daily_Land_Records_Data_Spreader.py %date%, %time% >> %prgLog%
+::
+echo _Finish Daily data Master Updater, %date%, %time% >> %batLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

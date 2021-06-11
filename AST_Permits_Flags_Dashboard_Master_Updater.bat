@@ -1,27 +1,27 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Assessment_Reports_Master_bat.log
+echo. > R:\GIS\GIS_LOGS\BatchLogs\AST_Permits_Flags_Dashboard_Master_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
+::Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
 ::
 Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
 ::
-Set batLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
+Set batLog=%batLogwrkspce%\AST_Permits_Flags_Dashboard_Master_Updater_bat.log
 ::
-::::::::::::::::::::::: Run Vision Reconcile Report (Vision_Reconcile_Report.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run BuildingPermits_PictometryFlags Updater (BuildingPermitOnly_Updater.py) :::::::::::::::::::::::
 ::
-echo _Assessment_Reports_Master_bat, %date%, %time% >> %batLog% 
+echo _BuildingPermitOnly_Updater_bat, %date%, %time% >> %batLog% 
 ::
-Set prgLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
+Set prgLog=%batLogwrkspce%\BuildingPermitOnly_Updater_bat.log
 ::
-echo Start Running Vision_Reconcile_Report.py >> %prgLog% 
-call %wrkspce%\Vision_Reconcile_Report.py >> %prgLog%
+echo Start Running BuildingPermitOnly_Updater.py >> %prgLog% 
+call %ASTwrkspce%\BuildingPermitOnly_Updater.py >> %prgLog%
 ::
-echo End Running Vision_Reconcile_Report.py %date%, %time% >> %prgLog%
+echo End BuildingPermitOnly_Updater.py %date%, %time% >> %prgLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

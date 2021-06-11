@@ -125,6 +125,17 @@ call %wrkspce%\Judicial_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Judicial_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
+::::::::::::::::::::::: Run Community Services Data Spreader (Community_Services_Data_Spreader.py ) :::::::::::::::::::::::
+::
+echo _Start Community Services Data Spreader, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
+::
+echo Start Community_Services_Data_Spreader.py , %date%, %time% >> %prgLog%
+call %wrkspce%\Community_Services_Data_Spreader.py >> %prgLog%
+::
+echo End Running Community_Services_Data_Spreader.py %date%, %time% >> %prgLog%
+::
 echo _Finish Miscellaneous_Master_Updater, %date%, %time% >> %batLog%
 ::
 set ENDTIME=%TIME%

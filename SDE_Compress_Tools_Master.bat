@@ -19,7 +19,7 @@ echo _SDE_Compress_Master_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\SDE_Compress_Master_bat.log
 ::
 echo Start Running SDE_Compress_Tools.py >> %prgLog% 
-call %wrkspce%\Python\SDE_Compress_Tools.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Python\SDE_Compress_Tools.py >> %prgLog%
 ::
 echo End Running SDE_Compress_Tools.py %date%, %time% >> %prgLog%
 ::

@@ -11,6 +11,9 @@ Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
 Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
 ::Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
 ::
+Set PLANwrkspce=R:\GIS\ArcAutomations\Planning\Python
+::Set PLANwrkspce=R:\GIS\ArcAutomations\Planning\Python
+::
 Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
@@ -47,6 +50,17 @@ echo Start Running Locator_Rebuilder.py >> %prgLog%
 call %wrkspce%\Locator_Rebuilder.py >> %prgLog%
 ::
 echo End Running Locator_Rebuilder.py %date%, %time% >> %prgLog%
+::
+::::::::::::::::::::::: Run Land Use Data Spreader (LandUse_Data_Spreader.py) :::::::::::::::::::::::
+::
+echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
+::
+echo Start Running LandUse_Data_Spreader.py >> %prgLog% 
+call %PLANwrkspce%\LandUse_Data_Spreader.py >> %prgLog%
+::
+echo End Running LandUse_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
 echo _Finish Land Records Master Updater, %date%, %time% >> %batLog%
 ::
