@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # BuildingPermitOnly_Updater.py
 # Created on: 2019-05-09 
-# Updated on 2021-03-23
+# Updated on 2021-07-18
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -73,9 +73,11 @@ AUTOWORKSPACE_AST = "Database Connections\\auto_workspace@ccsde.sde\\CCSDE.AUTO_
 VISION_VIEW = "Database Connections\\Vision_Database.sde"
 CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
 PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+LOCATOR_WKSP = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
+AST_REPORTS_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
 
 # Local variables:
-BLDG_PRMT_AST = AST + "\\CCSDE.AST.Crawford_Parcels\\CCSDE.AST.BLDG_PRMT"
+BLDG_PRMT_AST = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.Building_Permit_Base"
 BLDGPERM_TBL_VISION = VISION_VIEW + "\\VISION.REAL_PROP.BLDGPERM"
 BLDGPERM_TBL_AUTOWKSP = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.BLDGPERM_TBL"
 BUILDING_PERMIT_JOINED_AUTOWKSP = AUTOWORKSPACE_AST + "\\CCSDE.AUTO_WORKSPACE.Building_Permit_Joined"
@@ -96,6 +98,9 @@ REALMAST_VISION = VISION_VIEW + "\\VISION.REAL_PROP.REALMAST"
 SALESHISTORY_VISION = VISION_VIEW + "\\VISION.REAL_PROP.SALEHIST"
 VISITHISTORY_VISON = VISION_VIEW + "\\VISION.REAL_PROP.VISITHST"
 CAMA_RECORDS_TBL = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Assessment_CAMA_Records_Table"
+CC_PARCEL_LOC = LOCATOR_WKSP + "\\CC_Parcel_Locator"
+UNMATCHED_PERMITS_EXCEL = AST_REPORTS_FLDR + "\\Unmatched_GIS_Building_Permits.xls"
+
 
 # Local variable - tables
 VISION_BLDGPERM_SDE = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.VIS_BLDGPERM_TBL"
@@ -159,6 +164,10 @@ try:
         arcpy.Delete_management(Pictometry2014_flags_TEMP, "Table")
         print (Pictometry2014_flags_TEMP + " found - temp file deleted")
         write_log(Pictometry2014_flags_TEMP + " found - temp file deleted", logfile)
+    if arcpy.Exists(UNMATCHED_PERMITS_EXCEL):
+        os.remove(UNMATCHED_PERMITS_EXCEL)
+        print (UNMATCHED_PERMITS_EXCEL + " found - table deleted")
+        write_log(UNMATCHED_PERMITS_EXCEL + " found - table deleted", logfile)
 except:
     print ("\n Unable to delete VISION_OWNER_TBL_WEBTemp, VISION_OWNER_TBL_SDE or VISION_OTHER_TBL_SDE, need to delete existing FGDB manually and/or close program locking the tables")
     write_log("\n Unable to create new VISION_OWNER_TBL_WEBTemp, VISION_OWNER_TBL_SDE or VISION_OTHER_TBL_SDE, need to delete existing FGDB manually and/or close program locking the tables", logfile)
@@ -553,14 +562,81 @@ write_log("       Updating Assessment CAMA Records Table in PUBLIC_WEB from VISI
 print ("\n Creating Building Permits Joined from BLDG_PRMT - AST & VISION tables")
 write_log("\n Creating Building Permits Joined from BLDG_PRMT - AST & VISION tables", logfile)
 
-
 print (" Joining BLDGPERM_VISION_VIEW with VISION_OTHER_TBL and VISION_OWNER_TBL...")
 write_log(" Joining BLDGPERM_VISION_VIEW with VISION_OTHER_TBL and VISION_OWNER_TBL...", logfile)
 
 try:
-    # Make temporary feature (BUILDING_PERMIT_TEMP) from BLDG_PRMT_AST (creates temporary file of building permit points from assessment workspace)
-    BUILDING_PERMIT_TEMP = arcpy.FeatureClassToFeatureClass_conversion(BLDG_PRMT_AST, AUTOWORKSPACE_AST, "BUILDING_PERMIT_TEMP", "", 'REM_PID "PID" true true false 4 Long 0 10 ,First,#,'+BLDG_PRMT_AST+',REM_PID,-1,-1;PERMIT_LINK "PID-PERMIT #" true true false 100 Text 0 0 ,First,#,'+BLDG_PRMT_AST+',PERMIT_LINK,-1,-1;EDITOR "EDITOR" false true false 255 Text 0 0 ,First,#,'+BLDG_PRMT_AST+',EDITOR,-1,-1;DATE_EDIT "DATE_EDIT" false true false 8 Date 0 0 ,First,#,'+BLDG_PRMT_AST+',DATE_EDIT,-1,-1', "")
+    # Delete rows from Building_Permits_Base - AUTOWORKSPACE\ASSESSMENT
+    arcpy.DeleteRows_management(BLDG_PRMT_AST)
+except:
+    print ("\n Unable to delete rows from  Building_Permits_Base - AUTOWORKSPACE\ASSESSMENT")
+    write_log("\n Unable to delete rows from  Building_Permits_Base - AUTOWORKSPACE\ASSESSMENT", logfile)
+    logging.exception('Got exception on delete rows from  Building_Permits_Base - AUTOWORKSPACE\ASSESSMENT logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
 
+try:
+    # Create Building_Permit_Geocode "in_memory"
+    Building_Permit_Geocode = arcpy.GeocodeAddresses_geocoding(VISION_BLDGPERM_SDE, CC_PARCEL_LOC, "'Single Line Input' BPE_PID VISIBLE NONE", "in_memory/Building_Permit_Geocode", "STATIC", "", "ROUTING_LOCATION")
+    print ("\n Creating Building_Permit_Geocode in_memory")
+    write_log("\n Creating Building_Permit_Geocode in_memory",logfile)
+except:
+    print ("\n Unable to Create Building_Permit_Geocode in_memory")
+    write_log("\n Unable to Create Building_Permit_Geocode in_memory", logfile)
+    logging.exception('Got exception on Create Building_Permit_Geocode in_memory logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Append Building_Permit_Geocode "in_memory" into BLDGPERM_TBL_AUTOWKSP
+    arcpy.Append_management(Building_Permit_Geocode, BLDG_PRMT_AST, "NO_TEST", 'REM_PID "PID" true true false 4 Long 0 10 ,First,#,in_memory/Building_Permit_Geocode,BPE_PID,-1,-1;PERMIT_LINK "PID-PERMIT #" true true false 100 Text 0 0 ,First,#,in_memory/Building_Permit_Geocode,PERMIT_LINK,-1,-1;EDITOR "EDITOR" true true false 255 Text 0 0 ,First,#;DATE_EDIT "DATE_EDIT" false true false 8 Date 0 0 ,First,#;GEOCODE_STATUS "Status of Geocode" true true false 50 Text 0 0 ,First,#,in_memory/Building_Permit_Geocode,Status,-1,-1', "")
+    print ("\n   Appending Building_Permit_Geocode in_memory into BLDGPERM_TBL_AUTOWKSP")
+    write_log("\n   Appending Building_Permit_Geocode in_memory into BLDGPERM_TBL_AUTOWKSP",logfile)
+except:
+    print ("\n Unable to Appending Building_Permit_Geocode in_memory into BLDGPERM_TBL_AUTOWKSP")
+    write_log("\n Unable to Appending Building_Permit_Geocode in_memory into BLDGPERM_TBL_AUTOWKSP", logfile)
+    logging.exception('Got exception on Appending Building_Permit_Geocode in_memory into BLDGPERM_TBL_AUTOWKSP logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Clear "in_memory" for (keeps in_memory from getting overloaded or corrupted)
+    arcpy.Delete_management("in_memory")
+except:
+    print ("\n Unable to clear Building_Permit_Geocode from in_memory")
+    write_log("Unable to clear Building_Permit_Geocode from in_memory", logfile)
+    logging.exception('Got exception on clear Building_Permit_Geocode from in_memory logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Select out unmatched building permits and export to excel sheet
+    Unmatched_Building_Permits = arcpy.MakeFeatureLayer_management(BLDG_PRMT_AST, "Unmatched_Building_Permits", "GEOCODE_STATUS = 'U'", "", "OBJECTID OBJECTID VISIBLE NONE;REM_PID REM_PID VISIBLE NONE;PERMIT_LINK PERMIT_LINK VISIBLE NONE;EDITOR EDITOR VISIBLE NONE;DATE_EDIT DATE_EDIT VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;GEOCODE_STATUS GEOCODE_STATUS VISIBLE NONE")
+    arcpy.TableToExcel_conversion(Unmatched_Building_Permits, UNMATCHED_PERMITS_EXCEL, "ALIAS", "DESCRIPTION")
+    print ("\n    Exported out unmatched GIS building permits list to: "+UNMATCHED_PERMITS_EXCEL)
+    write_log ("\n    Exported out unmatched GIS building permits list to: "+UNMATCHED_PERMITS_EXCEL, logfile)
+except:
+    print ("\n Unable to Select out unmatched building permits and export to excel sheet")
+    write_log("Unable to Select out unmatched building permits and export to excel sheet", logfile)
+    logging.exception('Got exception on Select out unmatched building permits and export to excel sheet logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Create feature layer of matched or tied records from Building Permit Geocode
+    Matched_Tied_Building_Permits = arcpy.MakeFeatureLayer_management(BLDG_PRMT_AST, "Matched_Tied_Building_Permits", "GEOCODE_STATUS = 'M' OR GEOCODE_STATUS = 'T'", "", "OBJECTID OBJECTID VISIBLE NONE;REM_PID REM_PID VISIBLE NONE;PERMIT_LINK PERMIT_LINK VISIBLE NONE;EDITOR EDITOR VISIBLE NONE;DATE_EDIT DATE_EDIT VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;GEOCODE_STATUS GEOCODE_STATUS VISIBLE NONE")
+    print ("\n   Create feature layer of matched or tied records from Building Permit Geocode")
+    write_log("\n   Create feature layer of matched or tied records from Building Permit Geocode",logfile)
+except:
+    print ("\n Unable to Create feature layer of matched or tied records from Building Permit Geocode")
+    write_log("\n Unable to Create feature layer of matched or tied records from Building Permit Geocode", logfile)
+    logging.exception('Got exception on Create feature layer of matched or tied records from Building Permit Geocode logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+try:
+    # Make temporary feature (BUILDING_PERMIT_TEMP) from BLDG_PRMT_AST (creates temporary file of building permit points from assessment workspace)
+    BUILDING_PERMIT_TEMP = arcpy.FeatureClassToFeatureClass_conversion(Matched_Tied_Building_Permits, AUTOWORKSPACE_AST, "BUILDING_PERMIT_TEMP", "", 'REM_PID "PID" true true false 4 Long 0 10 ,First,#,Matched_Tied_Building_Permits,REM_PID,-1,-1;PERMIT_LINK "PID-PERMIT #" true true false 100 Text 0 0 ,First,#,Matched_Tied_Building_Permits,PERMIT_LINK,-1,-1;EDITOR "EDITOR" true true false 255 Text 0 0 ,First,#,Matched_Tied_Building_Permits,EDITOR,-1,-1;DATE_EDIT "DATE_EDIT" false true false 8 Date 0 0 ,First,#,Matched_Tied_Building_Permits,DATE_EDIT,-1,-1;GEOCODE_STATUS "Status of Geocode" true true false 50 Text 0 0 ,First,#,Matched_Tied_Building_Permits,GEOCODE_STATUS,-1,-1', "")
 except:
     print ("\n Unable to make temporary feature (BUILDING_PERMIT_TEMP) from BLDG_PRMT_AST")
     write_log("\n Unable to make temporary feature (BUILDING_PERMIT_TEMP) from BLDG_PRMT_AST", logfile)
@@ -792,9 +868,6 @@ except:
     logging.exception('Got exception on delete BLDG_PERMIT_TEMP files logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
-
-print ("       Make feature layer of Pictometry Flags, join in BLDGPERM_VISION_View, then update Pictometry Flags Joined - AUTOWORKSPACE completed " + time.strftime("%I:%M:%S %p", time.localtime()))
-write_log("       Make feature layer of Pictometry Flags, join in BLDGPERM_VISION_View, then update Pictometry Flags Joined - AUTOWORKSPACE completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
