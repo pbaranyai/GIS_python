@@ -152,6 +152,8 @@ ADDR_OldAdd_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_
 ADDR_Name_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_Name_PubLocator"
 ADDR_FName_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_FName_PubLocator"
 ADDR_HSESTREET_PubLocator = Locators + "\\Public_Locators\\Locator_workspace\\ADDR_HSESTREET_PubLocator"
+TAX_PARCELS_PID_AUTO = Locators + "\\Intranet_Locators\\Locator_workspace\\TAX_PARCELS_PID_AUTOMATION_LOC"
+BUILDINGONLY_PID_AUTO = Locators + "\\Intranet_Locators\\Locator_workspace\\BUILDINGONLY_PID_AUTOMATION_LOC"
 
 # Publishing variables
 gis_server_connection_file = ArcServer_Admin
@@ -1070,6 +1072,38 @@ except:
 
 print ("       Rebuilding BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
 write_log("       Rebuilding BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
+write_log("\n Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL
+    arcpy.RebuildAddressLocator_geocoding(TAX_PARCELS_PID_AUTO)
+except:
+    print ("\n Unable to rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels-  CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
+write_log("\n Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL
+    arcpy.RebuildAddressLocator_geocoding(BUILDINGONLY_PID_AUTO)
+except:
+    print ("\n Unable to rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels-  CRAW_INTERNAL completed", logfile)
 
 ##print ("\n Rebuild Composite Intranet Locators from individual locators")
 ##print ("==================================================================")

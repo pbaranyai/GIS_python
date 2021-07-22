@@ -487,8 +487,19 @@ except:
     sys.exit ()
 
 try:
-    # Append - Hydrants
-    arcpy.Append_management(Hydrants_CrawfordCo, NWPS_Staging_Hydrants_CrawfordCo, "TEST", "", "")
+    # Make Feature Layer - Hydrants
+    NWS_HYDRANTS_Layer = arcpy.MakeFeatureLayer_management(Hydrants_CrawfordCo, "NWS_HYDRANTS_Layer", "", "", "OBJECTID OBJECTID VISIBLE NONE;Shape Shape VISIBLE NONE;ID ID VISIBLE NONE;NWS_ADDRESS_ID NWS_ADDRESS_ID VISIBLE NONE;NWS_HYDRANT_ID NWS_HYDRANT_ID VISIBLE NONE;NWS_HYDRANT_NUMBER NWS_HYDRANT_NUMBER VISIBLE NONE;NWS_HYDRANT_LOCATIONDESCRIPTION NWS_HYDRANT_LOCATIONDESCRIPTION VISIBLE NONE;NWS_HYDRANT_SERIAL_NUMBER NWS_HYDRANT_SERIAL_NUMBER VISIBLE NONE;NWS_HYDRANT_IN_SERVICE NWS_HYDRANT_IN_SERVICE VISIBLE NONE;NWS_HYDRANT_COLOR NWS_HYDRANT_COLOR VISIBLE NONE;SIZE SIZE VISIBLE NONE;TYPE TYPE VISIBLE NONE;GPM GPM VISIBLE NONE")
+except:
+    print ("\n Unable to make feature layer from Hydrants_CrawfordCo")
+    write_log("Unable to make feature layer from Hydrants_CrawfordCo", logfile)
+    logging.exception('Got exception on make feature layer from Hydrants_CrawfordCo logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Append hydrants from layer file to NWPS_Staging_Hydrants_CrawfordCo - Hydrants
+    arcpy.Append_management(NWS_HYDRANTS_Layer, NWPS_Staging_Hydrants_CrawfordCo, "TEST", "", "")
+##    arcpy.Append_management(NWS_HYDRANTS_Layer, NWPS_Staging_Hydrants_CrawfordCo, "NO_TEST", 'ID "ID" true true false 4 Long 0 10 ,First,#,NWS_HYDRANTS_Layer,ID,-1,-1;NWS_ADDRESS_ID "NWS_ADDRESS_ID" true true false 4 Long 0 10 ,First,#,NWS_HYDRANTS_Layer,NWS_ADDRESS_ID,-1,-1;NWS_HYDRANT_ID "NWS_HYDRANT_ID" true true false 4 Long 0 10 ,First,#,NWS_HYDRANTS_Layer,NWS_HYDRANT_ID,-1,-1;NWS_HYDRANT_NUMBER "NWS_HYDRANT_NUMBER" true true false 20 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,NWS_HYDRANT_NUMBER,-1,-1;NWS_HYDRANT_LOCATIONDESCRIPTION "NWS_HYDRANT_LOCATIONDESCRIPTION" true true false 50 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,NWS_HYDRANT_LOCATIONDESCRIPTION,-1,-1;NWS_HYDRANT_SERIAL_NUMBER "NWS_HYDRANT_SERIAL_NUMBER" true true false 20 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,NWS_HYDRANT_SERIAL_NUMBER,-1,-1;NWS_HYDRANT_IN_SERVICE "NWS_HYDRANT_IN_SERVICE" true true false 3 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,NWS_HYDRANT_IN_SERVICE,-1,-1;NWS_HYDRANT_COLOR "NWS_HYDRANT_COLOR" true true false 30 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,NWS_HYDRANT_COLOR,-1,-1;SIZE "SIZE" true true false 50 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,SIZE,-1,-1;TYPE "TYPE" true true false 50 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,TYPE,-1,-1;GPM "GPM" true true false 50 Text 0 0 ,First,#,NWS_HYDRANTS_Layer,GPM,-1,-1', "")
     Hydrants_result = arcpy.GetCount_management(NWPS_Staging_Hydrants_CrawfordCo)
     print ('{} has {} records'.format(NWPS_Staging_Hydrants_CrawfordCo, Hydrants_result[0]))
     write_log('{} has {} records'.format(NWPS_Staging_Hydrants_CrawfordCo, Hydrants_result[0]), logfile)
