@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Community_Services_Data_Spreader.py
 # Created on: 2020-04-21 
-# Updated on: 2020-04-21
+# Updated on: 2021-09-21
+# Works in ArcPro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -19,7 +20,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -44,19 +44,12 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-GIS = "Database Connections\\GIS@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+GIS = Database_Connections + "\\GIS@ccsde.sde"
 
 # Local variables:
 CRAWFORD_FOOD_PANTRIES_GIS = GIS + "\\CCSDE.GIS.Community_Services\\CCSDE.GIS.CRAWFORD_FOOD_PANTRIES"
@@ -69,6 +62,7 @@ print ("Updating Community Services Datasets: "+ str(Day) + " " + str(Time))
 print ("Will update the following:")
 print ("\nCrawford Food Pantries Feature Class"  )
 print ("\n From source to CRAW_INTERNAL")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -76,6 +70,7 @@ write_log("Updating Community Services Datasets: "+ str(Day) + " " + str(Time), 
 write_log("Will update the following:", logfile)
 write_log("\nCrawford Food Pantries Feature Class", logfile)  
 write_log("\n From source to CRAW_INTERNAL", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating Crawford Food Pantries - CRAW_INTERNAL from GIS")

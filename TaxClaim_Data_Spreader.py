@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # TaxClaim_Data_Spreader.py
 # Created on: 2019-08-27 
-# Updated on 2021-03-23
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -47,23 +48,16 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-AUTOWORKSPACE = "Database Connections\\auto_workspace@ccsde.sde"
-AUTOWORKSPACE_AST = "Database Connections\\auto_workspace@ccsde.sde\\CCSDE.AUTO_WORKSPACE.Assessment"
-AUTOWORKSPACE_TREAS = "Database Connections\\auto_workspace@ccsde.sde\\CCSDE.AUTO_WORKSPACE.Treasurers"
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-GSS = "Database Connections\\GSS_Database.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
+AUTOWORKSPACE_AST = Database_Connections + "\\auto_workspace@ccsde.sde\\CCSDE.AUTO_WORKSPACE.Assessment"
+AUTOWORKSPACE_TREAS = Database_Connections + "\\auto_workspace@ccsde.sde\\CCSDE.AUTO_WORKSPACE.Treasurers"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+GSS = Database_Connections + "\\GSS_Database.sde"
+PUBLIC_WEB = Database_Connections + "\\public_web@ccsde.sde"
 
 # Local variables:
 BUILDING_ONLY_AUTOWKSP = AUTOWORKSPACE_AST + "\\CCSDE.AUTO_WORKSPACE.Building_Only_Joined"
@@ -85,6 +79,7 @@ print ("Will update the following:")
 print ("\nTax Claim Building Only Feature Class")
 print ("Tax Claim Tax Parcels Feature Class")
 print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -93,6 +88,7 @@ write_log("Will update the following:", logfile)
 write_log("\nTax Claim Building Only Feature Class", logfile)  
 write_log("Tax Claim Tax Parcels Feature Class", logfile)
 write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB -> PUBLIC_OD (where applicable)", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Delete existing Tax Claim FC in AUTOWORKSPACE")
@@ -155,7 +151,7 @@ try:
     # Copy and rename Tax Claim Table from GSS to TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE
     arcpy.TableToTable_conversion(GSS_TAXCLAIM_TBL, AUTOWORKSPACE, "TAX_CLAIM_TBL_TEMP", "", 'Certmail "Certmail" false false false 22 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Certmail,-1,-1;Salenum "Salenum" false false false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',Salenum,-1,-1;District "District" false false false 2 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',District,-1,-1;Ward "Ward" false false false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Ward,-1,-1;Control "Control" false false false 6 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Control,-1,-1;EtuxID "EtuxID" false false false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',EtuxID,-1,-1;Year "Year" false false false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Year,-1,-1;SaleYear "SaleYear" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',SaleYear,-1,-1;Map "Map" false true false 50 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Map,-1,-1;Map3 "Map3" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Map3,-1,-1;Map4 "Map4" false true false 3 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Map4,-1,-1;Map5 "Map5" false true false 5 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Map5,-1,-1;Name "Name" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Name,-1,-1;CoOwner "CoOwner" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',CoOwner,-1,-1;CareOf "CareOf" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',CareOf,-1,-1;Addr1 "Addr1" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Addr1,-1,-1;Addr2 "Addr2" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Addr2,-1,-1;Addr3 "Addr3" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Addr3,-1,-1;City "City" false true false 50 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',City,-1,-1;State "State" false true false 2 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',State,-1,-1;ZipCode "ZipCode" false true false 5 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',ZipCode,-1,-1;ZipCode2 "ZipCode2" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',ZipCode2,-1,-1;MastName "MastName" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastName,-1,-1;MastCoOwner "MastCoOwner" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastCoOwner,-1,-1;MastAddr1 "MastAddr1" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastAddr1,-1,-1;MastAddr2 "MastAddr2" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastAddr2,-1,-1;MastCity "MastCity" false true false 50 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastCity,-1,-1;MastState "MastState" false true false 2 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastState,-1,-1;MastZipCode "MastZipCode" false true false 5 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastZipCode,-1,-1;MastZipCode2 "MastZipCode2" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',MastZipCode2,-1,-1;Acreage "Acreage" false true false 20 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Acreage,-1,-1;Landuse "Landuse" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Landuse,-1,-1;LDesc "LDesc" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',LDesc,-1,-1;Desc1 "Desc1" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Desc1,-1,-1;Desc2 "Desc2" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Desc2,-1,-1;Desc3 "Desc3" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Desc3,-1,-1;SitusDesc "SitusDesc" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',SitusDesc,-1,-1;AssLand "AssLand" false true false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',AssLand,-1,-1;AssImpr "AssImpr" false true false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',AssImpr,-1,-1;MVLand "MVLand" false true false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',MVLand,-1,-1;MVImpr "MVImpr" false true false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',MVImpr,-1,-1;DeedRef "DeedRef" false true false 50 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',DeedRef,-1,-1;DeedBook "DeedBook" false true false 9 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',DeedBook,-1,-1;DeedPage "DeedPage" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',DeedPage,-1,-1;Amount "Amount" false true false 8 Double 4 19 ,First,#,'+GSS_TAXCLAIM_TBL+',Amount,-1,-1;CurrentCounty "CurrentCounty" false true false 8 Double 4 19 ,First,#,'+GSS_TAXCLAIM_TBL+',CurrentCounty,-1,-1;CurrentTwp "CurrentTwp" false true false 8 Double 4 19 ,First,#,'+GSS_TAXCLAIM_TBL+',CurrentTwp,-1,-1;CurrentSchool "CurrentSchool" false true false 8 Double 4 19 ,First,#,'+GSS_TAXCLAIM_TBL+',CurrentSchool,-1,-1;CurrentFee "CurrentFee" false true false 8 Double 4 19 ,First,#,'+GSS_TAXCLAIM_TBL+',CurrentFee,-1,-1;Lien "Lien" false true false 8 Double 4 19 ,First,#,'+GSS_TAXCLAIM_TBL+',Lien,-1,-1;LienDesc "LienDesc" false true false 75 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',LienDesc,-1,-1;SignedFor "SignedFor" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',SignedFor,-1,-1;SheriffService "SheriffService" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',SheriffService,-1,-1;PostFlag "PostFlag" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',PostFlag,-1,-1;SentToPalmetto "SentToPalmetto" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',SentToPalmetto,-1,-1;PalmettoIneligible "PalmettoIneligible" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',PalmettoIneligible,-1,-1;SaleType "SaleType" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',SaleType,-1,-1;CarrierRoute "CarrierRoute" false true false 4 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',CarrierRoute,-1,-1;DeliveryPoint "DeliveryPoint" false true false 2 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',DeliveryPoint,-1,-1;CheckDigit "CheckDigit" false true false 1 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',CheckDigit,-1,-1;Job "Job" false true false 2 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Job,-1,-1;Tray "Tray" false true false 5 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Tray,-1,-1;Package "Package" false true false 5 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Package,-1,-1;Sequence "Sequence" false true false 13 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',Sequence,-1,-1;ZipCodeNumber "ZipCodeNumber" false true false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',ZipCodeNumber,-1,-1;ZipCodeNumber2 "ZipCodeNumber2" false true false 4 Long 0 10 ,First,#,'+GSS_TAXCLAIM_TBL+',ZipCodeNumber2,-1,-1;IMBNumeric "IMBNumeric" false true false 31 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',IMBNumeric,-1,-1;IMBAlpha "IMBAlpha" false true false 65 Text 0 0 ,First,#,'+GSS_TAXCLAIM_TBL+',IMBAlpha,-1,-1', "")
 except:
-    print "\n Unable to Copy and rename Tax Claim Table from GSS to TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE"
+    print ("\n Unable to Copy and rename Tax Claim Table from GSS to TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE")
     write_log("Unable to Copy and rename Tax Claim Table from GSS to TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE", logfile)
     logging.exception('Got exception on Unable to Copy and rename Tax Claim Table from GSS to TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE logged at:' + str(Day) + " " + str(Time))
     raise
@@ -171,7 +167,7 @@ try:
     # Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_PARCELS - AUTOWORKSPACE
     arcpy.JoinField_management(TAX_CLAIM_PARCELS, "REM_USRFLD", TAXCLAIM_TBL_TEMP, "Control", "Salenum;District;Ward;Control;Year;SaleYear;Map;Map3;Map4;Map5;Name;CoOwner;Addr1;Addr2;City;State;ZipCode;ZipCode2;MastName;MastCoOwner;Acreage;Desc1;Desc2;Desc3;AssLand;AssImpr;DeedRef;DeedBook;DeedPage;Amount;SaleType")
 except:
-    print "\n Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_PARCELS - AUTOWORKSPACE"
+    print ("\n Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_PARCELS - AUTOWORKSPACE")
     write_log("Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_PARCELS - AUTOWORKSPACE", logfile)
     logging.exception('Got exception on Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_PARCELS - AUTOWORKSPACE logged at:' + str(Day) + " " + str(Time))
     raise
@@ -184,7 +180,7 @@ try:
     # Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_BLDGONLY - AUTOWORKSPACE
     arcpy.JoinField_management(TAX_CLAIM_BLDGONLY, "REM_USRFLD", TAXCLAIM_TBL_TEMP, "Control", "Salenum;District;Ward;Control;Year;SaleYear;Map;Map3;Map4;Map5;Name;CoOwner;Addr1;Addr2;City;State;ZipCode;ZipCode2;MastName;MastCoOwner;Acreage;Desc1;Desc2;Desc3;AssLand;AssImpr;DeedRef;DeedBook;DeedPage;Amount;SaleType")
 except:
-    print "\n Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_BLDGONLY - AUTOWORKSPACE"
+    print ("\n Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_BLDGONLY - AUTOWORKSPACE")
     write_log("Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_BLDGONLY - AUTOWORKSPACE", logfile)
     logging.exception('Got exception on Unable to Join TAX_CLAIM_TBL_TEMP - AUTOWORKSPACE to TAX_CLAIM_BLDGONLY - AUTOWORKSPACE logged at:' + str(Day) + " " + str(Time))
     raise
@@ -206,10 +202,10 @@ try:
                 pass
         del row
         del UJPcursor
-        print "        Tax Claim Parcels cleaned up"
+        print ("        Tax Claim Parcels cleaned up")
         write_log("        Tax Claim Parcels cleaned up",logfile)
 except:
-    print "\n Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_PARCELS"
+    print ("\n Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_PARCELS")
     write_log("Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_PARCELS", logfile)
     logging.exception('Got exception on Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_PARCELS logged at:' + str(Day) + " " + str(Time))
     raise
@@ -225,10 +221,10 @@ try:
                 pass
         del row
         del UJBOcursor
-        print "        Tax Claim Building Only cleaned up..."
+        print ("        Tax Claim Building Only cleaned up...")
         write_log("          Tax Claim Building Only cleaned up...",logfile)
 except:
-    print "\n Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_BLDGONLY"
+    print ("\n Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_BLDGONLY")
     write_log("Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_BLDGONLY", logfile)
     logging.exception('Got exception on Unable to Delete rows that dont contain tax claim information with TAX_CLAIM_BLDGONLY logged at:' + str(Day) + " " + str(Time))
     raise

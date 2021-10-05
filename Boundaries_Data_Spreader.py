@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Boundaries_CountyData_Spreader.py
 # Created on: 2019-03-04 
-# Updated on: 2019-06-06
+# Updated on: 2019-09-21
+# Works in ArcPro
 #
 # Author: Phil Baranyai/GIS Manager
 # 
@@ -53,23 +54,16 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-AST = "Database Connections\\AST@ccsde.sde"
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PLANNING = "Database Connections\\PLANNING@ccsde.sde"
-PUBLIC_SAFETY = "Database Connections\\PUBLIC_SAFETY@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+AST = Database_Connections + "\\AST@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+OPEN_DATA = Database_Connections + "\\public_od@ccsde.sde"
+PLANNING = Database_Connections + "\\PLANNING@ccsde.sde"
+PUBLIC_SAFETY = Database_Connections + "\\PUBLIC_SAFETY@ccsde.sde"
+PUBLIC_WEB = Database_Connections + "\\public_web@ccsde.sde"
 
 # Local variables:
 ASSESSOR_AREAS_AST = AST + "\\CCSDE.AST.Assessor_Responsibilities\\CCSDE.AST.Assessor_Areas"
@@ -103,6 +97,7 @@ print ("Crawford County Municpal Boundaries")
 print ("Crawford County Municpal Boundaries Relate")
 print ("Address Point Web Relate")
 print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB -> PUBLIC_OD (where applicable)")
+print ("Works in ArcGIS Pro")
 print ("===============================================================================================")
 
 write_log("============================================================================", logfile)
@@ -117,6 +112,7 @@ write_log("Crawford County Municpal Boundaries", logfile)
 write_log("Crawford County Municpal Boundaries Relate", logfile)
 write_log("Address Points Web Relate", logfile)
 write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB -> PUBLIC_OD (where applicable)", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 

@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # LandRecords_Data_Spreader.py
 # Created on: 2019-03-05 
-# Updated on 2019-04-30
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -33,7 +34,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -58,56 +58,36 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PUBLIC_SAFETY = "Database Connections\\PUBLIC_SAFETY@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+PUBLIC_SAFETY = Database_Connections + "\\PUBLIC_SAFETY@ccsde.sde"
 
 # Local variables:
 AED_LOCATIONS_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.AED_LOCATIONS"
 AED_LOCATIONS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL"
-AED_LOCATIONS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.AED_LOCATIONS_WEB"
 ALS_ZONES_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES"
 ALS_ZONES_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL"
-ALS_ZONES_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.ALS_ZONES_WEB"
 ATV_COVERAGE_PS = PUBLIC_SAFETY + "\\\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ATV_COVERAGES"
 ATV_COVERAGE_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.ATV_COVERAGES_INTERNAL"
 BLS_COVERAGE_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL"
-BLS_COVERAGE_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.BLS_COVERAGE_WEB"
 EHS_FACILITIES_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.EHS_FACILITIES"
 EHS_FACILITIES_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.EHS_FACILITIES_INTERNAL"
 ESZ_ALL_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ESZ_ALL"
 FIRE_DEPT_COVERAGE_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL"
-FIRE_DEPT_COVERAGE_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.FIRE_DEPT_COVERAGE_WEB"
-FIRE_DEPT_COVERAGE_OD = OPEN_DATA + "\\CCSDE.PUBLIC_OD.Public_Safety\\CCSDE.PUBLIC_OD.FIRE_DEPT_COVERAGE_OD"
 FIRE_GRIDS_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.FIRE_GRIDS"
 FIRE_GRIDS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_GRIDS_INTERNAL"
 LANDMARKS_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.LANDMARKS"
 LANDMARKS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.LANDMARKS_INTERNAL"
-LANDMARKS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.LANDMARKS_WEB"
 POLICE_DEPT_COVERAGE_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL"
-POLICE_DEPT_COVERAGE_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.POLICE_DEPT_COVERAGE_WEB"
 PUBLIC_SAFETY_DEPARTMENTS_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.PUBLIC_SAFETY_DEPARTMENTS"
 PUBLIC_SAFETY_DEPARTMENTS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL"
-PUBLIC_SAFETY_DEPARTMENTS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.PUBLIC_SAFETY_DEPARTMENTS_WEB"
-PUBLIC_SAFETY_DEPARTMENTS_OD = OPEN_DATA + "\\CCSDE.PUBLIC_OD.Public_Safety\\CCSDE.PUBLIC_OD.PUBLIC_SAFETY_DEPARTMENTS_OD"
 QRS_DEPT_COVERAGE_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL"
-QRS_DEPT_COVERAGE_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.QRS_DEPT_COVERAGE_WEB"
 RED_CROSS_SHELTERS_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.RED_CROSS_SHELTERS"
 RED_CROSS_SHELTERS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RED_CROSS_SHELTERS_INTERNAL"
 RESCUE_DEPT_COVERAGE_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL"
-RESCUE_DEPT_COVERAGE_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Public_Safety\\CCSDE.PUBLIC_WEB.RESCUE_DEPT_COVERAGE_WEB"
 
 start_time = time.time()
 
@@ -127,7 +107,8 @@ print ("Public Safety Departments Feature Class")
 print ("QRS Department Coverage Feature Class")
 print ("Red Cross Shelters Feature Class")
 print ("Rescue Department Coverage Feature Class")
-print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("\n From source to CRAW_INTERNAL (where applicable)")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -146,7 +127,8 @@ write_log("Public Safety Departments Feature Class", logfile)
 write_log("QRS Department Coverage Feature Class", logfile)
 write_log("Red Cross Shelters Feature Class", logfile)
 write_log("Rescue Department Coverage Feature Class", logfile)
-write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)", logfile)
+write_log("\n From source to CRAW_INTERNAL (where applicable)", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating AED - CRAW_INTERNAL from PUBLIC_SAFETY")
@@ -177,35 +159,6 @@ except:
 
 print ("       Updating AED - CRAW_INTERNAL from PUBLIC_SAFETY completed")
 write_log("       Updating AED - CRAW_INTERNAL from PUBLIC_SAFETY completed", logfile)
-
-print ("\n Updating AED - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating AED - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from AED - PUBLIC_WEB
-    arcpy.DeleteRows_management(AED_LOCATIONS_WEB)
-except:
-    print ("\n Unable to delete rows from AED - PUBLIC_WEB")
-    write_log("Unable to delete rows from AED - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from AED - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append AED - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(AED_LOCATIONS_INTERNAL, AED_LOCATIONS_WEB, "NO_TEST", "ORGANIZATION_NAME \"ORGANIZATION NAME\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,ORGANIZATION_NAME,-1,-1;LOCATION_ONSITE \"LOCATION ONSITE\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,LOCATION_ONSITE,-1,-1;STREET_ADDRESS \"ADDRESS # & FULL STREET NAME\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,STREET_ADDRESS,-1,-1;POST_OFFICE \"POST OFFICE\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,POST_OFFICE,-1,-1;ZIPCODE \"ZIPCODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,ZIPCODE,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNICIPALITY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.AED_LOCATIONS_INTERNAL,UPDATE_DATE,-1,-1", "")
-    AED_Web_result = arcpy.GetCount_management(AED_LOCATIONS_WEB)
-    print ('{} has {} records'.format(AED_LOCATIONS_WEB, AED_Web_result[0]))
-    write_log('{} has {} records'.format(AED_LOCATIONS_WEB, AED_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append AED - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append AED - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append AED - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating AED - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating AED - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 print ("\n Updating ATV Coverage - CRAW_INTERNAL from PUBLIC_SAFETY")
 write_log("\n Updating ATV Coverage from PUBLIC_SAFETY: " + str(Day) + " " + str(Time), logfile)
@@ -265,45 +218,6 @@ except:
 print ("       Updating LANDMARKS - CRAW_INTERNAL from PUBLIC_SAFETY completed")
 write_log("       Updating LANDMARKS - CRAW_INTERNAL from PUBLIC_SAFETY completed", logfile)
 
-print ("\n Updating LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL filtering out TYPE= 911")
-write_log("\n Updating LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL filtering out TYPE= 911", logfile)
-
-try:
-    # Delete Rows from LANDMARKS - PUBLIC_WEB
-    arcpy.DeleteRows_management(LANDMARKS_WEB)
-except:
-    print ("\n Unable to delete rows from LANDMARKS - PUBLIC_WEB")
-    write_log("Unable to delete rows from LANDMARKS - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from LANDMARKS - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Make Feature Layer LANDMARKS // No Type **911** (make temporary layer, excluding LM_TYPE = 911 as they are specific for 911 and not public)
-    LANDMARKS_INTERNAL_NO_911_TYPE_Layer = arcpy.MakeFeatureLayer_management(LANDMARKS_INTERNAL, "LANDMARKS_INTERNAL_NO_911_TYPE_Layer", "LM_TYPE = 'PUBLIC' ", "", "OBJECTID OBJECTID VISIBLE NONE;LANDMARK_NAME LANDMARK_NAME VISIBLE NONE;LM_TYPE LM_TYPE VISIBLE NONE;MUNI_NAME MUNI_NAME VISIBLE NONE;MUNI_FIPS MUNI_FIPS VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;UPDATE_DATE UPDATE_DATE VISIBLE NONE;GLOBALID GLOBALID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE")
-except:
-    print ("\n Unable to make feature layer from LANDMARKS // No Type **911**")
-    write_log("Unable to make feature layer from LANDMARKS // No Type **911**", logfile)
-    logging.exception('Got exception on make feature layer from LANDMARKS // No Type **911** logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL // No Type **911** (append temporary layer created in above step)
-    arcpy.Append_management(LANDMARKS_INTERNAL_NO_911_TYPE_Layer, LANDMARKS_WEB, "NO_TEST", "LANDMARK_NAME \"LANDMARK NAME\" true true false 75 Text 0 0 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,LANDMARK_NAME,-1,-1;LM_TYPE \"LM_TYPE\" true true false 50 Text 0 0 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,LM_TYPE,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNICIPALITY FIPS CODE\" true true false 8 Double 8 38 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,LANDMARKS_INTERNAL_NO_911_TYPE_Layer,UPDATE_DATE,-1,-1", "")
-    Landmark_Web_result = arcpy.GetCount_management(LANDMARKS_WEB)
-    print ('{} has {} records'.format(LANDMARKS_WEB, Landmark_Web_result[0]))
-    write_log('{} has {} records'.format(LANDMARKS_WEB, Landmark_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL // No Type **911**")
-    write_log("Unable to append LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL // No Type **911**", logfile)
-    logging.exception('Got exception on append LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL // No Type **911** logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL (No Type 911) completed")
-write_log("       Updating LANDMARKS - PUBLIC_WEB from CRAW_INTERNAL (No Type 911) completed", logfile)
-
 print ("\n Updating RED CROSS SHELTERS - CRAW_INTERNAL from PUBLIC_SAFETY")
 write_log("\n Updating RED CROSS SHELTERS - CRAW_INTERNAL from PUBLIC_SAFETY", logfile)
 
@@ -362,35 +276,6 @@ except:
 print ("       Updating ALS ZONES - CRAW_INTERNAL from PUBLIC_SAFETY completed")
 write_log("       Updating ALS ZONES - CRAW_INTERNAL from PUBLIC_SAFETY completed", logfile)
 
-print ("\n Updating ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY")
-write_log("\n Updating ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY", logfile)
-
-try:
-    # Delete Rows from ALS ZONES WEB - PUBLIC_WEB
-    arcpy.DeleteRows_management(ALS_ZONES_WEB)
-except:
-    print ("\n Unable to delete rows from ALS ZONES - PUBLIC_WEB")
-    write_log("Unable to delete rows from ALS ZONES - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from ALS ZONES - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY
-    arcpy.Append_management(ALS_ZONES_PS, ALS_ZONES_WEB, "NO_TEST", "ALS_NAME \"ALS SERVICE NAME\" true true false 75 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES,ALS_NAME,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES,UPDATE_DATE,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES,COUNTY_FIPS,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\PUBLIC_SAFETY@ccsde.sde\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ALS_ZONES,SHAPE.STLength(),-1,-1", "")
-    ALS_Web_result = arcpy.GetCount_management(ALS_ZONES_WEB)
-    print ('{} has {} records'.format(ALS_ZONES_WEB, ALS_Web_result[0]))
-    write_log('{} has {} records'.format(ALS_ZONES_WEB, ALS_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY")
-    write_log("Unable to append ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY", logfile)
-    logging.exception('Got exception on append ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY completed")
-write_log("       Updating ALS ZONES - PUBLIC_WEB from PUBLIC_SAFETY completed", logfile)
-
 print ("\n Updating Fire Grids - CRAW_INTERNAL from PUBLIC_SAFETY")
 write_log("\n Updating Fire Grids - CRAW_INTERNAL from PUBLIC_SAFETY", logfile)
 
@@ -448,35 +333,6 @@ except:
 
 print ("       Updating Public Safety Departments - CRAW_INTERNAL from PUBLIC_SAFETY completed")
 write_log("       Updating Public Safety Departments - CRAW_INTERNAL from PUBLIC_SAFETY completed", logfile)
-
-print ("\n Updating Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from PUBLIC SAFETY DEPTS - PUBLIC_WEB
-    arcpy.DeleteRows_management(PUBLIC_SAFETY_DEPARTMENTS_WEB)
-except:
-    print ("\n Unable to delete rows from Public Safety Departments - PUBLIC_WEB")
-    write_log("Unable to delete rows from Public Safety Departments - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Public Safety Departments - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append PUBLIC SAFETY DEPTS - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(PUBLIC_SAFETY_DEPARTMENTS_INTERNAL, PUBLIC_SAFETY_DEPARTMENTS_WEB, "NO_TEST", "DEPT_NAME \"DEPARTMENT NAME\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,DEPT_NAME,-1,-1;FIRE_SVC \"FIRE SERVICE?\" true true false 1 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,FIRE_SVC,-1,-1;EMS_SVC \"EMS SERVICE?\" true true false 1 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,EMS_SVC,-1,-1;RESCUE_SVC \"RESCUE SERVICE?\" true true false 1 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,RESCUE_SVC,-1,-1;POLICE_SVC \"POLICE SERVICE?\" true true false 1 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,POLICE_SVC,-1,-1;HSENUMBER \"ADDRESS #\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,HSENUMBER,-1,-1;STREET \"FULL STREET NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,STREET,-1,-1;POST_OFFICE \"POST OFFICE\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,POST_OFFICE,-1,-1;ZIPCODE \"ZIPCODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,ZIPCODE,-1,-1;MUNI_NAME \"MUNICIPAL NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNICIPAL FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY_FIPS\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,COUNTY_FIPS,-1,-1;WEBSITES \"WEBSITES\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,WEBSITES,-1,-1;UPDATE_DATE \"UPDATE_DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.PUBLIC_SAFETY_DEPT_INTERNAL,UPDATE_DATE,-1,-1", "")
-    PSDepts_Web_result = arcpy.GetCount_management(PUBLIC_SAFETY_DEPARTMENTS_WEB)
-    print ('{} has {} records'.format(PUBLIC_SAFETY_DEPARTMENTS_WEB, PSDepts_Web_result[0]))
-    write_log('{} has {} records'.format(PUBLIC_SAFETY_DEPARTMENTS_WEB, PSDepts_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Public Safety Departments - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 print ("\n Updating EHS Facilities - CRAW_INTERNAL from PUBLIC_SAFETY")
 write_log("\n Updating EHS Facilities - CRAW_INTERNAL from PUBLIC_SAFETY", logfile)
@@ -566,35 +422,6 @@ except:
 print ("       Updating Fire Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY completed")
 write_log("       Updating Fire Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY completed", logfile)
 
-print ("\n Updating Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from FIRE DEPT COVERAGE - PUBLIC_WEB
-    arcpy.DeleteRows_management(FIRE_DEPT_COVERAGE_WEB)
-except:
-    print ("\n Unable to delete rows from Fire Department Coverage - PUBLIC_WEB")
-    write_log("Unable to delete rows from Fire Department Coverage - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Fire Department Coverage - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append FIRE DEPT COVERAGE  - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(FIRE_DEPT_COVERAGE_INTERNAL, FIRE_DEPT_COVERAGE_WEB, "NO_TEST", "FIRE_DEPT \"FIRE DEPARTMENT\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,FIRE_DEPT,-1,-1;FIRE_FDID \"FIRE DEPARTMENT FDID CODE\" true true false 15 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,FIRE_FDID,-1,-1;FIRE_NUM \"FIRE DEPARTMENT #\" true true false 10 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,FIRE_NUM,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,COUNTY_FIPS,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    FireDept_Web_result = arcpy.GetCount_management(FIRE_DEPT_COVERAGE_WEB)
-    print ('{} has {} records'.format(FIRE_DEPT_COVERAGE_WEB, FireDept_Web_result[0]))
-    write_log('{} has {} records'.format(FIRE_DEPT_COVERAGE_WEB, FireDept_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Fire Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
-
 print ("\n Updating BLS Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039")
 write_log("\n Updating BLS Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039", logfile)
 
@@ -653,35 +480,6 @@ except:
     
 print ("       Updating BLS Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY - processing only COUNTY_FIPS = 42039 completed")
 write_log("       Updating BLS Department Coverage - CRAW_INTERNAL from ESZ_ALL - PUBLIC_SAFETY - processing only COUNTY_FIPS = 42039 completed", logfile)
-
-print ("\n Updating BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from BLS DEPT COVERAGE - PUBLIC_WEB
-    arcpy.DeleteRows_management(BLS_COVERAGE_WEB)
-except:
-    print ("\n Unable to delete rows from BLS Department Coverage - PUBLIC_WEB")
-    write_log("Unable to delete rows from BLS Department Coverage - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from BLS Department Coverage - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append BLS DEPT COVERAGE - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(BLS_COVERAGE_INTERNAL, BLS_COVERAGE_WEB, "NO_TEST", "EMS_DEPT \"BLS/EMS DEPARTMENT\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,EMS_DEPT,-1,-1;EMS_NUM \"BLS/EMS DEPARTMENT #\" true true false 10 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,EMS_NUM,-1,-1;EMS_EMSID \"EMS ID CODE\" true true false 10 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,EMS_EMSID,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,COUNTY_FIPS,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    BLSDept_Web_result = arcpy.GetCount_management(BLS_COVERAGE_WEB)
-    print ('{} has {} records'.format(BLS_COVERAGE_WEB, BLSDept_Web_result[0]))
-    write_log('{} has {} records'.format(BLS_COVERAGE_WEB, BLSDept_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating BLS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 print ("\n Updating QRS Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039")
 write_log("\n Updating QRS Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039", logfile)
@@ -742,35 +540,6 @@ except:
 print ("       Updating QRS Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed")
 write_log("       Updating QRS Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed", logfile)
 
-print ("\n Updating QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from QRS DEPT COVERAGE - PUBLIC_WEB
-    arcpy.DeleteRows_management(QRS_DEPT_COVERAGE_WEB)
-except:
-    print ("\n Unable to delete rows from QRS Department Coverage - PUBLIC_WEB")
-    write_log("Unable to delete rows from QRS Department Coverage - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from QRS Department Coverage - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append QRS DEPT COVERAGE - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(QRS_DEPT_COVERAGE_INTERNAL, QRS_DEPT_COVERAGE_WEB, "NO_TEST", "QRS_FDID \"QUICK RESPONSE SERVICE DEPARTMENT FDID CODE\" true true false 15 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,QRS_FDID,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,COUNTY_FIPS,-1,-1;QRS_DEPT \"QUICK RESPONSE SERVICE DEPARTMENT NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,QRS_DEPT,-1,-1;QRS_NUM \"QUICK RESPONSE SERVICE DEPARTMENT #\" true true false 10 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,QRS_NUM,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.QRS_DEPT_COVERAGE_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    QRSDept_Web_result = arcpy.GetCount_management(QRS_DEPT_COVERAGE_WEB)
-    print ('{} has {} records'.format(QRS_DEPT_COVERAGE_WEB, QRSDept_Web_result[0]))
-    write_log('{} has {} records'.format(QRS_DEPT_COVERAGE_WEB, QRSDept_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating QRS Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
-
 print ("\n Updating Police Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed")
 write_log("\n Updating Police Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed", logfile)
 
@@ -830,35 +599,6 @@ except:
 print ("       Updating Police Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed")
 write_log("       Updating Police Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed", logfile)
 
-print ("\n Updating Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from POLICE DEPT COVERAGE - PUBLIC_WEB
-    arcpy.DeleteRows_management(POLICE_DEPT_COVERAGE_WEB)
-except:
-    print ("\n Unable to delete rows from Police Department Coverage - PUBLIC_WEB")
-    write_log("Unable to delete rows from Police Department Coverage - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Police Department Coverage - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append POLICE DEPT COVERAGE - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(POLICE_DEPT_COVERAGE_INTERNAL, POLICE_DEPT_COVERAGE_WEB, "NO_TEST", "POLICE_DEPT \"POLICE DEPARTMENT\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,POLICE_DEPT,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,COUNTY_FIPS,-1,-1;POLICE_ID \"POLICE_ID\" true true false 4 Long 0 10 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,POLICE_ID,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    PoliceDept_Web_result = arcpy.GetCount_management(POLICE_DEPT_COVERAGE_WEB)
-    print ('{} has {} records'.format(POLICE_DEPT_COVERAGE_WEB, PoliceDept_Web_result[0]))
-    write_log('{} has {} records'.format(POLICE_DEPT_COVERAGE_WEB, PoliceDept_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Police Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
-
 print ("\n Updating Rescue Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039")
 write_log("\n Updating Rescue Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039", logfile)
 
@@ -917,35 +657,6 @@ except:
     
 print ("       Updating Rescue Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed")
 write_log("       Updating Rescue Department Coverage - CRAW_INTERNAL from PUBLIC_SAFETY (ESZ_ALL) - processing only COUNTY_FIPS = 42039 completed", logfile)
-
-print ("\n Updating Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from RESCUE DEPT COVERAGE - PUBLIC_WEB
-    arcpy.DeleteRows_management(RESCUE_DEPT_COVERAGE_WEB)
-except:
-    print ("\n Unable to delete rows from Rescue Department Coverage - PUBLIC_WEB")
-    write_log("Unable to delete rows from Rescue Department Coverage - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Rescue Department Coverage - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append RESCUE DEPT COVERAGE - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(RESCUE_DEPT_COVERAGE_INTERNAL, RESCUE_DEPT_COVERAGE_WEB, "NO_TEST", "RESCUE_DEPT \"RESCUE DEPARTMENT\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,RESCUE_DEPT,-1,-1;RESCUE_NUM \"RESCUE DEPARTMENT #\" true true false 10 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,RESCUE_NUM,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,COUNTY_FIPS,-1,-1;RESCUE_FDID \"RESCUE_FDID\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,RESCUE_FDID,-1,-1;SHAPE.STArea() \"SHAPE.STArea()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.RESCUE_DEPT_COVERAGE_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    RescueDept_Web_result = arcpy.GetCount_management(RESCUE_DEPT_COVERAGE_WEB)
-    print ('{} has {} records'.format(RESCUE_DEPT_COVERAGE_WEB, RescueDept_Web_result[0]))
-    write_log('{} has {} records'.format(RESCUE_DEPT_COVERAGE_WEB, RescueDept_Web_result[0]), logfile)
-except:
-    print ("\n Unable to append Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Rescue Department Coverage - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time

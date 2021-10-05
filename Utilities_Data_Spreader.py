@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Utilities_Data_Spreader.py
 # Created on: 2019-03-05 
-# Updated on 2021-03-18
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -26,7 +27,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -51,20 +51,12 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PUBLIC_SAFETY = "Database Connections\\PUBLIC_SAFETY@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+PUBLIC_SAFETY = Database_Connections + "\\PUBLIC_SAFETY@ccsde.sde"
 
 # Local variables:
 HYDRANTS_PS = PUBLIC_SAFETY + "\\CCSDE.PUBLIC_SAFETY.Utilities\\CCSDE.PUBLIC_SAFETY.HYDRANTS"
@@ -91,7 +83,8 @@ print ("National Fuel Stations Feature Class")
 print ("NW Rec Substations Feature Class")
 print ("Tower Sites Feature Class")
 print ("Utilities Feature Class")
-print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("\n From source to CRAW_INTERNAL")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -103,7 +96,8 @@ write_log("National Fuel Stations Feature Class", logfile)
 write_log("NW Rec Substations Feature Class", logfile)
 write_log("Tower Sites Feature Class", logfile) 
 write_log("Utilities Feature Class", logfile)
-write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)", logfile)
+write_log("\n From source to CRAW_INTERNAL", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating Hydrants - CRAW_INTERNAL from PUBLIC_SAFETYY")

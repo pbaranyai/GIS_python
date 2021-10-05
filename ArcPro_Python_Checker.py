@@ -1,6 +1,8 @@
+#Works in ArcGIS Pro
+
 import arcpy
 
-Tool = 'R:\GIS\ArcAutomations\GIS_Dept\Python\LandRecords_Data_Spreader.py'
+Tool = 'R:\GIS\ArcAutomations\GIS_Dept\Python\TopologyExport.py'
 Report = 'R:\GIS\ArcAutomations\GIS_Dept\ArcProChecker.txt'
 
 arcpy.AnalyzeToolsForPro_management(Tool, Report)

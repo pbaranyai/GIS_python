@@ -16,9 +16,11 @@
 #
 #
 # Author: Phil Baranyai/Crawford County GIS Manager
-# Created: 5/16/2019
-# Last Edited: 4/26/2021
+# Created on: 2019-05-16 
+# Updated on 2021-09-13
+# Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
+
 
 from __future__ import print_function, unicode_literals, absolute_import
 import sys
@@ -63,16 +65,6 @@ except:
     sys.exit ()
 
 try:
-    # Set the necessary product code
-    import arcinfo
-except:
-    print ("No ArcInfo (ArcAdvanced) license available")
-    write_log("!!No ArcInfo (ArcAdvanced) license available!!", logfile)
-    logging.exception('Got exception on importing ArcInfo (ArcAdvanced) license logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
-    raise
-    sys.exit()
-
-try:
     # delete old database versions log (if exists)
     if arcpy.Exists(Version_logfile):
         arcpy.Delete_management(Version_logfile, "Log")
@@ -105,9 +97,11 @@ DB_LIST = sdeConnections()
 start_time = time.time()
 print ("============================================================================")
 print ("Checking for Database Connections: "+ str(Day) + " " + str(Time))
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 write_log ("============================================================================", logfile)
 write_log ("Checking for Database Connections: "+ str(Day) + " " + str(Time), logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log ("============================================================================", logfile)
 
 DB_LIST.sort(reverse = False)
@@ -115,9 +109,8 @@ for DBConnection in DB_LIST:
     print ((DBConnection))
     write_log(DBConnection, logfile)
 
-# Set the connections folder -- Toggle depending on which machine the script is runnning, default should be CCORBWEAVER
-DB_Connections = r'E:\\ArcGIS_Pro\\Projects\\ArcServer'   #--CCORBWEAVER
-#DB_Connections = r'C:\\Users\\pbaranyai\\AppData\\Roaming\\Esri\\ArcGISPro\\Favorites'  #--GIS01
+# Set the connections folder 
+DB_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"  
 
 # Set the workspaces
 arcpy.env.workspace = DB_Connections + '\\SDE@ccsde.sde'
@@ -137,6 +130,8 @@ PUB_OD_CONNECTION = DB_Connections + "\\public_od@ccsde.sde"
 PS_CONNECTION = DB_Connections + "\\PUBLIC_SAFETY@ccsde.sde"
 PUBLIC_WEB_CONNECTION = DB_Connections + "\\public_web@ccsde.sde"
 SDE_CONNECTION = DB_Connections + "\\SDE@ccsde.sde"
+HS_CONNECTION = DB_Connections + "\\HUMAN_SERVICES@ccsde.sde"
+
 
 print ("\n============================================================================")
 print ("Checking for Connected users:")
@@ -789,6 +784,54 @@ except:
 print ("       Rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
 write_log("       Rebuild indexes and analyze datasets on all datasets on PUBLIC_WEB_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
+print ("\n Rebuild indexes and analyze datasets on all datasets on HUMAN_SERVICES_CONNECTION")
+write_log("\n Rebuild indexes and analyze datasets on HUMAN_SERVICES_CONNECTION all datasets", logfile)
+
+# Get a list of datasets owned by the admin user
+try:
+    # reset the workspace
+    arcpy.env.workspace = HS_CONNECTION
+    workspace = arcpy.env.workspace
+
+    # Get the user name for the workspace
+    userName = arcpy.Describe(workspace).connectionProperties.user
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Get a list of all the datasets the user has access to.
+    # First, get all the stand alone tables, feature classes and rasters owned by the current user.
+    dataList = arcpy.ListTables('*.' + userName + '.*') + arcpy.ListFeatureClasses('*.' + userName + '.*') + arcpy.ListRasters('*.' + userName + '.*')
+    print (dataList)
+    write_log((dataList),logfile)
+
+    # Next, for feature datasets owned by the current user
+    # get all of the featureclasses and add them to the master list.
+    for dataset in arcpy.ListDatasets('*.' + userName + '.*'):
+        dataList += arcpy.ListFeatureClasses(feature_dataset=dataset)
+        print (dataList)
+        write_log((dataList),logfile)
+   
+    # Pass in the list of datasets owned by the connected user to the rebuild indexes 
+    # and update statistics on the data tables
+    arcpy.RebuildIndexes_management(workspace, "NO_SYSTEM", dataList, "ALL")
+    print ("\n Rebuild index on HUMAN_SERVICES_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+    write_log("\n Rebuild index on HUMAN_SERVICES_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()),logfile)
+    arcpy.AnalyzeDatasets_management(workspace, "NO_SYSTEM", dataList, "ANALYZE_BASE", "ANALYZE_DELTA", "ANALYZE_ARCHIVE")
+   
+except:
+    print ("\n Unable to rebuild indexes and analyze datasets on all datasets on HUMAN_SERVICES_CONNECTION")
+    write_log("Unable to rebuild indexes and analyze datasets on all datasets on HUMAN_SERVICES_CONNECTION", logfile)
+    logging.exception('Got exception on rebuild indexes and analyze datasets on all datasets ON HUMAN_SERVICES_CONNECTION logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit ()
+
+print ("       Rebuild indexes and analyze datasets on all datasets on HUMAN_SERVICES_CONNECTION completed at " + time.strftime("%I:%M:%S %p", time.localtime()))
+write_log("       Rebuild indexes and analyze datasets on all datasets on HUMAN_SERVICES_CONNECTION completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
+
 print ("\n Rebuild indexes and analyze datasets on all datasets on SDE CONNNECTION")
 write_log("\n Rebuild indexes and analyze datasets on SDE CONNNECTION all datasets", logfile)
 
@@ -863,6 +906,10 @@ try:
             write_log("Created version {0}".format(version),logfile)
         elif version.startswith("PLANNING"):
             arcpy.management.CreateVersion(PLAN_CONNECTION,defaultVersion, version[9:], "PUBLIC")
+            print ("Created version {0}".format(version))
+            write_log("Created version {0}".format(version),logfile)
+        elif version.startswith("HUMAN_SERVICES"):
+            arcpy.management.CreateVersion(HS_CONNECTION,defaultVersion, version[15:], "PUBLIC")
             print ("Created version {0}".format(version))
             write_log("Created version {0}".format(version),logfile)
         else:

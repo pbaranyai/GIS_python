@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Education_Data_Spreader.py
 # Created on: 2019-04-04 
-# Updated on 2019-04-25
+# Updated on 2021-09-21
+# Works in ArcPro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -45,18 +46,13 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-GIS = "Database Connections\\GIS@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+OPEN_DATA = Database_Connections + "\\public_od@ccsde.sde"
+GIS = Database_Connections + "\\GIS@ccsde.sde"
 
 # Local variables:
 SCHOOL_DISTRICTS_GIS = GIS + "\\CCSDE.GIS.Education\\CCSDE.GIS.SCHOOL_DISTRICTS"
@@ -72,6 +68,7 @@ print ("Will update the following:")
 print ("\nSchool Districts")
 print ("School Locations")
 print ("\n From source to CRAW_INTERNAL")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -80,6 +77,7 @@ write_log("Will update the following:", logfile)
 write_log("\nSchool Districts", logfile)  
 write_log("School Locations", logfile) 
 write_log("\n From source to CRAW_INTERNAL", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating School Districts - CRAW_INTERNAL from GIS")

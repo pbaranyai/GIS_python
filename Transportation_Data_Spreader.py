@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Transportation_Data_Spreader.py
 # Created on: 2019-03-05 
-# Updated on 2021-03-23
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -26,7 +27,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -51,36 +51,24 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-GIS = "Database Connections\\GIS@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+GIS = Database_Connections + "\\GIS@ccsde.sde"
 
 # Local variables:
 AIRPORT_LOCATIONS_GIS = GIS + "\\CCSDE.GIS.Transportation\\CCSDE.GIS.AIRPORT_LOCATIONS"
 AIRPORT_LOCATIONS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.AIRPORTS_INTERNAL"
-AIRPORT_LOCATIONS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Transportation\\CCSDE.PUBLIC_WEB.AIRPORT_LOCATIONS_WEB"
 BRIDGES_GIS = GIS + "\\CCSDE.GIS.Transportation\\CCSDE.GIS.BRIDGES"
 BRIDGES_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.BRIDGES_INTERNAL"
 CATA_BUS_STOPS_GIS = GIS + "\\CCSDE.GIS.Transportation\\CCSDE.GIS.CATA_BUS_STOPS"
 CATA_BUS_STOPS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.CATA_BUS_STOPS_INTERNAL"
 MILE_MARKERS_GIS = GIS + "\\CCSDE.GIS.Transportation\\CCSDE.GIS.MILE_MARKERS_LOCATIONS"
 MILE_MARKERS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.MILE_MARKERS_INTERNAL"
-MILE_MARKERS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Transportation\\CCSDE.PUBLIC_WEB.MILE_MARKERS_LOCATIONS_WEB"
 RAILROADS_GIS = GIS + "\\CCSDE.GIS.Transportation\\CCSDE.GIS.RAILROADS"
 RAILROADS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.RAILROADS_INTERNAL"
-RAILROADS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Transportation\\CCSDE.PUBLIC_WEB.RAILROADS_WEB"
 RAILROAD_CROSSINGS_GIS = GIS + "\\CCSDE.GIS.Transportation\\CCSDE.GIS.RAILROAD_CROSSINGS"
 RAILROAD_CROSSINGS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.RAILROAD_CROSSINGS_INTERNAL"
 
@@ -95,7 +83,8 @@ print ("CATA Bus Stops Feature Class")
 print ("Mile Markers Feature Class")
 print ("Railroads Feature Class")
 print ("Railroad Crossings Feature Class")
-print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("\n From source to CRAW_INTERNAL")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -107,7 +96,8 @@ write_log("CATA Bus Stops Feature Class Feature Class", logfile)
 write_log("Mile Markers Feature Class", logfile)
 write_log("Railroads Feature Class", logfile) 
 write_log("Railroad Crossings Feature Class", logfile)
-write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)", logfile)
+write_log("\n From source to CRAW_INTERNAL", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating Airports - CRAW_INTERNAL from GIS")
@@ -137,34 +127,6 @@ except:
 
 print ("       Updating Airports - CRAW_INTERNAL from GIS completed")
 write_log("       Updating Airports - CRAW_INTERNAL from GIS completed", logfile)
-
-print ("\n Updating Airports - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Airports - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from Airports - PUBLIC_WEB
-    arcpy.DeleteRows_management(AIRPORT_LOCATIONS_WEB)
-except:
-    print ("\n Unable to delete rows from Airports - PUBLIC_WEB")
-    write_log("Unable to delete rows from Airports - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Airports - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try: 
-    # Append Airports - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(AIRPORT_LOCATIONS_INTERNAL, AIRPORT_LOCATIONS_WEB, "NO_TEST", "AIRPORT_NAME \"AIRPORT NAME\" true true false 150 Text 0 0 ,First,#,"+AIRPORT_LOCATIONS_INTERNAL+",AIRPORT_NAME,-1,-1;RUNWAY_LENGTH \"RUNWAY_LENGTH\" true true false 2 Short 0 5 ,First,#,"+AIRPORT_LOCATIONS_INTERNAL+",RUNWAY_LENGTH,-1,-1;RUNWAY_SURF_TYPE \"RUNWAY SURFACE TYPE\" true true false 8 Double 8 38 ,First,#,"+AIRPORT_LOCATIONS_INTERNAL+",RUNWAY_SURF_TYPE,-1,-1;AIRPORT_TYPE \"AIRPORT TYPE\" true true false 50 Text 0 0 ,First,#,"+AIRPORT_LOCATIONS_INTERNAL+",AIRPORT_TYPE,-1,-1;TOWER \"TOWER\" true true false 50 Text 0 0 ,First,#,"+AIRPORT_LOCATIONS_INTERNAL+",TOWER,-1,-1", "")
-    Airports_Web_result = arcpy.GetCount_management(AIRPORT_LOCATIONS_WEB)
-    print ('{} has {} records'.format(AIRPORT_LOCATIONS_WEB, Airports_Web_result[0]))
-except:
-    print ("\n Unable to append Airports - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Airports - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Airports - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Airports - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Airports - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 print ("\n Updating Bridges - CRAW_INTERNAL from GIS")
 write_log("\n Updating Bridges - CRAW_INTERNAL from GIS", logfile)
@@ -250,34 +212,6 @@ except:
 print ("       Updating Mile Markers - CRAW_INTERNAL from GIS completed")
 write_log("       Updating Mile Markers - CRAW_INTERNAL from GIS completed", logfile)
 
-print ("\n Updating Mile Markers - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Mile Markers - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from Mile Markers - PUBLIC_WEB
-    arcpy.DeleteRows_management(MILE_MARKERS_WEB)
-except:
-    print ("\n Unable to delete rows from Mile Markers - PUBLIC_WEB")
-    write_log("Unable to delete rows from Mile Markers - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Mile Markers - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try: 
-    # Append Mile Markers - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(MILE_MARKERS_INTERNAL, MILE_MARKERS_WEB, "NO_TEST", "MILE_POST \"MILE POST\" true true false 25 Text 0 0 ,First,#,"+MILE_MARKERS_INTERNAL+",MILE_POST,-1,-1;STREET_NAME \"STREET NAME\" true true false 50 Text 0 0 ,First,#,"+MILE_MARKERS_INTERNAL+",STREET_NAME,-1,-1;MARKER_NAME \"MARKER NAME\" true true false 75 Text 0 0 ,First,#,"+MILE_MARKERS_INTERNAL+",MARKER_NAME,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,"+MILE_MARKERS_INTERNAL+",MUNI_NAME,-1,-1;MUNI_FIPS \"MUNI FIPS CODE\" true true false 8 Double 8 38 ,First,#,"+MILE_MARKERS_INTERNAL+",MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,"+MILE_MARKERS_INTERNAL+",COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,"+MILE_MARKERS_INTERNAL+",COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,"+MILE_MARKERS_INTERNAL+",UPDATE_DATE,-1,-1", "")
-    MileMarkers_Web_result = arcpy.GetCount_management(MILE_MARKERS_WEB)
-    print ('{} has {} records'.format(MILE_MARKERS_WEB, MileMarkers_Web_result[0]))
-except:
-    print ("\n Unable to append Mile Markers - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Mile Markers - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Mile Markers - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Mile Markers - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Mile Markers - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
-
 print ("\n Updating Railroad Crossings - CRAW_INTERNAL from GIS")
 write_log("\n Updating Railroad Crossings - CRAW_INTERNAL from GIS", logfile)
 
@@ -333,34 +267,6 @@ except:
 
 print ("       Updating Railroads - CRAW_INTERNAL from GIS completed")
 write_log("       Updating Railroads - CRAW_INTERNAL from GIS completed", logfile)
-
-print ("\n Updating Railroads - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Railroads - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from Railroads - PUBLIC_WEB
-    arcpy.DeleteRows_management(RAILROADS_WEB)
-except:
-    print ("\n Unable to delete rows from Railroads - PUBLIC_WEB")
-    write_log("Unable to delete rows from Railroads - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on delete rows from Railroads - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try: 
-    # Append Railroads - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(RAILROADS_INTERNAL, RAILROADS_WEB, "NO_TEST", "OPERATIONS_OWNER \"OPERATIONS OWNER\" true true false 100 Text 0 0 ,First,#,"+RAILROADS_INTERNAL+",OPERATIONS_OWNER,-1,-1;NON_OPERATIONS_OWNER \"NON-OPERATIONS OWNER\" true true false 100 Text 0 0 ,First,#,"+RAILROADS_INTERNAL+",NON_OPERATIONS_OWNER,-1,-1;TRACK_RIGHTS \"TRACK RIGHTS\" true true false 100 Text 0 0 ,First,#,"+RAILROADS_INTERNAL+",TRACK_RIGHTS,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,"+RAILROADS_INTERNAL+",MUNI_NAME,-1,-1;MUNI_FIPS \"MUNI FIPS CODE\" true true false 8 Double 8 38 ,First,#,"+RAILROADS_INTERNAL+",MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,"+RAILROADS_INTERNAL+",COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,"+RAILROADS_INTERNAL+",COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE DATE\" true true false 8 Date 0 0 ,First,#,"+RAILROADS_INTERNAL+",UPDATE_DATE,-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,"+RAILROADS_INTERNAL+",SHAPE.STLength(),-1,-1", "")
-    Railroads_Web_result = arcpy.GetCount_management(RAILROADS_WEB)
-    print ('{} has {} records'.format(RAILROADS_WEB, Railroads_Web_result[0]))
-except:
-    print ("\n Unable to append Railroads - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Railroads - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Railroads - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Railroads - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Railroads - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time

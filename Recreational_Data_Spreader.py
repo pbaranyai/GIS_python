@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Recreational_Data_Spreader.py
 # Created on: 2019-03-05 
-# Updated on 2019-04-25
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -24,7 +25,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -49,32 +49,20 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-GIS = "Database Connections\\GIS@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+GIS = Database_Connections + "\\GIS@ccsde.sde"
     
 # Local variables:
-CAMPGROUNDS_GIS = "Database Connections\\GIS@ccsde.sde\\CCSDE.GIS.Recreational\\CCSDE.GIS.CAMPGROUNDS"
+CAMPGROUNDS_GIS = GIS + "\\CCSDE.GIS.Recreational\\CCSDE.GIS.CAMPGROUNDS"
 CAMPGROUNDS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL"
-CAMPGROUNDS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Recreational\\CCSDE.PUBLIC_WEB.CAMPGROUNDS_WEB"
 FISH_BOAT_ACCESS_GIS = GIS + "\\CCSDE.GIS.Recreational\\CCSDE.GIS.FISH_BOAT_ACCESS"
 FISH_BOAT_ACCESS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL"
-FISH_BOAT_ACCESS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Recreational\\CCSDE.PUBLIC_WEB.FISH_BOAT_ACCESS_WEB"
 RECREATIONAL_TRAILS_GIS = GIS + "\\CCSDE.GIS.Recreational\\CCSDE.GIS.RECREATIONAL_TRAILS"
 RECREATIONAL_TRAILS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL"
-RECREATIONAL_TRAILS_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Recreational\\CCSDE.PUBLIC_WEB.RECREATIONAL_TRAILS_WEB"
 TRAIL_EMERGENCY_ACCESS_GIS = GIS + "\\CCSDE.GIS.Recreational\\CCSDE.GIS.TRAIL_EMERGENCY_ACCESS"
 TRAIL_EMERGENCY_ACCESS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.TRAIL_EMEGNCY_ACCESS_INTERNAL"
 
@@ -87,7 +75,8 @@ print ("\nCampgrounds Feature Class")
 print ("Fish & Boat Access Feature Class")
 print ("Recreational Trails Feature Class")
 print ("Trail Emergency Access Feature Class")
-print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("\n From source to CRAW_INTERNAL")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -97,7 +86,8 @@ write_log("\nCampgrounds Feature Class", logfile)
 write_log("Fish & Boat Access Feature Class", logfile) 
 write_log("Recreational Trails Feature Class", logfile)
 write_log("Trail Emergency Access Feature Class", logfile)
-write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)", logfile)
+write_log("\n From source to CRAW_INTERNAL", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating Campgrounds - CRAW_INTERNAL from GIS")
@@ -128,34 +118,6 @@ except:
 print ("       Updating Campgrounds - CRAW_INTERNAL from GIS completed")
 write_log("       Updating Campgrounds - CRAW_INTERNAL from GIS completed", logfile)
 
-print ("\n Updating Campgrounds - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Campgrounds - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from Campgrounds - PUBLIC_WEB
-    arcpy.DeleteRows_management(CAMPGROUNDS_WEB)
-except:
-    print ("\n Unable to delete rows from Campgrounds - PUBLIC_WEB")
-    write_log("Unable to delete rows from Campgrounds - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on Unable to delete rows from Campgrounds - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:    
-    # Append Campgrounds - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(CAMPGROUNDS_INTERNAL, CAMPGROUNDS_WEB, "NO_TEST", "CAMPGROUND_NAME \"CAMPGROUND NAME\" true true false 150 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,CAMPGROUND_NAME,-1,-1;SITE_ID \"SITE ID\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,SITE_ID,-1,-1;TYPE \"TYPE\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,TYPE,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNI FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE_DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.CAMPGROUNDS_INTERNAL,UPDATE_DATE,-1,-1", "")
-    Campground_Web_result = arcpy.GetCount_management(CAMPGROUNDS_WEB)
-    print ('{} has {} records'.format(CAMPGROUNDS_WEB, Campground_Web_result[0]))
-except:
-    print ("\n Unable to append Campgrounds - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Campgrounds - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Campgrounds - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Campgrounds - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Campgrounds - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
-
 print ("\n Updating Fish & Boat Access - CRAW_INTERNAL from GIS")
 write_log("\n Updating Fish & Boat Access - CRAW_INTERNAL from GIS", logfile)
 
@@ -184,34 +146,6 @@ except:
 print ("       Updating Fish & Boat Access - CRAW_INTERNAL from GIS completed")
 write_log("       Updating Fish & Boat Access - CRAW_INTERNAL from GIS completed", logfile)
 
-print ("\n Updating Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from Fish & Boat Access - PUBLIC_WEB
-    arcpy.DeleteRows_management(FISH_BOAT_ACCESS_WEB)
-except:
-    print ("\n Unable to delete rows from Fish & Boat Access - PUBLIC_WEB")
-    write_log("Unable to delete rows from Fish & Boat Access - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on Unable to delete rows from Fish & Boat Access - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(FISH_BOAT_ACCESS_INTERNAL, FISH_BOAT_ACCESS_WEB, "NO_TEST", "ACCESS_NAME \"ACCESS NAME\" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,ACCESS_NAME,-1,-1;WATER_BODY \"WATER BODY\" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,WATER_BODY,-1,-1;OWNER \"OWNER\" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,OWNER,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNI FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE_DATE\" true true false 8 Date 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.FISH_BOAT_ACCESS_INTERNAL,UPDATE_DATE,-1,-1", "")
-    Fish_Boat_Web_result = arcpy.GetCount_management(FISH_BOAT_ACCESS_WEB)
-    print ('{} has {} records'.format(FISH_BOAT_ACCESS_WEB, Fish_Boat_Web_result[0]))
-except:
-    print ("\n Unable to append Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Fish & Boat Access - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
-
 print ("\n Updating Recreational Trails - CRAW_INTERNAL from GIS")
 write_log("\n Updating Recreational Trails - CRAW_INTERNAL from GIS", logfile)
 
@@ -239,34 +173,6 @@ except:
 
 print ("       Updating Recreational Trails - CRAW_INTERNAL from GIS completed")
 write_log("       Updating Recreational Trails - CRAW_INTERNAL from GIS completed", logfile)
-
-print ("\n Updating Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL")
-write_log("\n Updating Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-
-try:
-    # Delete Rows from Recreational Trails - PUBLIC_WEB
-    arcpy.DeleteRows_management(RECREATIONAL_TRAILS_WEB)
-except:
-    print ("\n Unable to delete rows from Recreational Trials  - PUBLIC_WEB")
-    write_log("Unable to delete rows from Recreational Trials  - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on Unable to delete rows from Recreational Trials  - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-try:
-    # Append_PublicWEB Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL
-    arcpy.Append_management(RECREATIONAL_TRAILS_INTERNAL, RECREATIONAL_TRAILS_WEB, "NO_TEST", "NAME \"NAME\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,NAME,-1,-1;TYPE \"TYPE\" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,TYPE,-1,-1;MAINTENANCE \"MAINTENANCE\" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,MAINTENANCE,-1,-1;CONTACT \"CONTACT\" true true false 100 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,CONTACT,-1,-1;SURFACE_TYPE \"SURFACE_TYPE\" true true false 75 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,SURFACE_TYPE,-1,-1;MUNI_NAME \"MUNICIPALITY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,MUNI_NAME,-1,-1;MUNI_FIPS \"MUNI FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,MUNI_FIPS,-1,-1;COUNTY_NAME \"COUNTY NAME\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS \"COUNTY FIPS CODE\" true true false 8 Double 8 38 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE \"UPDATE_DATE\" true true false 50 Text 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,UPDATE_DATE,-1,-1;SHAPE.STLength() \"SHAPE.STLength()\" false false true 0 Double 0 0 ,First,#,Database Connections\\craw_internal@ccsde.sde\\CCSDE.CRAW_INTERNAL.Recreational\\CCSDE.CRAW_INTERNAL.RECREATIONAL_TRAILS_INTERNAL,SHAPE.STLength(),-1,-1", "")
-    Trails_Web_result = arcpy.GetCount_management(RECREATIONAL_TRAILS_WEB)
-    print ('{} has {} records'.format(RECREATIONAL_TRAILS_WEB, Trails_Web_result[0]))
-except:
-    print ("\n Unable to append Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL")
-    write_log("Unable to append Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on append Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("       Updating Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL completed")
-write_log("       Updating Recreational Trails - PUBLIC_WEB from CRAW_INTERNAL completed", logfile)
 
 print ("\n Updating Trail Emergency Access - CRAW_INTERNAL from GIS")
 write_log("\n Updating Trail Emergency Access - CRAW_INTERNAL from GIS", logfile)

@@ -1,7 +1,8 @@
 # ---------------------------------------------------------------------------
 # TopologyExport.py
 # Created on: 2019-03-05 
-# Updated on 2019-03-05
+# Updated on 2021-09-22
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -9,9 +10,15 @@
 #  Export topology errors out to feature classes
 # ---------------------------------------------------------------------------
 
+print ("============================================================================")
+print (("Exporting Topology: "+ str(Day) + " " + str(Time)))
+print ("Works in ArcGIS Pro")
+print ("============================================================================")
 
-# Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-import arceditor
+write_log("============================================================================", logfile)
+write_log("Exporting Topology: "+ str(Day) + " " + str(Time), logfile)
+write_log("Works in ArcGIS Pro", logfile)
+write_log("============================================================================", logfile)
 
 # Import arcpy module
 import arcpy
