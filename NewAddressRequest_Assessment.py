@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # NewAddressRequest_Assessment.py
 # Created on: 2020-08-10 
-# Updated on 2020-08-19
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -46,18 +47,13 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-AGOL_EDIT_PUB_PS = "Database Connections\\agol_edit_pub@ccsde.sde\\CCSDE.AGOL_EDIT_PUB.Public_Safety"
-AGOL_EDIT_AST = "Database Connections\\agol_edit@ccsde.sde\\CCSDE.AGOL_EDIT.Assessment"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+AGOL_EDIT_PUB_PS = Database_Connections + "\\agol_edit_pub@ccsde.sde\\CCSDE.AGOL_EDIT_PUB.Public_Safety"
+AGOL_EDIT_AST = Database_Connections + "\\agol_edit@ccsde.sde\\CCSDE.AGOL_EDIT.Assessment"
 
 # Local variables:
 AddressRequest_PS = AGOL_EDIT_PUB_PS + "\\CCSDE.AGOL_EDIT_PUB.ADDRESS_NEW_REQUESTS_AGOL_EDIT_PUB"
@@ -71,6 +67,7 @@ print (("Updating New address request assessment data feature classes: "+ str(Da
 print ("Will update the following:")
 print ("\nNewAddressRequests_Assessment")
 print ("\n From source to CRAW_INTERNAL")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -78,6 +75,7 @@ write_log("Updating New address request assessment data feature classes: "+ str(
 write_log("Will update the following:", logfile)
 write_log("\nNewAddressRequests_Assessment", logfile)  
 write_log("\n From source to CRAW_INTERNAL", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating New address requests - assessment - AGOL_EDIT from AGOL_EDIT_PUB")
