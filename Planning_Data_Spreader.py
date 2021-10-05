@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Planning_Data_Spreader.py
 # Created on: 2019-10-01 
-# Updated on 2021-03-23
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -24,7 +25,6 @@ import datetime
 import os
 import traceback
 import logging
-#import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -49,22 +49,14 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-PLANNING = "Database Connections\\PLANNING@ccsde.sde"
-OPEN_DATA = "Database Connections\\public_od@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
-AGOL_EDIT = "Database Connections\\agol_edit@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+PLANNING = Database_Connections + "\\PLANNING@ccsde.sde"
+PUBLIC_WEB = Database_Connections + "\\public_web@ccsde.sde"
+AGOL_EDIT = Database_Connections + "\\agol_edit@ccsde.sde"
 
 # Local variables:
 CC_LERTA_AGOL = AGOL_EDIT + "\\CCSDE.AGOL_EDIT.Investment_Incentive_Zones\\CCSDE.AGOL_EDIT.Crawford_County_LERTA_Zones"
@@ -95,6 +87,7 @@ print ("School District LERTA zones Feature Class")
 print ("Crawford County Submarkets Feature Class")
 print ("Crawford County Subregions Feature Class")
 print ("\n From source to CRAW_INTERNAL/AGOL_EDIT -> PUBLIC_WEB (where applicable)")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -107,6 +100,7 @@ write_log("School District LERTA zones Feature Class", logfile)
 write_log("Crawford County Submarkets Feature Class", logfile)
 write_log("Crawford County Subregions Feature Class", logfile)
 write_log("\n From source to CRAW_INTERNAL/AGOL_EDIT -> PUBLIC_WEB (where applicable)", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating Zoning Districts - CRAW_INTERNAL from PLANNING")

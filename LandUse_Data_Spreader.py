@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # LandRecords_Data_Spreader.py
 # Created on: 2020-10-19 
-# Updated on 2021-03-23
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -21,7 +22,6 @@ import datetime
 import os
 import traceback
 import logging
-#import __builtin__
 import builtins
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
@@ -47,20 +47,13 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
-AUTO_WKSP = "Database Connections\\auto_workspace@ccsde.sde"
-CRAW_INTERNAL = "Database Connections\\craw_internal@ccsde.sde"
-PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
+AUTO_WKSP = Database_Connections + "\\auto_workspace@ccsde.sde"
+CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
+PUBLIC_WEB = Database_Connections + "\\public_web@ccsde.sde"
 
 # Local variables:
 LANDUSE_PARCELS_WKSP = AUTO_WKSP + "\\CCSDE.AUTO_WORKSPACE.Planning\\CCSDE.AUTO_WORKSPACE.LANDUSE_PARCELS_WKSP"
@@ -75,6 +68,7 @@ print (("Updating Land Records: "+ str(Day) + " " + str(Time)))
 print ("Will update the following:")
 print ("\nLand Use Parcels Feature Class")
 print ("\n From source to CRAW_INTERNAL -> PUBLIC_WEB (where applicable)")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
@@ -83,6 +77,7 @@ write_log("Will update the following:", logfile)
 write_log("\nLand Use Parcels Feature Class", logfile)  
 
 write_log("\n From source to CRAW_INTERNAL -> PUBLIC_WEB", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating Land Use Parcels - AUTO_WORKSPACE from Tax Parcels - CRAW_INTERNAL")
@@ -173,7 +168,7 @@ try:
         del row 
         del cursor
 except:
-    print "\n Unable to Convert Assessment Land Use codes to Planning Land Use categories and LBCS codes"
+    print ("\n Unable to Convert Assessment Land Use codes to Planning Land Use categories and LBCS codes")
     write_log("Unable to Convert Assessment Land Use codes to Planning Land Use categories and LBCS codes", logfile)
     logging.exception('Got exception on Convert Assessment Land Use codes to Planning Land Use categories and LBCS codes logged at:'  + str(Day) + " " + str(Time))
     raise
