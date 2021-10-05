@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # Vision_Reconcile_Report.py
 # Created on: 2019-06-20
-# Updated on 2019-06-20
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -20,7 +21,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -45,20 +45,13 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-AUTOWORKSPACE = "Database Connections\\auto_workspace@ccsde.sde"
-VISION_VIEW = "Database Connections\\Vision_Database.sde"
-ASMT_REPORT_FLDR = r"R:\\GIS\\Assessment\\Reports"
+AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
+VISION_VIEW = Database_Connections + "\\Vision_Database.sde"
+ASMT_REPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
 
 # Local variables:
 PARCEL_VISION = VISION_VIEW + "\\VISION.REAL_PROP.PARCEL"
@@ -75,10 +68,12 @@ start_time = time.time()
 print ("============================================================================")
 print ("Creating Total Assessment Reconcile Report: "+ str(Day) + " " + str(Time))
 print ("Located at: R:\GIS\Assessment\Assmt_Reconcile_Report")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 write_log("============================================================================", logfile)
 write_log("Creating Total Assessment Reconcile Report: "+ str(Day) + " " + str(Time), logfile)
 write_log("Located at: R:\GIS\Assessment\Assmt_Reconcile_Report", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Updating ASMT_RECONCILE_TBL in AUTOWORKSPACE")
@@ -143,7 +138,8 @@ except:
 
 try:
     # Append VISION_OTHER_TBL_VIEW to ASMT_RECONCILE_TBL (append tables joined above to ASMT_RECONCILE_TBL in AUTOWORKSPACE)
-    arcpy.Append_management(VISION_PARCEL_TBL_TEMP, ASMT_RECONCILE_TBL, "NO_TEST", 'REM_PID "PID - Control #" true false false 4 Long 0 10 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_PID,-1,-1;REM_MBLU_MAP "Map" true true false 7 Text 0 0 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_MBLU_MAP,-1,-1;REM_MBLU_BLOCK "Block" true true false 7 Text 0 0 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_MBLU_BLOCK,-1,-1;REM_MBLU_LOT "Lot" true true false 7 Text 0 0 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_MBLU_LOT,-1,-1;WEEKLY_ASSESSMENT_TOTAL "Weekly Assessment Total" true true false 8 Double 8 38 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_TTL_ASSESS,-1,-1;WEEKLY_ASSESSMENT_DATE "Weekly Assessment Date" true true false 8 Date 0 0 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_PRCL_STATUS_DATE,-1,-1;CURRENT_ASSESSMENT_TOTAL "Current Assessment Total" true true false 8 Double 8 38 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_TTL_15,-1,-1;CURRENT_ASSESSMENT_DATE "Current Assessment Date" true true false 8 Date 0 0 ,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_COST_D,-1,-1;TOTAL_ASSESSMENT_DIFFERENCE "Total Assessment Difference" true true false 8 Double 8 38 ,First,#', "")
+    arcpy.management.Append(VISION_PARCEL_TBL_TEMP,ASMT_RECONCILE_TBL, "NO_TEST", r'REM_PID "PID - Control #" true false false 4 Long 0 10,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_PID,-1,-1;REM_MBLU_MAP "Map" true true false 7 Text 0 0,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_MBLU_MAP,0,7;REM_MBLU_BLOCK "Block" true true false 7 Text 0 0,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_MBLU_BLOCK,0,7;REM_MBLU_LOT "Lot" true true false 7 Text 0 0,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_MBLU_LOT,0,7;WEEKLY_ASSESSMENT_TOTAL "Weekly Assessment Total" true true false 8 Double 8 38,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_TTL_ASSESS,-1,-1;WEEKLY_ASSESSMENT_DATE "Weekly Assessment Date" true true false 8 Date 0 0,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,REM_PRCL_STATUS_DATE,-1,-1;CURRENT_ASSESSMENT_TOTAL "Current Assessment Total" true true false 8 Double 8 38,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_TTL_15,-1,-1;CURRENT_ASSESSMENT_DATE "Current Assessment Date" true true false 8 Date 0 0,First,#,R:\\GIS\\Assessment\\Reports\\Assessment_Report_TempFGDB.gdb\\PARCEL_TBL_TEMP,PRC_COST_D,-1,-1;TOTAL_ASSESSMENT_DIFFERENCE "Total Assessment Difference" true true false 8 Double 8 38,First,#', '', "")#"PRC_COST_D = CURRENT_DATE()")
+    print ("VISION_PARCEL_TBL_TEMP appended to ASMT_RECONCILE_TBL")
 except:
     print ("\n Unable to append VISION_OTHER_TBL_VIEW to ASMT_RECONCILE_TBL")
     write_log("\n Unable to append VISION_OTHER_TBL_VIEW to ASMT_RECONCILE_TBL", logfile)
@@ -158,44 +154,48 @@ print ("\n Calculating TOTAL_ASSESSMENT_DIFFERENCE field in ASMT_RECONCILE_TBL i
 write_log("\n Calculating TOTAL_ASSESSMENT_DIFFERENCE field in ASMT_RECONCILE_TBL in AUTOWORKSPACE, then removing records with zero or null value in that field",logfile)
 
 try:
-    # Calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL (iterate through rows and calculate difference between values from date of report run vs date of last parcel creation, generally from weekend prior to report run)
-    ASMT_FIELDS = ['WEEKLY_ASSESSMENT_TOTAL','CURRENT_ASSESSMENT_TOTAL','TOTAL_ASSESSMENT_DIFFERENCE']
+    # Remove any records not changed "today" (date of script run)
+    #Calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL (iterate through rows and calculate difference between values from date of report run vs date of last parcel creation, generally from weekend prior to report run)
+    ASMT_FIELDS = ['WEEKLY_ASSESSMENT_TOTAL','CURRENT_ASSESSMENT_TOTAL','TOTAL_ASSESSMENT_DIFFERENCE','CURRENT_ASSESSMENT_DATE']
+    today=datetime.date.today()
     with arcpy.da.UpdateCursor(ASMT_RECONCILE_TBL,ASMT_FIELDS) as cursor:
         for row in cursor:
-            if row[0] >= 0:
-                row[2] = row[1] - row[0]
-                cursor.updateRow(row)
-            if row[0] is None:
-                row[2] = row[1]
-                cursor.updateRow(row)
+            if row[3] == None:
+                cursor.deleteRow()
+                pass
+            elif row[3].date() != today:
+                cursor.deleteRow()
+                pass
+            elif row[3].date() == today:
+                if row[0] is not None:
+                    row[2] = row[1] - row[0]
+                    cursor.updateRow(row)
+                if row[0] is None:
+                    row[2] = row[1]
+                    cursor.updateRow(row)
             else:
                 pass
         del row
         del cursor
-        print ("  TOTAL_ASSESSMENT_DIFFERENCE field calculated...")
-        write_log("  TOTAL_ASSESSMENT_DIFFERENCE field calculated...",logfile)
+        print ("  PRIOR DAY RECORDS REMOVED & TOTAL_ASSESSMENT_DIFFERENCE field calculated...")
+        write_log("  PRIOR DAY RECORDS REMOVED & TOTAL_ASSESSMENT_DIFFERENCE field calculated...",logfile)
 except:
-    print ("\n Unable to calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL")
-    write_log("\n Unable to calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL", logfile)
-    logging.exception('Got exception on calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to remove prior day records & calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL")
+    write_log("\n Unable to remove prior day records & calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL", logfile)
+    logging.exception('Got exception on remove prior day records & calculate CURRENT_ASSESSMENT_TOTAL subtracted from WEEKLY_ASSESSMENT_TOTAL and put value in TOTAL_ASSESSMENT_DIFFERENCE fields in ASMT_RECONCILE_TBL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit()
 
 try:
-    # Remove records with a zero value in the TOTAL_ASSESSMENT_DIFFERENCE field (iterate through records, remove any will a zero or null value, otherwise, no assessment changes)
-    KEEP_FIELDS = ['TOTAL_ASSESSMENT_DIFFERENCE','CURRENT_ASSESSMENT_DATE']
-    with arcpy.da.UpdateCursor(ASMT_RECONCILE_TBL,KEEP_FIELDS) as cursor:
-        for row in cursor:
-            if row[1] == [datetime.date.today()]:
-                pass
-            if row[0] is None:
-                cursor.deleteRow()
-            if row [0] == 0:
-                cursor.deleteRow()
+    # Remove records with a zero or None (null) value in the TOTAL_ASSESSMENT_DIFFERENCE field (iterate through records, remove any will a zero or null value, otherwise, no assessment changes)
+    with arcpy.da.UpdateCursor(ASMT_RECONCILE_TBL,'TOTAL_ASSESSMENT_DIFFERENCE') as delcursor:
+        for delrow in delcursor:
+            if delrow[0] == 0 or delrow[0] == None:
+                delcursor.deleteRow()
             else:
                 pass
-        del row
-        del cursor
+        del delrow
+        del delcursor
         print ("   Records with zero value in TOTAL_ASSESSMENT_DIFFERENCE field, removed from table...")
         write_log("   Records with zero value in TOTAL_ASSESSMENT_DIFFERENCE field, removed from table...",logfile)
 except:
