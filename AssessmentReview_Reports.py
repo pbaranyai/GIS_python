@@ -2,7 +2,8 @@
 # ---------------------------------------------------------------------------
 # AssessmentReview_Reports.py
 # Created on: 2019-08-21 
-# Updated on 2019-08-21
+# Updated on 2019-09-21
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -18,7 +19,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -43,18 +43,11 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-AGOL_EDIT_PUB_ASMT = "Database Connections\\agol_edit_pub@ccsde.sde\\CCSDE.AGOL_EDIT_PUB.Assessment"
+AGOL_EDIT_PUB_ASMT = Database_Connections + "\\agol_edit_pub@ccsde.sde\\CCSDE.AGOL_EDIT_PUB.Assessment"
 ASMT_REPORT_FLDR = r"R:\\GIS\\Assessment\\Reports"
 
 # Local variables:
@@ -67,10 +60,12 @@ start_time = time.time()
 
 print ("============================================================================")
 print ("Begining Assessment request report run: "+ str(Day) + " " + str(Time))
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 
 write_log("============================================================================", logfile)
 write_log("Begining Assessment request report run: "+ str(Day) + " " + str(Time), logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 try:

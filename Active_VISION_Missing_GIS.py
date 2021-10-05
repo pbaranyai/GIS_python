@@ -3,6 +3,7 @@
 # Active_VISION_Missing_GIS.py
 # Created on: 2021-07-19
 # Updated on 2021-07-19
+# Works in ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 #
@@ -19,7 +20,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -44,18 +44,11 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-AUTOWORKSPACE = "Database Connections\\auto_workspace@ccsde.sde"
+AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
 ASMT_REPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
 LOCATOR_WKSP = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
 
@@ -72,10 +65,12 @@ start_time = time.time()
 print ("============================================================================")
 print ("Creating Active VISION record missing from GIS Report: "+ str(Day) + " " + str(Time))
 print ("Located at: R:\GIS\Assessment\Reports")
+print ("Works in ArcGIS Pro")
 print ("============================================================================")
 write_log("============================================================================", logfile)
 write_log("Creating Active VISION record missing from GIS Report: "+ str(Day) + " " + str(Time), logfile)
 write_log("Located at: R:\GIS\Assessment\Reports", logfile)
+write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
 print ("\n Deleting excel file & Geocoding all VISION records")
@@ -107,7 +102,7 @@ except:
 
 try:
     # Geocode VIS_REALMAST_TBL in AUTOWORKSPACE against CC_PARCEL_Locator, into "memory"
-    VIS_REALMAST_GEOCODE = arcpy.GeocodeAddresses_geocoding(VISION_REALMAST_TBL_SDE, CC_PARCEL_LOC, "'Single Line Input' REM_PID VISIBLE NONE", "in_memory/VIS_REALMAST_GEOCODE", "STATIC", "", "ROUTING_LOCATION")
+    VIS_REALMAST_GEOCODE = arcpy.geocoding.GeocodeAddresses(VISION_REALMAST_TBL_SDE, CC_PARCEL_LOC, "'Single Line Input' REM_PID VISIBLE NONE", "in_memory/VIS_REALMAST_GEOCODE", "STATIC", None, '', None, "ALL")
     print ("\n Geocoding REALMAST Table into memory")
     write_log ("\n Geocoding REALMAST Table into memory", logfile)
 except:
@@ -119,7 +114,7 @@ except:
 
 try:
     # Append VIS_REALMAST_GEOCODE from memory to MISSING_GIS_GEOCODE in AUTOWORKSPACE/ASSESSMENT
-    arcpy.Append_management(VIS_REALMAST_GEOCODE, MISSING_GIS_GEOCODE, "NO_TEST", 'REM_PID "REM_PID" true true false 4 Long 0 10 ,First,#,in_memory/VIS_REALMAST_GEOCODE,REM_PID,-1,-1;REM_PARCEL_STATUS "REM_PARCEL_STATUS" true true false 1 Text 0 0 ,First,#,in_memory/VIS_REALMAST_GEOCODE,REM_PARCEL_STATUS,-1,-1;STATUS "STATUS" true true false 50 Text 0 0 ,First,#,in_memory/VIS_REALMAST_GEOCODE,Status,-1,-1', "")
+    arcpy.management.Append(VIS_REALMAST_GEOCODE, MISSING_GIS_GEOCODE, "NO_TEST", r'REM_PID "REM_PID" true true false 4 Long 0 10,First,#,in_memory/VIS_REALMAST_GEOCODE,USER_REM_PID,-1,-1;REM_PARCEL_STATUS "REM_PARCEL_STATUS" true true false 1 Text 0 0,First,#,in_memory/VIS_REALMAST_GEOCODE,USER_REM_PARCEL_STATUS,0,1;STATUS "STATUS" true true false 50 Text 0 0,First,#,in_memory/VIS_REALMAST_GEOCODE,Status,0,1', '', '')
     print ("\n   Appending VIS_REALMAST_GEOCODE from memory to MISSING_GIS_GEOCODE in AUTOWORKSPACE/ASSESSMENT")
     write_log ("\n   Appending VIS_REALMAST_GEOCODE from memory to MISSING_GIS_GEOCODE in AUTOWORKSPACE/ASSESSMENT", logfile)
 except:
