@@ -10,8 +10,9 @@
 #
 # STEP 1 of 2
 # Author: Phil Baranyai/Crawford County GIS Manager
-# Created: 2/28/2019
-# Last Edited: 06/1/2021 - Updated with missing NG911 fields for multiple datasets.
+# Created on: 2019-02-28 
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
 
 import sys
@@ -20,7 +21,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -45,16 +45,6 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("No ArcEditor (ArcStandard) license available", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
-
 # Define Work Paths for FGDB:
 NORTHERN_TIER_CAD_FLDR = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
 NORTHERN_TIER_COUNTY_DATA_XML = "R:\\GIS\\NorthernTierCAD_GIS\\XML_Workspace\\NORTHERN_TIER_COUNTY_DATA.XML"
@@ -64,8 +54,13 @@ start_time = time.time()
 
 print ("=====================================================================================================================")
 print ("Checking for existing NorthernTier FGDB, delete and rebuild fresh if exists.")
+print ("Works in ArcGIS Pro")
 print ("=====================================================================================================================")
+
+write_log("=====================================================================================================================", logfile)
 write_log("\n Checking for existing NorthernTier FGDB, delete and rebuild fresh if exists.", logfile)
+write_log("Works in ArcGIS Pro", logfile)
+write_log("=====================================================================================================================", logfile)
 
 try:
     # Pre-clean old FGDB, if exists (if old Northern_Tier_County_Data_YYYYMMDD.gdb exists and was never renamed, the program will delete it, so it will be able to run without failure, henceforth providing the newest data)
@@ -93,12 +88,15 @@ except:
     raise
     sys.exit ()
 
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+
 # Define Work Paths for Databases:
 NORTHERN_TIER_CAD_FLDR = r"R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
 NORTHERN_TIER_CAD_FGDB = NORTHERN_TIER_CAD_FLDR + "\\Northern_Tier_County_Data_YYYYMMDD.gdb"
 NORTHERN_TIER_CAD_FGDB_CC = NORTHERN_TIER_CAD_FGDB + "\\Crawford_County"
 DELETE_FILES = NORTHERN_TIER_CAD_FGDB + "\\DELETE_FILES"
-PUBLIC_SAFETY_DB = "Database Connections\\PUBLIC_SAFETY@ccsde.sde"
+PUBLIC_SAFETY_DB = Database_Connections + "\\PUBLIC_SAFETY@ccsde.sde"
 
 print ("Importing XML workspace to Northern Tier FGDB for schema structure")
 write_log("Importing XML workspace to Northern Tier FGDB for schema structure", logfile)
@@ -106,7 +104,7 @@ write_log("Importing XML workspace to Northern Tier FGDB for schema structure", 
 try:
     # Import XML Workspace for NT FGDB Schema (if the Northern Tier GIS sub-committee agrees to more changes, this XML will need to be updated)
     arcpy.ImportXMLWorkspaceDocument_management(NORTHERN_TIER_CAD_FGDB, NORTHERN_TIER_COUNTY_DATA_XML, "SCHEMA_ONLY", "")
-    print "Northern_Tier_County_Data_YYYYMMDD FGDB schema import completed"
+    print ("Northern_Tier_County_Data_YYYYMMDD FGDB schema import completed")
 except:
     print ("\n Unable to import XML workspace file")
     write_log("Unable to import XML workspace file", logfile)
@@ -350,7 +348,7 @@ try:
     # Make Feature Layer_BLSResponse (make a temporary layer file of BLS coverage, so it can be manipulated)
     BLS_COVERAGE_INTERNAL_Layer = arcpy.MakeFeatureLayer_management(BLS_COVERAGE_INTERNAL, "BLS_COVERAGE_INTERNAL_Layer", "", "", "EMS_DEPT EMS_DEPT VISIBLE NONE;EMS_NUM EMS_NUM VISIBLE NONE;EMS_EMSID EMS_EMSID VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;GLOBALID GLOBALID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;OBJECTID OBJECTID VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE.STArea() SHAPE.STArea() VISIBLE NONE;SHAPE.STLength() SHAPE.STLength() VISIBLE NONE")
 except:
-    print "\n Unable to Make Feature Layer_BLSResponse"
+    print ("\n Unable to Make Feature Layer_BLSResponse")
     write_log("Unable to Make Feature Layer_BLSResponse", logfile)
     logging.exception('Got exception on Make Feature Layer_BLSResponse logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -364,7 +362,7 @@ try:
     # Intersect ALS Zones with BLS Coverage (intersect BLS and ALS coverages, to break up ALS into BLS sized polygons, to serve the EMS districts FC in CAD)
     arcpy.Intersect_analysis(Intersect_analysis_feature_list, Intersect_analysis_feature_output, "ALL", "", "INPUT")
 except:
-    print "\n Unable to Intersect ALS Zones with BLS Coverage"
+    print ("\n Unable to Intersect ALS Zones with BLS Coverage")
     write_log("Unable to Intersect ALS Zones with BLS Coverage", logfile)
     logging.exception('Got exception on Intersect ALS Zones with BLS Coverage logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -374,7 +372,7 @@ try:
     # Spatial Join - BLS Coverage Internal / ALS Zones Internal  (spatial join ALS to BLS, to get data from fields of both features)
     arcpy.SpatialJoin_analysis(Intersect_analysis_feature_output, ALS_ZONES_INTERNAL, DELETE_FILES + "//BLS_ALS_INTERSECT_Spatial_Join", "JOIN_ONE_TO_ONE", "KEEP_ALL", 'ALS_ID "ALS UNQUIE ID #" true true false 8 Double 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',ALS_ID,-1,-1;ALS_NAME "ALS SERVICE NAME" true true false 75 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',ALS_NAME,-1,-1;UPDATE_DATE "UPDATE DATE" true true false 8 Date 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',UPDATE_DATE,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',COUNTY_FIPS,-1,-1;FID_ALS_ZONES_INTERNAL "FID_ALS_ZONES_INTERNAL" true true false 4 Long 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',FID_ALS_ZONES_INTERNAL,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',DiscrpAgID_1,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',STATE_1,-1,-1;EMS_DEPT "BLS/EMS DEPARTMENT" true true false 50 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',EMS_DEPT,-1,-1;EMS_NUM "BLS/EMS DEPARTMENT #" true true false 10 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',EMS_NUM,-1,-1;EMS_EMSID "EMS ID CODE" true true false 10 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',EMS_EMSID,-1,-1;COUNTY_NAME_1 "COUNTY NAME" true true false 50 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',COUNTY_NAME_1,-1,-1;COUNTY_FIPS_1 "COUNTY FIPS CODE" true true false 8 Double 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',COUNTY_FIPS_1,-1,-1;FID_BLS_COVERAGE_INTERNAL "FID_BLS_COVERAGE_INTERNAL" true true false 4 Long 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',FID_BLS_COVERAGE_INTERNAL,-1,-1;DiscrpAgID_1 "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',DiscrpAgID_1,-1,-1;STATE_1 "State" true true false 2 Text 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',STATE_1,-1,-1;SHAPE_Length "SHAPE_Length" false true true 8 Double 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',SHAPE_Length,-1,-1;SHAPE_Area "SHAPE_Area" false true true 8 Double 0 0 ,First,#,'+ALS_JOIN_DELETE_Intersect_DELETE+',SHAPE_Area,-1,-1;ALS_ID_1 "ALS UNQUIE ID #" true true false 8 Double 8 38 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,ALS_ID,-1,-1;ALS_NAME_1 "ALS SERVICE NAME" true true false 75 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,ALS_NAME,-1,-1;UPDATE_DATE_1 "UPDATE DATE" true true false 8 Date 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,UPDATE_DATE,-1,-1;COUNTY_NAME_12 "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS_12 "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,GLOBALID,-1,-1;DiscrpAgID_12 "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,DiscrpAgID,-1,-1;STATE_12 "State" true true false 2 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,STATE,-1,-1;SHAPE_STArea__ "SHAPE_STArea__" false false true 0 Double 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE_STLength__ "SHAPE_STLength__" false false true 0 Double 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL,SHAPE.STLength(),-1,-1', "HAVE_THEIR_CENTER_IN", "", "")
 except:
-    print "\n Unable to Spatial Join - BLS Coverage Internal / ALS Zones Internal"
+    print ("\n Unable to Spatial Join - BLS Coverage Internal / ALS Zones Internal")
     write_log("Unable to Spatial Join - BLS Coverage Internal / ALS Zones Internal", logfile)
     logging.exception('Got exception on Spatial Join - BLS Coverage Internal / ALS Zones Internal logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -384,7 +382,7 @@ try:
     # Add Description Field to EMSDistricts
     arcpy.AddField_management(BLS_ALS_INTERSECT_Spatial_Join, "Description", "TEXT", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add Description Field to EMSDistricts"
+    print ("\n Unable to Add Description Field to EMSDistricts")
     write_log("Unable to Add Description Field to EMSDistricts", logfile)
     logging.exception('Got exception on Add Description Field to EMSDistricts logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -394,7 +392,7 @@ try:
     # Add ID Field to EMSDistricts
     arcpy.AddField_management(BLS_ALS_INTERSECT_Spatial_Join, "ID", "TEXT", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add ID Field to EMSDistricts"
+    print ("\n Unable to Add ID Field to EMSDistricts")
     write_log("Unable to Add ID Field to EMSDistricts", logfile)
     logging.exception('Got exception on Add ID Field to EMSDistricts logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -404,7 +402,7 @@ try:
     # Add ID_TEMP Field to EMSDistricts (ID is source data is text format, need to calculate into integer, temp field added)
     arcpy.AddField_management(BLS_ALS_INTERSECT_Spatial_Join, "ID_TEMP", "LONG", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add ID_TEMP Field to EMSDistricts"
+    print ("\n Unable to Add ID_TEMP Field to EMSDistricts")
     write_log("Unable to Add ID_TEMP Field to EMSDistricts", logfile)
     logging.exception('Got exception on Add ID_TEMP Field to EMSDistricts logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -414,7 +412,7 @@ try:
     # Calculate Field - EMSDistricts Description (calculate first 12 digits of ALS_NAME - EMS_NUM into field)
     arcpy.CalculateField_management(BLS_ALS_INTERSECT_Spatial_Join, "Description", '"{} - {}".format(!ALS_NAME![0:12], !EMS_NUM!)', "PYTHON", "")
 except:
-    print "\n Unable to Calculate Field - EMSDistricts Description"
+    print ("\n Unable to Calculate Field - EMSDistricts Description")
     write_log("Unable to Calculate Field - EMSDistricts Description", logfile)
     logging.exception('Got exception on Unable to Calculate Field - EMSDistricts Description logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -424,7 +422,7 @@ try:
     # Calculate Field - EMSDistricts ID_TEMP
     arcpy.CalculateField_management(BLS_ALS_INTERSECT_Spatial_Join, "ID_TEMP",'!ALS_ID!', "PYTHON", "")
 except:
-    print "\n Unable to Calculate Field - EMSDistricts ID_TEMP"
+    print ("\n Unable to Calculate Field - EMSDistricts ID_TEMP")
     write_log("Unable to Calculate Field - EMSDistricts ID_TEMP", logfile)
     logging.exception('Got exception on Unable to Calculate Field - EMSDistricts ID_TEMP logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -435,7 +433,7 @@ try:
     # Calculate Field - EMSDistricts ID (calculate 2 + the last 5 digits of ID_TEMP + EMS_ID)
     arcpy.CalculateField_management(BLS_ALS_INTERSECT_Spatial_Join, "ID", '"2"+str(!ID_TEMP!)[5:]+str(!EMS_EMSID!)', "PYTHON", "")
 except:
-    print "\n Unable to Calculate Field - EMSDistricts ID"
+    print ("\n Unable to Calculate Field - EMSDistricts ID")
     write_log("Unable to Calculate Field - EMSDistricts ID", logfile)
     logging.exception('Got exception on Unable to Calculate Field - EMSDistricts ID logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -448,24 +446,24 @@ try:
     print ('{} has {} records'.format(EMS_Districts_CrawfordCo, EMS_Districts_result[0]))
     write_log('{} has {} records'.format(EMS_Districts_CrawfordCo, EMS_Districts_result[0]), logfile)
 except:
-    print "\n Unable to Append BLS_ALS_INTERSECT_Spatial_Join to EMS Districts to Northern Tier FGDB"
+    print ("\n Unable to Append BLS_ALS_INTERSECT_Spatial_Join to EMS Districts to Northern Tier FGDB")
     write_log("Unable to Append BLS_ALS_INTERSECT_Spatial_Join to EMS Districts to Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append BLS_ALS_INTERSECT_Spatial_Join to EMS Districts to Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
     
-print "       BLS-ALS Coverage to EMS Districts append completed"
+print ("       BLS-ALS Coverage to EMS Districts append completed")
 write_log("       BLS-ALS Coverage to EMS Districts append completed", logfile)
 
 
-print "\n Append Fire Department Coverage from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Fire Department Coverage from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Fire Department Coverage from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
     # Fire Dept Coverage to Delete Files (create temporary fire dept feature in delete files FDS for manipulation into fire dept for CAD)
     arcpy.FeatureClassToFeatureClass_conversion(FIRE_DEPT_COVERAGE_INTERNAL, DELETE_FILES, "FIRE_DEPT_COVERAGE_DELETE", "", 'FIRE_DEPT "FIRE DEPARTMENT" true true false 50 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',FIRE_DEPT,-1,-1;FIRE_FDID "FIRE DEPARTMENT FDID CODE" true true false 15 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',FIRE_FDID,-1,-1;FIRE_NUM "FIRE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',FIRE_NUM,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',GLOBALID,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',STATE,-1,-1;SHAPE_STArea__ "SHAPE_STArea__" false false true 0 Double 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',SHAPE.STArea(),-1,-1;SHAPE_STLength__ "SHAPE_STLength__" false false true 0 Double 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',SHAPE.STLength(),-1,-1', "")
 except:
-    print "\n Unable to export Fire Dept Coverage to Delete Files"
+    print ("\n Unable to export Fire Dept Coverage to Delete Files")
     write_log("Unable to export Fire Dept Coverage to Delete Files", logfile)
     logging.exception('Got exception on export Fire Dept Coverage to Delete Files logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -475,7 +473,7 @@ try:
     # Add ID Field to FireDept_COVERAGE_DELETE
     arcpy.AddField_management(FIRE_DEPT_COVERAGE_DELETE, "ID", "LONG", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add ID Field to FireDept_COVERAGE_DELETE"
+    print ("\n Unable to Add ID Field to FireDept_COVERAGE_DELETE")
     write_log("Unable to Add ID Field to FireDept_COVERAGE_DELETE", logfile)
     logging.exception('Got exception on Add ID Field to FireDept_COVERAGE_DELETE logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -485,7 +483,7 @@ try:
     # Calculate ID Field FIRE_DEPT_COVERAGE_DELETE (calculate 20+FIRE_FDID into field)
     arcpy.CalculateField_management(FIRE_DEPT_COVERAGE_DELETE, "ID", '"20"+ !FIRE_FDID!', "PYTHON", "")
 except:
-    print "\n Unable to Calculate ID Field FIRE_DEPT_COVERAGE_DELETE"
+    print ("\n Unable to Calculate ID Field FIRE_DEPT_COVERAGE_DELETE")
     write_log("Unable to Calculate ID Field FIRE_DEPT_COVERAGE_DELETE", logfile)
     logging.exception('Got exception on Calculate ID Field FIRE_DEPT_COVERAGE_DELETE logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -498,24 +496,24 @@ try:
     print ('{} has {} records'.format(Fire_Department_CrawfordCo, Fire_Department_result[0]))
     write_log('{} has {} records'.format(Fire_Department_CrawfordCo, Fire_Department_result[0]), logfile)
 except:
-    print "\n Unable to Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to Northern Tier FGDB"
+    print ("\n Unable to Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to Northern Tier FGDB")
     write_log("Unable to Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
    
-print "       Fire Department Coverage to Fire Department append completed"
+print ("       Fire Department Coverage to Fire Department append completed")
 write_log("       Fire Department Coverage to Fire Department append completed", logfile)
 
 
-print "\n Process Fire Department Coverage & Fire Grids from CRAW_INTERNAL as Fire Response and append to Northern Tier FGDB"
+print ("\n Process Fire Department Coverage & Fire Grids from CRAW_INTERNAL as Fire Response and append to Northern Tier FGDB")
 write_log("\n Process Fire Department Coverage & Fire Grids from CRAW_INTERNAL as Fire Response and append to Northern Tier FGDB", logfile)
 
 try:
     # Make Feature Layer from Fire Department Internal (create temporary fire dept layer for manipulation into fire response for CAD)
     FIRE_DEPT_COVERAGE_INTERNAL_LYR = arcpy.MakeFeatureLayer_management(FIRE_DEPT_COVERAGE_INTERNAL, "FIRE_DEPT_COVERAGE_INTERNAL_LYR", "", "", "FIRE_DEPT FIRE_DEPT VISIBLE NONE;FIRE_FDID FIRE_FDID VISIBLE NONE;FIRE_NUM FIRE_NUM VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;GLOBALID GLOBALID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;OBJECTID OBJECTID VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;STATE STATE VISIBLE NONE;SHAPE.STArea() SHAPE.STArea() VISIBLE NONE;SHAPE.STLength() SHAPE.STLength() VISIBLE NONE")
 except:
-    print "\n Unable to Make Feature Layer from Fire Department Internal"
+    print ("\n Unable to Make Feature Layer from Fire Department Internal")
     write_log("Unable to Make Feature Layer from Fire Department Internal", logfile)
     logging.exception('Got exception on Make Feature Layer from Fire Department Internal logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -525,7 +523,7 @@ try:
     # Spatial Join Fire Dept Internal Layer and Fire Grids (spatial join fire dept coverage and fire grids, to break up fire departments into grid sized areas)
     arcpy.SpatialJoin_analysis(FIRE_GRIDS_INTERNAL, FIRE_DEPT_COVERAGE_INTERNAL_LYR, FIRE_GRIDS_JOIN_DELETE, "JOIN_ONE_TO_ONE", "KEEP_ALL", 'Description "Description" true true false 50 Text 0 0 ,First,#,'+FIRE_GRIDS_INTERNAL+',Description,-1,-1;ID "ID" true true false 4 Long 0 10 ,First,#,'+FIRE_GRIDS_INTERNAL+',ID,-1,-1;FG_UNIQUE_ID "FG_UNIQUE_ID" true true false 4 Long 0 10 ,First,#,'+FIRE_GRIDS_INTERNAL+',FG_UNIQUE_ID,-1,-1;EDIT_DATE "EDIT_DATE" true true false 8 Date 0 0 ,First,#,'+FIRE_GRIDS_INTERNAL+',EDIT_DATE,-1,-1;Shape_STArea__ "Shape_STArea__" false false true 0 Double 0 0 ,First,#,'+FIRE_GRIDS_INTERNAL+',Shape.STArea(),-1,-1;Shape_STLength__ "Shape_STLength__" false false true 0 Double 0 0 ,First,#,'+FIRE_GRIDS_INTERNAL+',Shape.STLength(),-1,-1;FIRE_DEPT "FIRE DEPARTMENT" true true false 50 Text 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,FIRE_DEPT,-1,-1;FIRE_FDID "FIRE DEPARTMENT FDID CODE" true true false 15 Text 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,FIRE_FDID,-1,-1;FIRE_NUM "FIRE DEPARTMENT #" true true false 10 Text 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,FIRE_NUM,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,GLOBALID,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,STATE,-1,-1;SHAPE_STArea_1 "SHAPE_STArea_1" false true true 0 Double 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,SHAPE.STArea(),-1,-1;SHAPE_STLength_1 "SHAPE_STLength_1" false true true 0 Double 0 0 ,First,#,FIRE_DEPT_COVERAGE_INTERNAL_LYR,SHAPE.STLength(),-1,-1', "INTERSECT", "", "")
 except:
-    print "\n Unable to Spatial Join Fire Dept Internal Layer and Fire Grids"
+    print ("\n Unable to Spatial Join Fire Dept Internal Layer and Fire Grids")
     write_log("Unable to Spatial Join Fire Dept Internal Layer and Fire Grids", logfile)
     logging.exception('Got exception on Spatial Join Fire Dept Internal Layer and Fire Grids logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -535,7 +533,7 @@ try:
     # Add CAD_ID Field to FIRE_GRIDS_JOIN_DELETE
     arcpy.AddField_management(FIRE_GRIDS_JOIN_DELETE, "CAD_ID", "TEXT", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add CAD_ID Field to FIRE_GRIDS_JOIN_DELETE"
+    print ("\n Unable to Add CAD_ID Field to FIRE_GRIDS_JOIN_DELETE")
     write_log("Unable to Add CAD_ID Field to FIRE_GRIDS_JOIN_DELETE", logfile)
     logging.exception('Got exception on Add CAD_ID Field to FIRE_GRIDS_JOIN_DELETE logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -545,7 +543,7 @@ try:
     # Process: Calculate Field CAD_ID
     arcpy.CalculateField_management(FIRE_GRIDS_JOIN_DELETE, "CAD_ID", "!ID!", "PYTHON", "")
 except:
-    print "\n Unable to Calculate Field CAD_ID"
+    print ("\n Unable to Calculate Field CAD_ID")
     write_log("Unable to Calculate Field CAD_ID", logfile)
     logging.exception('Got exception on Calculate Field CAD_ID logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -555,7 +553,7 @@ try:
     # Add CAD_Description Field to FIRE_GRIDS_JOIN_DELETE
     arcpy.AddField_management(FIRE_GRIDS_JOIN_DELETE, "CAD_DESCRIPTION", "TEXT", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add CAD_Description Field to FIRE_GRIDS_JOIN_DELETE"
+    print ("\n Unable to Add CAD_Description Field to FIRE_GRIDS_JOIN_DELETE")
     write_log("Unable to Add CAD_Description Field to FIRE_GRIDS_JOIN_DELETE", logfile)
     logging.exception('Got exception on Add CAD_Description Field to FIRE_GRIDS_JOIN_DELETE logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -565,7 +563,7 @@ try:
     # Calculate CAD Description Field
     arcpy.CalculateField_management(FIRE_GRIDS_JOIN_DELETE, "CAD_DESCRIPTION", '"20"+"-"+ !Description!', "PYTHON", "")
 except:
-    print "\n Unable to Calculate CAD Description Field"
+    print ("\n Unable to Calculate CAD Description Field")
     write_log("Unable to Calculate CAD Description Field", logfile)
     logging.exception('Got exception on Calculate CAD Description Field logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -578,24 +576,24 @@ try:
     print ('{} has {} records'.format(Fire_Response_CrawfordCo, Fire_Response_result[0]))
     write_log('{} has {} records'.format(Fire_Response_CrawfordCo, Fire_Response_result[0]), logfile)
 except:
-    print "\n Unable to Append FIRE_GRIDS_JOIN_DELETE to Fire Response in Northern Tier FGDB"
+    print ("\n Unable to Append FIRE_GRIDS_JOIN_DELETE to Fire Response in Northern Tier FGDB")
     write_log("Unable to Append FIRE_GRIDS_JOIN_DELETE to Fire Response in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append FIRE_GRIDS_JOIN_DELETE to Fire Response in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
  
-print "       Fire Department-Fire Grids coverage to Fire Response append completed"
+print ("       Fire Department-Fire Grids coverage to Fire Response append completed")
 write_log("       Fire Department-Fire Grids coverage to Fire Response append completed", logfile)
 
 
-print "\n Append Police Department Coverage from CRAW_INTERNAL to Northern Tier FGDB Police Department"
+print ("\n Append Police Department Coverage from CRAW_INTERNAL to Northern Tier FGDB Police Department")
 write_log("\n Append Police Department Coverage from CRAW_INTERNAL to Northern Tier FGDB Police Department", logfile)
 
 try:
     # Export PoliceDept Internal to PoliceDept Delete (create temporary police dept feature in delete_file FDS for manipulation into police department for CAD)
     arcpy.FeatureClassToFeatureClass_conversion(POLICE_DEPT_COVERAGE_INTERNAL, DELETE_FILES, "POLICE_DEPT_COVERAGE_DELETE", "POLICE_DEPT <> 'PA STATE POLICE - CORRY' OR COUNTY_FIPS = 42039", 'POLICE_DEPT "POLICE DEPARTMENT" true true false 50 Text 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',POLICE_DEPT,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',COUNTY_FIPS,-1,-1;POLICE_ID "POLICE_ID" true true false 4 Long 0 10 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',POLICE_ID,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',GLOBALID,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',STATE,-1,-1;SHAPE_STArea__ "SHAPE_STArea__" false false true 0 Double 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',SHAPE.STArea(),-1,-1;SHAPE_STLength__ "SHAPE_STLength__" false false true 0 Double 0 0 ,First,#,'+POLICE_DEPT_COVERAGE_INTERNAL+',SHAPE.STLength(),-1,-1', "")
 except:
-    print "\n Unable to Export PoliceDept Internal to PoliceDept Delete"
+    print ("\n Unable to Export PoliceDept Internal to PoliceDept Delete")
     write_log("Unable to Export PoliceDept Internal to PoliceDept Delete", logfile)
     logging.exception('Got exception on Export PoliceDept Internal to PoliceDept Delete logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -605,7 +603,7 @@ try:
     # Add PoliceDeptID Field to POLICE_DEPT_COVERAGE_DELETE
     arcpy.AddField_management(POLICE_DEPT_COVERAGE_DELETE, "ID", "LONG", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
 except:
-    print "\n Unable to Add PoliceDeptID Field to POLICE_DEPT_COVERAGE_DELETE"
+    print ("\n Unable to Add PoliceDeptID Field to POLICE_DEPT_COVERAGE_DELETE")
     write_log("Unable to Add PoliceDeptID Field to POLICE_DEPT_COVERAGE_DELETE", logfile)
     logging.exception('Got exception on Add PoliceDeptID Field to POLICE_DEPT_COVERAGE_DELETE logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -615,7 +613,7 @@ try:
     # Calculate Field - PoliceDept ID (calculate 20+POLICE_ID into field)
     arcpy.CalculateField_management(POLICE_DEPT_COVERAGE_DELETE, "ID", '"20{}".format(!POLICE_ID!)', "PYTHON", "")
 except:
-    print "\n Unable to Calculate Field - PoliceDept ID"
+    print ("\n Unable to Calculate Field - PoliceDept ID")
     write_log("Unable to Calculate Field - PoliceDept ID", logfile)
     logging.exception('Got exception on Calculate Field - PoliceDept ID logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -634,7 +632,7 @@ try:
         del row 
         del cursor
 except:
-    print "\n Unable to Calculate Description Field - ORI CODES"
+    print ("\n Unable to Calculate Description Field - ORI CODES")
     write_log("Unable to Calculate Description Field - ORI CODES", logfile)
     logging.exception('Got exception on Calculate Description Field - ORI CODES logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -645,7 +643,7 @@ try:
     # Dissolve POLICE_DEPT_COVERAGE_DELETE to elminate separate features
     arcpy.Dissolve_management(POLICE_DEPT_COVERAGE_DELETE, DELETE_FILES + "//POLICE_DEPT_COVERAGE_DELETE_DISSOLVE", "POLICE_DEPT;COUNTY_NAME;COUNTY_FIPS;POLICE_ID;DiscrpAgID;STATE;ID", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
-    print "\n Unable to Dissolve POLICE_DEPT_COVERAGE_DELETE to elminate separate features"
+    print ("\n Unable to Dissolve POLICE_DEPT_COVERAGE_DELETE to elminate separate features")
     write_log("Unable to Dissolve POLICE_DEPT_COVERAGE_DELETE to elminate separate features", logfile)
     logging.exception('Got exception on Dissolve POLICE_DEPT_COVERAGE_DELETE to elminate separate features logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -658,23 +656,23 @@ try:
     print ('{} has {} records'.format(Police_Department_CrawfordCo, Police_Department_result[0]))
     write_log('{} has {} records'.format(Police_Department_CrawfordCo, Police_Department_result[0]), logfile)
 except:
-    print "\n Unable to Append POLICE_DEPT_COVERAGE_DELETE_DISSOLVE to Police Department in Northern Tier FGDB"
+    print ("\n Unable to Append POLICE_DEPT_COVERAGE_DELETE_DISSOLVE to Police Department in Northern Tier FGDB")
     write_log("Unable to Append POLICE_DEPT_COVERAGE_DELETE_DISSOLVE to Police Department in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append POLICE_DEPT_COVERAGE_DELETE_DISSOLVE to Police Department in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
  
-print "      Police Department coverage to Police Department append completed"
+print ("      Police Department coverage to Police Department append completed")
 write_log("      Police Department coverage to Police Department append completed", logfile)
 
-print "\n Append Police Department Coverage from CRAW_INTERNAL to Northern Tier FGDB Police Response"
+print ("\n Append Police Department Coverage from CRAW_INTERNAL to Northern Tier FGDB Police Response")
 write_log("\n Append Police Department Coverage from CRAW_INTERNAL to Northern Tier FGDB Police Response", logfile)
 
 try:
     # Dissolve POLICE_DEPT_COVERAGE_INTERNAL to eliminate separate features
     arcpy.Dissolve_management(POLICE_DEPT_COVERAGE_INTERNAL, DELETE_FILES + "//POLICE_RESPONSE_DISSOLVE", "POLICE_DEPT;COUNTY_NAME;COUNTY_FIPS;POLICE_ID;DiscrpAgID;STATE", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
-    print "\n Unable to Dissolve POLICE_DEPT_COVERAGE_INTERNAL to eliminate separate features"
+    print ("\n Unable to Dissolve POLICE_DEPT_COVERAGE_INTERNAL to eliminate separate features")
     write_log("Unable to Dissolve POLICE_DEPT_COVERAGE_INTERNAL to eliminate separate features", logfile)
     logging.exception('Got exception on Dissolve POLICE_DEPT_COVERAGE_INTERNAL to eliminate separate features logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -687,24 +685,24 @@ try:
     print ('{} has {} records'.format(Police_Response_CrawfordCo, Police_Response_result[0]))
     write_log('{} has {} records'.format(Police_Response_CrawfordCo, Police_Response_result[0]), logfile)
 except:
-    print "\n Unable to Append POLICE_DEPT_COVERAGE_INTERNAL to Police Response in Northern Tier FGDB"
+    print ("\n Unable to Append POLICE_DEPT_COVERAGE_INTERNAL to Police Response in Northern Tier FGDB")
     write_log("Unable to Append POLICE_DEPT_COVERAGE_INTERNAL to Police Response in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append POLICE_DEPT_COVERAGE_INTERNAL to Police Response in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
  
-print "      Police Department coverage to Police Response append completed"
+print ("      Police Department coverage to Police Response append completed")
 write_log("      Police Department coverage to Police Response append completed", logfile)
 
 
-print "\n Process Municipal Boundaries with Police Department Coverage in Police Reporting and then append to Northern Tier FGDB"
+print ("\n Process Municipal Boundaries with Police Department Coverage in Police Reporting and then append to Northern Tier FGDB")
 write_log("\n Process Municipal Boundaries with Police Department Coverage in Police Reporting and then append to Northern Tier FGDB", logfile)
 
 try:
     # Spatial Join COUNTY_ADJ_MUNI_BOUND_INTERNAL to POLICE_DEPT_COVERAGE_INTERNAL (spatial join county adjusted muni boundaries with police dept coverage to break up into municipal sized police zones for CAD police reporting)
     arcpy.SpatialJoin_analysis(COUNTY_ADJ_MUNI_BOUND_INTERNAL, POLICE_DEPT_COVERAGE_INTERNAL, POLICE_REPORT_JOIN_DELETE, "JOIN_ONE_TO_ONE", "KEEP_ALL", 'MUNI_NAME "MUNICIPALITY NAME" true true false 50 Text 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',MUNI_NAME,-1,-1;MUNI_FIPS "MUNICIPALITY FIPS CODE" true true false 8 Double 8 38 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',MUNI_FIPS,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE DATE" true true false 8 Date 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',UPDATE_DATE,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',GLOBALID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',STATE,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',DiscrpAgID,-1,-1;COUNTRY "Country" true true false 2 Text 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',COUNTRY,-1,-1;SHAPE_STArea__ "SHAPE_STArea__" false false true 0 Double 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',SHAPE.STArea(),-1,-1;SHAPE_STLength__ "SHAPE_STLength__" false false true 0 Double 0 0 ,First,#,'+COUNTY_ADJ_MUNI_BOUND_INTERNAL+',SHAPE.STLength(),-1,-1;POLICE_DEPT "POLICE DEPARTMENT" true true false 50 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,POLICE_DEPT,-1,-1;COUNTY_NAME_1 "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS_1 "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,COUNTY_FIPS,-1,-1;POLICE_ID "POLICE_ID" true true false 4 Long 0 10 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,POLICE_ID,-1,-1;GLOBALID_1 "GLOBALID_1" false false false 38 GlobalID 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,GLOBALID,-1,-1;DiscrpAgID_1 "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,DiscrpAgID,-1,-1;STATE_1 "State" true true false 2 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,STATE,-1,-1;SHAPE_STArea_1 "SHAPE_STArea_1" false false true 0 Double 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE_STLength_1 "SHAPE_STLength_1" false false true 0 Double 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Public_Safety\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL,SHAPE.STLength(),-1,-1', "INTERSECT", "", "")
 except:
-    print "\n Unable to Spatial Join COUNTY_ADJ_MUNI_BOUND_INTERNAL to POLICE_DEPT_COVERAGE_INTERNAL"
+    print ("\n Unable to Spatial Join COUNTY_ADJ_MUNI_BOUND_INTERNAL to POLICE_DEPT_COVERAGE_INTERNAL")
     write_log("Unable to Spatial Join COUNTY_ADJ_MUNI_BOUND_INTERNAL to POLICE_DEPT_COVERAGE_INTERNAL", logfile)
     logging.exception('Got exception on Spatial Join COUNTY_ADJ_MUNI_BOUND_INTERNAL to POLICE_DEPT_COVERAGE_INTERNAL logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -717,17 +715,17 @@ try:
     print ('{} has {} records'.format(Police_Reporting_CrawfordCo, Police_Reporting_result[0]))
     write_log('{} has {} records'.format(Police_Reporting_CrawfordCo, Police_Reporting_result[0]), logfile)
 except:
-    print "\n Unable to Append POLICE_REPORT_JOIN_DELETE to Police Reporting in Northern Tier FGDB"
+    print ("\n Unable to Append POLICE_REPORT_JOIN_DELETE to Police Reporting in Northern Tier FGDB")
     write_log("Unable to Append POLICE_REPORT_JOIN_DELETE to Police Reporting in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append POLICE_REPORT_JOIN_DELETE to Police Reporting in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print "       Police Department coverage-Municipal Boundary to Police Reporting append completed"
+print ("       Police Department coverage-Municipal Boundary to Police Reporting append completed")
 write_log("       Police Department coverage-Municipal Boundary to Police Reporting append completed", logfile)
 
 
-print "\n Append Hydrants from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Hydrants from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Hydrants from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
@@ -737,24 +735,24 @@ try:
     print ('{} has {} records'.format(Hydrants_CrawfordCo, Hydrants_result[0]))
     write_log('{} has {} records'.format(Hydrants_CrawfordCo, Hydrants_result[0]), logfile)
 except:
-    print "\n Unable to Append HYDRANTS_INTERNAL to Hydrants in Northern Tier FGDB"
+    print ("\n Unable to Append HYDRANTS_INTERNAL to Hydrants in Northern Tier FGDB")
     write_log("Unable to Append Append HYDRANTS_INTERNAL to Hydrants in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append Append HYDRANTS_INTERNAL to Hydrants in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print "      Hydrants append completed"
+print ("      Hydrants append completed")
 write_log("      Hydrants append completed", logfile)
 
 
-print "\n Append Landmarks from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Landmarks from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Landmarks from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
     # Append LANDMARKS_INTERNAL to Landmarks in Northern Tier FGDB (append landmarks, unchanged, into staging FGDB)
     arcpy.Append_management(LANDMARKS_INTERNAL, Landmarks_CrawfordCo, "NO_TEST",'DiscrpAgID "Agency ID" true true false 75 Text 0 0 ,First,#,'+LANDMARKS_INTERNAL+',LANDMARK_NAME,-1,-1;DateUpdate "Date Updated" true true false 8 Date 0 0 ,First,#,'+LANDMARKS_INTERNAL+',UPDATE_DATE,-1,-1;Effective "Effective Date" true true false 8 Date 0 0 ,First,#;Expire "Expiration Date" true true false 8 Date 0 0 ,First,#;LMNP_NGUID "Landmark Name GID" true true false 254 Text 0 0 ,First,#,'+LANDMARKS_INTERNAL+',LANDMARK_NAME,-1,-1;Site_NGUID "Site GID" true true false 254 Text 0 0 ,First,#,'+LANDMARKS_INTERNAL+',LANDMARK_NAME,-1,-1;ACLMNNGUID "Complete Landmark Name GID" true true false 254 Text 0 0 ,First,#,'+LANDMARKS_INTERNAL+',LANDMARK_NAME,-1,-1;LMNamePart "Landmark Name Part" true true false 150 Text 0 0 ,First,#,'+LANDMARKS_INTERNAL+',LANDMARK_NAME,-1,-1;LMNP_Order "Landmark Name Part Order" true true false 1 Text 0 0 ,First,#', "")
 except:
-    print "\n Unable to Append LANDMARKS_INTERNAL to Landmarks in Northern Tier FGDB"
+    print ("\n Unable to Append LANDMARKS_INTERNAL to Landmarks in Northern Tier FGDB")
     write_log("Unable to Append LANDMARKS_INTERNAL to Landmarks in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append LANDMARKS_INTERNAL to Landmarks in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -767,17 +765,17 @@ try:
     print ('{} has {} records'.format(Landmarks_CrawfordCo, Landmarks_result[0]))
     write_log('{} has {} records'.format(Landmarks_CrawfordCo, Landmarks_result[0]), logfile)
 except:
-    print "\n Unable to Calculate Landmarks DiscrpAgID field in Northern Tier FGDB"
+    print ("\n Unable to Calculate Landmarks DiscrpAgID field in Northern Tier FGDB")
     write_log("Unable to Calculate Landmarks DiscrpAgID field in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Calculate Landmarks DiscrpAgID field in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print "       Landmarks append completed"
+print ("       Landmarks append completed")
 write_log("       Landmarks append completed", logfile)
 
 
-print "\n Append Mile Markers from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Mile Markers from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Mile Markers from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
@@ -787,17 +785,17 @@ try:
     print ('{} has {} records'.format(MilePosts_CrawfordCo, MilePosts_result[0]))
     write_log('{} has {} records'.format(MilePosts_CrawfordCo, MilePosts_result[0]), logfile)
 except:
-    print "\n Unable to Append MILE_MARKERS_INTERNAL to MilePosts in Northern Tier FGDB"
+    print ("\n Unable to Append MILE_MARKERS_INTERNAL to MilePosts in Northern Tier FGDB")
     write_log("Unable to Append MILE_MARKERS_INTERNAL to MilePosts in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append MILE_MARKERS_INTERNAL to MilePosts in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print "       Mile Markers to Mile Posts append completed"
+print ("       Mile Markers to Mile Posts append completed")
 write_log("       Mile Markers to Mile Posts append completed", logfile)
 
 
-print "\n Append Municipalities from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Municipalities from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Municipalities from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
@@ -807,24 +805,24 @@ try:
     print ('{} has {} records'.format(Municipalities_CrawfordCo, Municipalities_result[0]))
     write_log('{} has {} records'.format(Municipalities_CrawfordCo, Municipalities_result[0]), logfile)
 except:
-    print "\n Unable to Append COUNTY_ADJ_MUNI_BOUND_INTERNAL to Municipalities in Northern Tier FGDB"
+    print ("\n Unable to Append COUNTY_ADJ_MUNI_BOUND_INTERNAL to Municipalities in Northern Tier FGDB")
     write_log("Unable to Append COUNTY_ADJ_MUNI_BOUND_INTERNAL to Municipalities in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append COUNTY_ADJ_MUNI_BOUND_INTERNAL to Municipalities in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
     
-print "       Municipalities append completed"
+print ("       Municipalities append completed")
 write_log("       Municipalities append completed", logfile)
 
 
-print "\n Append Tax Parcels from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Tax Parcels from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Tax Parcels from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
     # Append TAX_PARCELS_INTERNAL to Parcels in Northern Tier FGDB (append tax parcels, unchanged, into staging FGDB)
     arcpy.Append_management(TAX_PARCELS_INTERNAL, Parcels_CrawfordCo, "NO_TEST", 'ParcelID "ParcelID" true true false 25 Text 0 0 ,First,#;Map_Num "Map_Num" true true false 50 Text 0 0 ,First,#,'+TAX_PARCELS_INTERNAL+',CAMA_PIN,-1,-1;Own "Own" true true false 100 Text 0 0 ,First,#,'+TAX_PARCELS_INTERNAL+',REM_OWN_NAME,-1,-1;Add_Number "Add_Number" true true false 4 Long 0 0 ,First,#;AddNum_Suf "AddNum_Suf" true true false 15 Text 0 0 ,First,#;St_PreDir "St_PreDir" true true false 9 Text 0 0 ,First,#;St_Name "St_Name" true true false 60 Text 0 0 ,First,#;St_PostType "St_PostType" true true false 50 Text 0 0 ,First,#;St_PostDir "St_PostDir" true true false 9 Text 0 0 ,First,#;City "City" true true false 50 Text 0 0 ,First,#;Add_State "Add_State" true true false 2 Text 0 0 ,First,#;Zip "Zip" true true false 10 Text 0 0 ,First,#;Muni "Muni" true true false 100 Text 0 0 ,First,#,'+TAX_PARCELS_INTERNAL+',SEC_MUNI_NAME,-1,-1;County "County" true true false 75 Text 0 0 ,First,#;State "State" true true false 2 Text 0 0 ,First,#;Contry "Contry" true true false 2 Text 0 0 ,First,#;SHAPE_Length "SHAPE_Length" false true true 8 Double 0 0 ,First,#;SHAPE_Area "SHAPE_Area" false true true 8 Double 0 0 ,First,#', "")
 except:
-    print "\n Unable to Append TAX_PARCELS_INTERNAL to Parcels in Northern Tier FGDB"
+    print ("\n Unable to Append TAX_PARCELS_INTERNAL to Parcels in Northern Tier FGDB")
     write_log("Unable to Append TAX_PARCELS_INTERNAL to Parcels in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append TAX_PARCELS_INTERNAL to Parcels in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -839,24 +837,24 @@ try:
     print ('{} has {} records'.format(Parcels_CrawfordCo, Parcels_result[0]))
     write_log('{} has {} records'.format(Parcels_CrawfordCo, Parcels_result[0]), logfile)
 except:
-    print "\n Unable to Calculate Parcels County/State/Contry field in Northern Tier FGDB"
+    print ("\n Unable to Calculate Parcels County/State/Contry field in Northern Tier FGDB")
     write_log("Unable to Calculate Parcels County/State/Contry field in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Calculate Parcels County/State/Contry field in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
     
-print "       Tax Parcels to Parcels append completed"
+print ("       Tax Parcels to Parcels append completed")
 write_log("       Tax Parcels to Parcels append completed", logfile)
 
 
-print "\n Append Railroads from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append Railroads from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Railroads from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
     # Append RAILROADS_INTERNAL to Railroads in Northern Tier FGDB (append railroads, unchanged, into staging FGDB)
     arcpy.Append_management(RAILROADS_INTERNAL, Railroads_CrawfordCo, "NO_TEST", 'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0 ,First,#;DateUpdate "DateUpdate" true true false 8 Date 0 0 ,First,#,'+RAILROADS_INTERNAL+',UPDATE_DATE,-1,-1;RS_NGUID "RS_NGUID" true true false 254 Text 0 0 ,First,#;RLOWN "RLOWN" true true false 100 Text 0 0 ,First,#,'+RAILROADS_INTERNAL+',OPERATIONS_OWNER,-1,-1;RLOP "RLOP" true true false 100 Text 0 0 ,First,#,'+RAILROADS_INTERNAL+',OPERATIONS_OWNER,-1,-1;Trck_Right "Trck_Right" true true false 100 Text 0 0 ,First,#,'+RAILROADS_INTERNAL+',TRACK_RIGHTS,-1,-1;RMPL "RMPL" true true false 8 Double 0 0 ,First,#;RMPH "RMPH" true true false 8 Double 0 0 ,First,#;Muni "Muni" true true false 100 Text 0 0 ,First,#,'+RAILROADS_INTERNAL+',MUNI_NAME,-1,-1;County "County" true true false 75 Text 0 0 ,First,#,'+RAILROADS_INTERNAL+',COUNTY_NAME,-1,-1;State "State" true true false 2 Text 0 0 ,First,#;Contry "Contry" true true false 2 Text 0 0 ,First,#;SHAPE_Length "SHAPE_Length" false true true 8 Double 0 0 ,First,#', "")
 except:
-    print "\n Unable to Append RAILROADS_INTERNAL to Railroads in Northern Tier FGDB"
+    print ("\n Unable to Append RAILROADS_INTERNAL to Railroads in Northern Tier FGDB")
     write_log("Unable to Append RAILROADS_INTERNAL to Railroads in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append RAILROADS_INTERNAL to Railroads in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -871,24 +869,24 @@ try:
     print ('{} has {} records'.format(Railroads_CrawfordCo, Railroads_result[0]))
     write_log('{} has {} records'.format(Railroads_CrawfordCo, Railroads_result[0]), logfile)
 except:
-    print "\n Unable to Calculate DiscrpAgID/State/Contry field in Northern Tier FGDB"
+    print ("\n Unable to Calculate DiscrpAgID/State/Contry field in Northern Tier FGDB")
     write_log("Unable to Calculate Parcels DiscrpAgID/State/Contry field to CRAWFORD in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Calculate Parcels DiscrpAgID/State/Contry field to CRAWFORD in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()    
 
-print "      Railroads append completed"
+print ("      Railroads append completed")
 write_log("      Railroads append completed", logfile)
 
 
-print "\n Append County Adjusted Municipal Boundaries from CRAW_INTERNAL to Northern Tier FGDB"
+print ("\n Append County Adjusted Municipal Boundaries from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append County Adjusted Municipal Boundaries from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
 try:
     # Make Feature Layer - Crawford Adjusted Muni (make temporary layer field of county adjusted muni boundaries for manipulation in steps below)
     arcpy.MakeFeatureLayer_management(COUNTY_ADJ_MUNI_BOUND_INTERNAL, COUNTY_ADJ_MUNI_LAYER, "", "", "MUNI_NAME MUNI_NAME VISIBLE NONE;MUNI_FIPS MUNI_FIPS VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;UPDATE_DATE UPDATE_DATE VISIBLE NONE;GLOBALID GLOBALID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;OBJECTID OBJECTID VISIBLE NONE;STATE STATE VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;COUNTRY COUNTRY VISIBLE NONE;SHAPE.STArea() SHAPE.STArea() VISIBLE NONE;SHAPE.STLength() SHAPE.STLength() VISIBLE NONE")
 except:
-    print "\n Unable to Make Feature Layer - Crawford Adjusted Muni"
+    print ("\n Unable to Make Feature Layer - Crawford Adjusted Muni")
     write_log("Unable to Make Feature Layer - Crawford Adjusted Muni", logfile)
     logging.exception('Got exception on Make Feature Layer - Crawford Adjusted Muni logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -898,7 +896,7 @@ try:
     # Dissolve COUNTY_ADJ_MUNI_LAYER into County shape (dissolve all county adjusted muni boundaries into 1 polygon to make county polygon)
     arcpy.Dissolve_management(COUNTY_ADJ_MUNI_LAYER, MUNI_DISSOLVE, "COUNTY_NAME;COUNTY_FIPS;STATE;DiscrpAgID;COUNTRY", "", "MULTI_PART", "DISSOLVE_LINES")
 except:
-    print "\n Unable to Dissolve COUNTY_ADJ_MUNI_LAYER into County shape"
+    print ("\n Unable to Dissolve COUNTY_ADJ_MUNI_LAYER into County shape")
     write_log("Unable to Dissolve COUNTY_ADJ_MUNI_LAYER into County shape", logfile)
     logging.exception('Got exception on Dissolve COUNTY_ADJ_MUNI_LAYER into County shape logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -911,7 +909,7 @@ try:
     print ('{} has {} records'.format(Counties_CrawfordCo, Counties_result[0]))
     write_log('{} has {} records'.format(Counties_CrawfordCo, Counties_result[0]), logfile)
 except:
-    print "\n Unable to Append COUNTY_ADJ_MUNI_BOUND_DISSOLVE to Counties in Northern Tier FGDB"
+    print ("\n Unable to Append COUNTY_ADJ_MUNI_BOUND_DISSOLVE to Counties in Northern Tier FGDB")
     write_log("Unable to Append COUNTY_ADJ_MUNI_BOUND_DISSOLVE to Counties in Northern Tier FGDB", logfile)
     logging.exception('Got exception on Append COUNTY_ADJ_MUNI_BOUND_DISSOLVE to Counties in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
@@ -923,13 +921,13 @@ try:
     arcpy.CalculateField_management(Counties_CrawfordCo, "Effective", "datetime.datetime.now( )", "PYTHON", "")
     print("  DateUpdate & Effective fields updated...")
 except:
-    print "\n Unable to calculate DateUpdate & Effective fields in Counties_CrawfordCo FC"
+    print ("\n Unable to calculate DateUpdate & Effective fields in Counties_CrawfordCo FC")
     write_log("Unable to calculate DateUpdate & Effective fields in Counties_CrawfordCo FC", logfile)
     logging.exception('Got exception on calculate DateUpdate & Effective fields in Counties_CrawfordCo FC logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
     
-print "       County Adjusted Municipal Boundaries to Counties append completed"
+print ("       County Adjusted Municipal Boundaries to Counties append completed")
 write_log("       County Adjusted Municipal Boundaries to Counties append completed", logfile)
 
 try:
@@ -946,14 +944,14 @@ except:
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
 
-print "\n==================================================================="
-print "Northern Tier CAD Data Export to local staging DB completed: " + str(Day) + " " + str(end_time)
-print time.strftime("\n %H:%M:%S", time.gmtime(elapsed_time))
-print "==================================================================="
+print ("\n===================================================================")
+print ("Northern Tier CAD Data Export to local staging DB completed: " + str(Day) + " " + str(end_time))
+print (time.strftime("\n %H:%M:%S", time.gmtime(elapsed_time)))
+print ("===================================================================")
 write_log("\n Elapsed time: " + str (time.strftime(" %H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)), logfile)
 
-print "\n                   Northern Tier CAD Data Export to local staging DB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB"
-print "\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+"
+print ("\n                   Northern Tier CAD Data Export to local staging DB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB")
+print ("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+")
 write_log("\n                   Northern Tier CAD Data Export to local staging DB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB", logfile)
 write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+", logfile)
 

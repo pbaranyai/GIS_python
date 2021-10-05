@@ -11,8 +11,9 @@
 #
 # STEP 2 of 2
 # Author: Phil Baranyai/Crawford County GIS Manager
-# Created: 4/2/2019
-# Last Edited: 03/18/2021 - Corrected new Crawford Hydrants schema in XML to NorthernTier schema
+# Created on: 2019-04-02 
+# Updated on 2021-09-21
+# Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
 
 import sys
@@ -21,7 +22,6 @@ import datetime
 import os
 import traceback
 import logging
-import __builtin__
 import shutil
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
@@ -47,18 +47,13 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("No ArcEditor (ArcStandard) license available", logfile)
-    sys.exit()
+#Database Connection Folder
+Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
 
 # Define Work Paths for FGDB:
 NORTHERN_TIER_CAD_FGDB = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_YYYYMMDD.gdb"
 NORTHERN_TIER_CAD_FLDR = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
-NWPS_STAGING_SVR = "Database Connections\\Staging@NWPSRPT.sde\\NWPS_GIS_Staging_ElkCo_PA.DBO.Crawford_County"
+NWPS_STAGING_SVR = Database_Connections + "\\Staging@NWPSRPT.sde\\NWPS_GIS_Staging_ElkCo_PA.DBO.Crawford_County"
 
 # Local variables:
 AddressPoint_CrawfordCo = NORTHERN_TIER_CAD_FGDB + "\\Crawford_County\\AddressPoint_CrawfordCo"
@@ -124,7 +119,33 @@ print ("Police Department")
 print ("Police Reporting")
 print ("Police Response")
 print ("\n From " + NORTHERN_TIER_CAD_FGDB + " to " + NWPS_STAGING_SVR)
-print "============================================================================"
+print ("Works in ArcGIS Pro")
+print ("============================================================================")
+
+write_log("============================================================================", logfile)
+write_log("Updating Northern Tier CAD data: "+ str(Day) + " " + str(Time), logfile)
+write_log("Will update the following:", logfile)
+write_log("\nAddress Points", logfile)
+write_log("Ambulance Company", logfile)
+write_log("Centerlines", logfile)
+write_log("Counties", logfile)
+write_log("EMS Districts", logfile)
+write_log("Fire Departments", logfile)
+write_log("Fire Response", logfile)
+write_log("Fire Stations", logfile)
+write_log("Hydrants", logfile)
+write_log("Landing Zones", logfile)
+write_log("Landmarks", logfile)
+write_log("Mile Posts", logfile)
+write_log("Municipalities", logfile)
+write_log("Parcels", logfile)
+write_log("Police Department", logfile)
+write_log("Police Reporting", logfile)
+write_log("Police Response", logfile)
+write_log("\n From " + NORTHERN_TIER_CAD_FGDB + " to " + NWPS_STAGING_SVR, logfile)
+write_log("Works in ArcGIS Pro", logfile)
+write_log("============================================================================")
+
 
 print ("\n Checking for connectivity to ELK Co server via VPN")
 write_log("\n Checking for connectivity to ELK Co server via VPN", logfile)
@@ -169,7 +190,7 @@ except:
 
 try:
     # Append - Staging Address Points
-    arcpy.Append_management(AddressPoint_CrawfordCo, NWPS_Staging_AddressPoint_CrawfordCo, "NO_TEST", "DiscrpAgID \"DiscrpAgID\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",DiscrpAgID,-1,-1;DateUpdate \"DateUpdate\" true true false 8 Date 0 0 ,First,#,"+AddressPoint_CrawfordCo+",DateUpdate,-1,-1;Effective \"Effective\" true true false 8 Date 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Effective,-1,-1;Expire \"Expire\" true true false 8 Date 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Expire,-1,-1;Site_NGUID \"Site_NGUID\" true true false 254 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Site_NGUID,-1,-1;Country \"Country\" true true false 2 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Country,-1,-1;State \"State\" true true false 2 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",State,-1,-1;County \"County\" true true false 40 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",County,-1,-1;AddCode \"AddCode\" true true false 506 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",AddCode,-1,-1;AddDataURI \"AddDataURI\" true true false 254 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",AddDataURI,-1,-1;Inc_Muni \"Inc_Muni\" true true false 100 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Inc_Muni,-1,-1;Uninc_Comm \"Uninc_Comm\" true true false 100 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Uninc_Comm,-1,-1;Nbrhd_Comm \"Nbrhd_Comm\" true true false 100 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Nbrhd_Comm,-1,-1;AddNum_Pre \"AddNum_Pre\" true true false 50 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",AddNum_Pre,-1,-1;Add_Number \"Add_Number\" true true false 4 Long 0 10 ,First,#,"+AddressPoint_CrawfordCo+",Add_Number,-1,-1;AddNum_Suf \"AddNum_Suf\" true true false 15 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",AddNum_Suf,-1,-1;St_PreMod \"St_PreMod\" true true false 15 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PreMod,-1,-1;St_PreDir \"ST_PreDir\" true true false 9 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PreDir,-1,-1;St_PreTyp \"St_PreTyp\" true true false 50 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PreTyp,-1,-1;St_PreSep \"St_PreSep\" true true false 20 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PreSep,-1,-1;St_Name \"St_Name\" true true false 60 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_Name,-1,-1;St_PosTyp \"St_PosTyp\" true true false 50 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PosTyp,-1,-1;St_PosDir \"St_PosDir\" true true false 9 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PosDir,-1,-1;St_PosMod \"St_PosMod\" true true false 25 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",St_PosMod,-1,-1;LSt_PreDir \"LSt_PreDir\" true true false 2 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",LSt_PreDir,-1,-1;LSt_Name \"LSt_Name\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",LSt_Name,-1,-1;LSt_Type \"LSt_Type\" true true false 4 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",LSt_Type,-1,-1;LStPosDir \"LStPosDir\" true true false 2 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",LStPosDir,-1,-1;ESN \"ESN\" true true false 5 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",ESN,-1,-1;MSAGComm \"MSAGComm\" true true false 30 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",MSAGComm,-1,-1;Post_Comm \"Post_Comm\" true true false 40 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Post_Comm,-1,-1;Post_Code \"Post_Code\" true true false 7 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Post_Code,-1,-1;Post_Code4 \"Post_Code4\" true true false 4 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Post_Code4,-1,-1;Building \"Building\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Building,-1,-1;Floor \"Floor\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Floor,-1,-1;Unit \"Unit\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Unit,-1,-1;Room \"Room\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Room,-1,-1;Seat \"Seat\" true true false 75 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Seat,-1,-1;Addtl_Loc \"Addtl_Loc\" true true false 225 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Addtl_Loc,-1,-1;LandmkName \"LandmkName\" true true false 150 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",LandmkName,-1,-1;Mile_Post \"Mile_Post\" true true false 150 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Mile_Post,-1,-1;Place_Type \"Place_Type\" true true false 50 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Place_Type,-1,-1;Placement \"Placement\" true true false 25 Text 0 0 ,First,#,"+AddressPoint_CrawfordCo+",Placement,-1,-1;Long \"Long\" true true false 8 Double 8 38 ,First,#,"+AddressPoint_CrawfordCo+",Long,-1,-1;Lat \"Lat\" true true false 8 Double 8 38 ,First,#,"+AddressPoint_CrawfordCo+",Lat,-1,-1;Elev \"Elev\" true true false 4 Long 0 10 ,First,#,"+AddressPoint_CrawfordCo+",Elev,-1,-1;JOIN_ID \"JOIN_ID\" true true false 4 Long 0 10 ,First,#,"+AddressPoint_CrawfordCo+",JOIN_ID,-1,-1;FullName \"FullName\" true true false 80 Text 0 0 ,First,#", "")
+    arcpy.Append_management(AddressPoint_CrawfordCo, NWPS_Staging_AddressPoint_CrawfordCo, "NO_TEST", 'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',DiscrpAgID,-1,-1;DateUpdate "DateUpdate" true true false 8 Date 0 0 ,First,#,'+AddressPoint_CrawfordCo+',DateUpdate,-1,-1;Effective "Effective" true true false 8 Date 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Effective,-1,-1;Expire "Expire" true true false 8 Date 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Expire,-1,-1;Site_NGUID "Site_NGUID" true true false 254 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Site_NGUID,-1,-1;Country "Country" true true false 2 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Country,-1,-1;State "State" true true false 2 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',State,-1,-1;County "County" true true false 40 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',County,-1,-1;AddCode "AddCode" true true false 506 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',AddCode,-1,-1;AddDataURI "AddDataURI" true true false 254 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',AddDataURI,-1,-1;Inc_Muni "Inc_Muni" true true false 100 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Inc_Muni,-1,-1;Uninc_Comm "Uninc_Comm" true true false 100 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Uninc_Comm,-1,-1;Nbrhd_Comm "Nbrhd_Comm" true true false 100 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Nbrhd_Comm,-1,-1;AddNum_Pre "AddNum_Pre" true true false 50 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',AddNum_Pre,-1,-1;Add_Number "Add_Number" true true false 4 Long 0 10 ,First,#,'+AddressPoint_CrawfordCo+',Add_Number,-1,-1;AddNum_Suf "AddNum_Suf" true true false 15 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',AddNum_Suf,-1,-1;St_PreMod "St_PreMod" true true false 15 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PreMod,-1,-1;St_PreDir "ST_PreDir" true true false 9 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PreDir,-1,-1;St_PreTyp "St_PreTyp" true true false 50 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PreTyp,-1,-1;St_PreSep "St_PreSep" true true false 20 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PreSep,-1,-1;St_Name "St_Name" true true false 60 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_Name,-1,-1;St_PosTyp "St_PosTyp" true true false 50 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PosTyp,-1,-1;St_PosDir "St_PosDir" true true false 9 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PosDir,-1,-1;St_PosMod "St_PosMod" true true false 25 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',St_PosMod,-1,-1;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',LSt_PreDir,-1,-1;LSt_Name "LSt_Name" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',LSt_Name,-1,-1;LSt_Type "LSt_Type" true true false 4 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',LSt_Type,-1,-1;LStPosDir "LStPosDir" true true false 2 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',LStPosDir,-1,-1;ESN "ESN" true true false 5 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',ESN,-1,-1;MSAGComm "MSAGComm" true true false 30 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',MSAGComm,-1,-1;Post_Comm "Post_Comm" true true false 40 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Post_Comm,-1,-1;Post_Code "Post_Code" true true false 7 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Post_Code,-1,-1;Post_Code4 "Post_Code4" true true false 4 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Post_Code4,-1,-1;Building "Building" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Building,-1,-1;Floor "Floor" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Floor,-1,-1;Unit "Unit" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Unit,-1,-1;Room "Room" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Room,-1,-1;Seat "Seat" true true false 75 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Seat,-1,-1;Addtl_Loc "Addtl_Loc" true true false 225 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Addtl_Loc,-1,-1;LandmkName "LandmkName" true true false 150 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',LandmkName,-1,-1;Mile_Post "Mile_Post" true true false 150 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Mile_Post,-1,-1;Place_Type "Place_Type" true true false 50 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Place_Type,-1,-1;Placement "Placement" true true false 25 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',Placement,-1,-1;Long "Long" true true false 8 Double 8 38 ,First,#,'+AddressPoint_CrawfordCo+',Long,-1,-1;Lat "Lat" true true false 8 Double 8 38 ,First,#,'+AddressPoint_CrawfordCo+',Lat,-1,-1;Elev "Elev" true true false 4 Long 0 10 ,First,#,'+AddressPoint_CrawfordCo+',Elev,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 10 ,First,#,'+AddressPoint_CrawfordCo+',JOIN_ID,-1,-1;FullName "FullName" true true false 80 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',FullName,-1,-1;HouseNumberCombinedNwps "HouseNumberCombinedNwps" true true false 50 Text 0 0 ,First,#,'+AddressPoint_CrawfordCo+',FullName,-1,-1', "")
     AddressPoint_result = arcpy.GetCount_management(NWPS_Staging_AddressPoint_CrawfordCo)
     print ('{} has {} records'.format(NWPS_Staging_AddressPoint_CrawfordCo, AddressPoint_result[0]))
     write_log('{} has {} records'.format(NWPS_Staging_AddressPoint_CrawfordCo, AddressPoint_result[0]), logfile)
