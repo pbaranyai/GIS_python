@@ -1,27 +1,27 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\AST_Permits_Flags_Dashboard_Master_Updater_bat.log
+echo. > R:\GIS\GIS_LOGS\BatchLogs\Reconcile_Post_All_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept
+::Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept
 ::
 Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
 ::
-Set batLog=%batLogwrkspce%\AST_Permits_Flags_Dashboard_Master_Updater_bat.log
+Set batLog=%batLogwrkspce%\Reconcile_Post_All_bat.log
 ::
-::::::::::::::::::::::: Run BuildingPermits_PictometryFlags Updater (BuildingPermitOnly_Updater.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run Reconcile/Post all versions Tools Reconcile_Post_All.py) :::::::::::::::::::::::
 ::
-echo _BuildingPermitOnly_Updater_bat, %date%, %time% >> %batLog% 
+echo _Reconcile_Post_All_bat, %date%, %time% >> %batLog% 
 ::
-Set prgLog=%batLogwrkspce%\BuildingPermitOnly_Updater_bat.log
+Set prgLog=%batLogwrkspce%\Reconcile_Post_All_bat.log
 ::
-echo Start Running BuildingPermitOnly_Updater.py >> %prgLog% 
-call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\BuildingPermitOnly_Updater.py >> %prgLog%
+echo Start Running Reconcile_Post_All.py >> %prgLog% 
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Python\Reconcile_Post_All.py >> %prgLog%
 ::
-echo End BuildingPermitOnly_Updater.py %date%, %time% >> %prgLog%
+echo End Running Reconcile_Post_All.py %date%, %time% >> %prgLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

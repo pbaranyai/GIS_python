@@ -19,7 +19,7 @@ echo _Assessment_Reports_Master_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
 ::
 echo Start Running Vision_Reconcile_Report.py >> %prgLog% 
-call %wrkspce%\Vision_Reconcile_Report.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Vision_Reconcile_Report.py >> %prgLog%
 ::
 echo End Running Vision_Reconcile_Report.py %date%, %time% >> %prgLog%
 ::

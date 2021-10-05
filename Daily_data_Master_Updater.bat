@@ -19,7 +19,7 @@ echo _Daily_data_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Daily_data_Master_Updater_bat.log
 ::
 echo Start Running Daily_Land_Records_Data_Spreader.py >> %prgLog% 
-call %PYwrkspce%\Daily_Land_Records_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PYwrkspce%\Daily_Land_Records_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Daily_Land_Records_Data_Spreader.py %date%, %time% >> %prgLog%
 ::

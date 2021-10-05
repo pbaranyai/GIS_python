@@ -19,7 +19,7 @@ echo _Public_Safety_CAD_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Public_Safety_CAD_Master_Updater_bat.log
 ::
 echo Start Running PublicSafety_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\GIS_Dept\Python\PublicSafety_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\GIS_Dept\Python\PublicSafety_Data_Spreader.py >> %prgLog%
 ::
 echo End Running PublicSafety_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -30,7 +30,7 @@ echo _Public_Safety_CAD_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Public_Safety_CAD_Master_Updater_bat.log
 ::
 echo Start Running NorthernTierCAD_DataExport_Process_Step1.py >> %prgLog% 
-call %wrkspce%\Public_Safety\Python\NorthernTierCAD_DataExport_Process_Step1.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Public_Safety\Python\NorthernTierCAD_DataExport_Process_Step1.py >> %prgLog%
 ::
 echo End Running NorthernTierCAD_DataExport_Process_Step1.py %date%, %time% >> %prgLog%
 ::

@@ -25,7 +25,7 @@ echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
 ::
 echo Start Running Parcel_Builder.py >> %prgLog% 
-call %ASTwrkspce%\Parcel_Builder.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\Parcel_Builder.py >> %prgLog%
 ::
 echo End Running Parcel_Builder.py %date%, %time% >> %prgLog%
 ::
@@ -63,6 +63,17 @@ call %PLANwrkspce%\LandUse_Data_Spreader.py >> %prgLog%
 echo End Running LandUse_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
 echo _Finish Land Records Master Updater, %date%, %time% >> %batLog%
+::
+::::::::::::::::::::::: Run Missing VISION records report (Active_VISION_Missing_GIS.py) :::::::::::::::::::::::
+::
+echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
+::
+echo Start Running Active_VISION_Missing_GIS.py >> %prgLog% 
+call %ASTwrkspce%\Active_VISION_Missing_GIS.py >> %prgLog%
+::
+echo End Running Active_VISION_Missing_GIS.py %date%, %time% >> %prgLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

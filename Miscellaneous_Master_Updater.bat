@@ -22,7 +22,7 @@ echo _Miscellaneous_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Running Boundaries_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\Boundaries_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Boundaries_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Boundaries_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -33,7 +33,7 @@ echo _Miscellaneous_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Running Education_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\Education_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Education_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Education_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -44,7 +44,7 @@ echo _Miscellaneous_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Running Elections_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\Elections_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Elections_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Elections_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -55,7 +55,7 @@ echo _Miscellaneous_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Running Hydrography_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\Hydrography_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Hydrography_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Hydrography_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -66,7 +66,7 @@ echo _Miscellaneous_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Running Planning_Data_Spreader.py >> %prgLog% 
-call %PLANwrkspce%\Planning_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PLANwrkspce%\Planning_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Planning_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -77,7 +77,7 @@ echo _Miscellaneous_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Running Recreational_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\Recreational_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Recreational_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Recreational_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -88,7 +88,7 @@ echo _Start Religon_Data_Spreader.py, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Religon_Data_Spreader.py , %date%, %time% >> %prgLog%
-call %wrkspce%\Religon_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Religon_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Religon_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -99,7 +99,7 @@ echo _Start Transportation Data Spreader, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Transportation_Data_Spreader.py , %date%, %time% >> %prgLog%
-call %wrkspce%\Transportation_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Transportation_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Transportation_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -110,7 +110,7 @@ echo Start Utilities Data Spreader , %date%, %time% >> %prgLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Utilities_Data_Spreader.py , %date%, %time% >> %prgLog%
-call %wrkspce%\Utilities_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Utilities_Data_Spreader.py >> %prgLog%
 ::
 echo End Utilities Data Spreader %date%, %time% >> %prgLog%
 ::
@@ -121,7 +121,7 @@ echo _Start Judicial Data Spreader, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Judicial_Data_Spreader.py , %date%, %time% >> %prgLog%
-call %wrkspce%\Judicial_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Judicial_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Judicial_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -132,7 +132,7 @@ echo _Start Community Services Data Spreader, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Miscellaneous_Master_Updater_bat.log
 ::
 echo Start Community_Services_Data_Spreader.py , %date%, %time% >> %prgLog%
-call %wrkspce%\Community_Services_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Community_Services_Data_Spreader.py >> %prgLog%
 ::
 echo End Running Community_Services_Data_Spreader.py %date%, %time% >> %prgLog%
 ::

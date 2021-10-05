@@ -5,8 +5,8 @@ date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set SVRwrkspce=\\ccdeploy\gss
-::Set SVRwrkspce=\\ccdeploy\gss
+Set SVRwrkspce=\\ccmeteor\gss
+::Set SVRwrkspce=\\ccmeteor\gss
 ::
 Set PYwrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
 ::Set PYwrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
@@ -33,7 +33,7 @@ echo _TaxClaim_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\TaxClaim_Master_Updater_bat.log
 ::
 echo Start Running TaxClaim_Data_Spreader.py >> %prgLog% 
-call %PYwrkspce%\TaxClaim_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PYwrkspce%\TaxClaim_Data_Spreader.py >> %prgLog%
 ::
 echo End Running TaxClaim_Data_Spreader.py %date%, %time% >> %prgLog%
 ::

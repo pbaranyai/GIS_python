@@ -22,7 +22,7 @@ echo _SurveyReports_Master_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\SurveyReports_Master_bat.log
 ::
 echo Start Running AssessmentReview_Reports.py >> %prgLog% 
-call %ASTwrkspce%\AssessmentReview_Reports.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\AssessmentReview_Reports.py >> %prgLog%
 ::
 echo End AssessmentReview_Reports.py %date%, %time% >> %prgLog%
 ::
@@ -33,7 +33,7 @@ echo _SurveyReports_Master_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\SurveyReports_Master_bat.log
 ::
 echo Start Running PS_Survey_Report.py >> %prgLog% 
-call %PSwrkspce%\PS_Survey_Report.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PSwrkspce%\PS_Survey_Report.py >> %prgLog%
 ::
 echo End Running PS_Survey_Report.py %date%, %time% >> %prgLog%
 ::

@@ -19,7 +19,7 @@ echo _Full_Week_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\Full_Week_Master_Updater_bat.log
 ::
 echo Start Running NewAddressRequest_Assessment.py >> %prgLog% 
-call %PYwrkspce%\NewAddressRequest_Assessment.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PYwrkspce%\NewAddressRequest_Assessment.py >> %prgLog%
 ::
 echo End Running NewAddressRequest_Assessment.py %date%, %time% >> %prgLog%
 ::
