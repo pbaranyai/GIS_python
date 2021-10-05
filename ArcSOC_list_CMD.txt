@@ -1,0 +1,3 @@
+tasklist | find "ArcSOC.exe" /c
+
+Run in CMD window on CCORBWEAVER
