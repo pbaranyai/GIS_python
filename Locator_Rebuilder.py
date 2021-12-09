@@ -2,8 +2,8 @@
 # ---------------------------------------------------------------------------
 # Locator_Rebuilder.py
 # Created on: 2019-03-06 
-# Updated on: 2019-09-22
-# Added logging and try/except blocks for troubleshooting
+# Updated on: 2021-10-27
+# Working to upgrade to ArcGIS Pro
 #
 # Author: Phil Baranyai/GIS Manager
 # 
@@ -78,6 +78,10 @@ except:
     write_log("Unable to write log file", logfile)
     sys.exit ()
 
+# Machine running script
+#MACHINE = r"C:\\Users\\pbaranyai" #GIS01
+MACHINE = r"C:\\Users\\arcadmin" #CCORBWEAVER
+
 # Locator location
 Locators = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators"
 IntranetLocatorsWorkspace = Locators + "\\Intranet_Locators\\Locator_workspace"
@@ -86,10 +90,8 @@ IntranetLocators =  Locators + "\\Intranet_Locators"
 PublicLocators = Locators + "\\Public_Locators"
 
 # Staging location
-#ArcServer_Admin = r"C:\\Users\\pbaranyai\\AppData\\Roaming\\ESRI\\Desktop10.7\\ArcCatalog\\arcgis on ccgis.crawfordcountypa.net (admin).ags" #GIS01 Machine
-ArcServer_Admin = r"C:\\Users\\arcadmin\\AppData\\Roaming\\ESRI\\Desktop10.7\\ArcCatalog\\arcgis on ccgis.crawfordcountypa.net (admin).ags" #CCORBWEAVER Machine
-#ArcServer_Staging = r"C:\\Users\\pbaranyai\\AppData\\Local\\ESRI\\Desktop10.7\\Staging\\arcgis on ccgis.crawfordcountypa.net (admin)" #GIS01 Machine
-ArcServer_Staging = r"C:\\Users\\arcadmin\\AppData\\Roaming\\ESRI\\Desktop10.7\\Staging\\arcgis on ccgis.crawfordcountypa.net (admin)" #CCORBWEAVER Machine
+ArcServer_Admin = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections\\Servers\\services on ccgis.crawfordcountypa.net (admin).ags"
+ArcServer_Staging = MACHINE + "\\AppData\\Local\\ESRI\\ArcGISPro\\Staging\\arcgis on ccgis.crawfordcountypa.net (admin)"
 Draft_Staging = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Draft_Services"
 
 # Local variables:
@@ -744,8 +746,8 @@ except:
 print ("       Rebuilding ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL completed")
 write_log("       Rebuilding ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding CL_Name_INTRA Locator from Street Centerline - CRAW_INTERNAL")
-write_log("\n Rebuilding CL_Name_INTRA Locator from Street Centerline - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding CC_Roads_Locator from Street Centerline - CRAW_INTERNAL")
+write_log("\n Rebuilding CC_Roads_Locator Locator from Street Centerline - CRAW_INTERNAL", logfile)
 
 try:
     # CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL
