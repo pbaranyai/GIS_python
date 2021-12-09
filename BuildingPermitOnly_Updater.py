@@ -483,7 +483,7 @@ print ("       Create VISION_OTHER_TBL and join LAND and PARCEL tables to it com
 write_log("       Create VISION_OTHER_TBL and join LAND and PARCEL tables to it completed at "+time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 print ("\n Creating temporary table (VISIDATA_TEMP) from VISION_OTHER_TBL_SDE & VISION_OWNER_TBL_SDE tables")
-write_log("\n Creating temporary table (VISIDATA_TEMP) from VISION_OTHER_TBL_SDE & VISION_OWNER_TBL_SDE tables: " + str(Day) + " " + str(Time), logfile)
+write_log("\n Creating temporary table (VISIDATA_TEMP) from VISION_OTHER_TBL_SDE & VISION_OWNER_TBL_SDE tables: " +time.strftime("%I:%M:%S %p", time.localtime()), logfile)
 
 try:
     # Create VISIDATA_TEMP table from VISION_OTHER_TBL (VISIDATA temp will become OTHER table and OWNER table joined, will be used for multiple join tools in program below)
