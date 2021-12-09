@@ -36,7 +36,7 @@ echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
 ::
 echo Start Running LandRecords_Data_Spreader.py >> %prgLog% 
-call %wrkspce%\LandRecords_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\LandRecords_Data_Spreader.py >> %prgLog%
 ::
 echo End Running LandRecords_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -47,7 +47,7 @@ echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
 ::
 echo Start Running Locator_Rebuilder.py >> %prgLog% 
-call %wrkspce%\Locator_Rebuilder.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %wrkspce%\Locator_Rebuilder.py >> %prgLog%
 ::
 echo End Running Locator_Rebuilder.py %date%, %time% >> %prgLog%
 ::
@@ -58,7 +58,7 @@ echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
 ::
 echo Start Running LandUse_Data_Spreader.py >> %prgLog% 
-call %PLANwrkspce%\LandUse_Data_Spreader.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PLANwrkspce%\LandUse_Data_Spreader.py >> %prgLog%
 ::
 echo End Running LandUse_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
@@ -71,9 +71,20 @@ echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog%
 Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
 ::
 echo Start Running Active_VISION_Missing_GIS.py >> %prgLog% 
-call %ASTwrkspce%\Active_VISION_Missing_GIS.py >> %prgLog%
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\Active_VISION_Missing_GIS.py >> %prgLog%
 ::
 echo End Running Active_VISION_Missing_GIS.py %date%, %time% >> %prgLog%
+::
+::::::::::::::::::::::: Run GIS not in VISION records report (Active_GIS_Missing_VISION.py) :::::::::::::::::::::::
+::
+echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
+::
+echo Start Running Active_GIS_Missing_VISION.py >> %prgLog% 
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\Active_GIS_Missing_VISION.py >> %prgLog%
+::
+echo End Running Active_GIS_Missing_VISION.py %date%, %time% >> %prgLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times

@@ -1,4 +1,4 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\AST_Permits_Flags_Dashboard_Master_Updater_bat.log
+echo. > R:\GIS\GIS_LOGS\BatchLogs\BuildingPermit_Tracks_CAMATables_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
@@ -10,18 +10,29 @@ Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
 ::
 Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
 ::
-Set batLog=%batLogwrkspce%\AST_Permits_Flags_Dashboard_Master_Updater_bat.log
+Set batLog=%batLogwrkspce%\BuildingPermit_Tracks_CAMATables_Updater_bat.log
 ::
-::::::::::::::::::::::: Run BuildingPermits_PictometryFlags Updater (BuildingPermitOnly_Updater.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run BuildingPermits_CAMA Tables Updater (BuildingPermitOnly_Updater.py) :::::::::::::::::::::::
 ::
 echo _BuildingPermitOnly_Updater_bat, %date%, %time% >> %batLog% 
 ::
-Set prgLog=%batLogwrkspce%\BuildingPermitOnly_Updater_bat.log
+Set prgLog=%batLogwrkspce%\BuildingPermit_Tracks_CAMATables_Updater_bat.log
 ::
 echo Start Running BuildingPermitOnly_Updater.py >> %prgLog% 
 call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\BuildingPermitOnly_Updater.py >> %prgLog%
 ::
 echo End BuildingPermitOnly_Updater.py %date%, %time% >> %prgLog%
+::
+::::::::::::::::::::::: Run Assessment Tracks Updater (Assessment_Historic_Tracks_Updater.py) :::::::::::::::::::::::
+::
+echo _BuildingPermitOnly_Updater_bat, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\BuildingPermit_Tracks_CAMATables_Updater_bat.log
+::
+echo Start Running Assessment_Historic_Tracks_Updater.py >> %prgLog% 
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\Assessment_Historic_Tracks_Updater.py >> %prgLog%
+::
+echo End Assessment_Historic_Tracks_Updater.py %date%, %time% >> %prgLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times
