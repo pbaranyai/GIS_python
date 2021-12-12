@@ -4,14 +4,14 @@
 #  
 # Description: 
 # This tool will create a FGDB (Northern_Tier_County_Data_YYYYMMDD.gdb), then process local Crawford County Data into the schema required for
-# the usage of the Northern Tier CAD.  
+# the usage of the Northern Tier CAD.  It will also copy the Northern_Tier_County_Data_YYYYMMDD.gdb into PA_NG911_Export_YYYYMMDD.gdb, and alter the data to meet NG911 standards)  
 #
 # After this tool is completed, you must connect to the Elk Co. VPN to run the next step
 #
 # STEP 1 of 2
 # Author: Phil Baranyai/Crawford County GIS Manager
 # Created on: 2019-02-28 
-# Updated on 2021-09-21
+# Updated on 2021-12-09
 # Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ import logging
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\911\\NorthernTierCAD_DataExport.log"  # Run Log
+logfile = r"\\CCFILE\\anybody\\GIS\\GIS_LOGS\\911\\NorthernTierCAD_DataExport.log"  # Run Log
 logging.basicConfig(filename=logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -46,28 +46,34 @@ except:
     sys.exit ()
 
 # Define Work Paths for FGDB:
-NORTHERN_TIER_CAD_FLDR = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
-NORTHERN_TIER_COUNTY_DATA_XML = "R:\\GIS\\NorthernTierCAD_GIS\\XML_Workspace\\NORTHERN_TIER_COUNTY_DATA.XML"
-NORTHERN_TIER_CAD_FGDB_OLD = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_YYYYMMDD.gdb"
+NORTHERN_TIER_CAD_FLDR = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
+NORTHERN_TIER_COUNTY_DATA_XML = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\XML_Workspace\\NORTHERN_TIER_COUNTY_DATA.XML"
+NORTHERN_TIER_CAD_FGDB_OLD = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_YYYYMMDD.gdb"
+PA_NG911_EXPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\PA_NG911_Exports"
+PA_NG911_EXPORT_FGDB_OLD = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\PA_NG911_Exports\\PA_NG911_Export_YYYYMMDD.gdb"
 
 start_time = time.time()
 
 print ("=====================================================================================================================")
-print ("Checking for existing NorthernTier FGDB, delete and rebuild fresh if exists.")
+print ("Checking for existing NorthernTier FGDB & PA_NG911 FGDB, delete and rebuild fresh if exists.")
 print ("Works in ArcGIS Pro")
 print ("=====================================================================================================================")
 
 write_log("=====================================================================================================================", logfile)
-write_log("\n Checking for existing NorthernTier FGDB, delete and rebuild fresh if exists.", logfile)
+write_log("\n Checking for existing NorthernTier FGDB & PA_NG911 FGDB, delete and rebuild fresh if exists.", logfile)
 write_log("Works in ArcGIS Pro", logfile)
 write_log("=====================================================================================================================", logfile)
 
 try:
-    # Pre-clean old FGDB, if exists (if old Northern_Tier_County_Data_YYYYMMDD.gdb exists and was never renamed, the program will delete it, so it will be able to run without failure, henceforth providing the newest data)
+    # Pre-clean old FGDBs, if exists (if old Northern_Tier_County_Data_YYYYMMDD.gdb or PA_NG911_Export_YYYYMMDD.gdb exists and was never renamed, the program will delete it, so it will be able to run without failure, henceforth providing the newest data)
     if arcpy.Exists(NORTHERN_TIER_CAD_FGDB_OLD):
         arcpy.Delete_management(NORTHERN_TIER_CAD_FGDB_OLD, "Workspace")
         print ("Northern_Tier_County_Data_YYYYMMDD.gdb found - FGDB deleted")
         write_log("Northern_Tier_County_Data_YYYYMMDD.gdb found - FGDB deleted", logfile)
+    if arcpy.Exists(PA_NG911_EXPORT_FGDB_OLD):
+        arcpy.Delete_management(PA_NG911_EXPORT_FGDB_OLD, "Workspace")
+        print ("PA_NG911_Export_YYYYMMDD.gdb found - FGDB deleted")
+        write_log("PA_NG911_Export_YYYYMMDD.gdb found - FGDB deleted", logfile)
 except:
     print ("\n Unable to delete Northern_Tier_County_Data_YYYYMMDD.gdb, need to delete existing FGDB manually and/or close program locking the FGDB")
     write_log("Unable to create new Northern_Tier_County_Data_YYYYMMDD , need to delete existing FGDB manually and/or close program locking the FGDB", logfile)
@@ -113,10 +119,11 @@ except:
     sys.exit ()
 
 # Local variables:
-ADDRESS_POINTS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.ADDRESS_POINTS_INTERNAL"
+ADDRESS_POINTS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.Site_Structure_Address_Points_INTERNAL"
 ALS_ZONES_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.ALS_ZONES_INTERNAL"
 BLS_COVERAGE_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.BLS_COVERAGE_INTERNAL"
 COUNTY_ADJ_MUNI_BOUND_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.COUNTY_ADJ_MUNI_BOUND_INTERNAL"
+ESZ_PS = PUBLIC_SAFETY_DB + "\\CCSDE.PUBLIC_SAFETY.Public_Safety\\CCSDE.PUBLIC_SAFETY.ESZ_ALL"
 FIRE_DEPT_COVERAGE_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_DEPT_COVERAGE_INTERNAL"
 FIRE_GRIDS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.FIRE_GRIDS_INTERNAL"
 HYDRANTS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Utilities\\CRAW_INTERNAL.HYDRANTS"
@@ -124,18 +131,18 @@ LANDMARKS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CC
 MILE_MARKERS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.MILE_MARKERS_INTERNAL"
 POLICE_DEPT_COVERAGE_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Public_Safety\\CCSDE.CRAW_INTERNAL.POLICE_DEPT_COVERAGE_INTERNAL"
 RAILROADS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Transportation\\CCSDE.CRAW_INTERNAL.RAILROADS_INTERNAL"
-STREET_CENTERLINE_PS = PUBLIC_SAFETY_DB + "\\CCSDE.PUBLIC_SAFETY.STREET_CENTERLINE"
-STREET_CENTERLINE = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.STREET_CENTERLINE_INTERNAL"
+STREET_CENTERLINE_PS = PUBLIC_SAFETY_DB + "\\CCSDE.PUBLIC_SAFETY.Street_Centerlines"
+STREET_CENTERLINE = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.Street_Centerlines_INTERNAL"
 TAX_PARCELS_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.TAX_PARCELS_INTERNAL"
 ZIPCODES_INTERNAL = PUBLIC_SAFETY_DB + "\\CCSDE.CRAW_INTERNAL.Boundaries\\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL"
 NORTHERN_TIER_COUNTY_DATA_XML = "R:\\GIS\\NorthernTierCAD_GIS\\XML_Workspace\\NORTHERN_TIER_COUNTY_DATA.XML"
 
-#Layer Files
+###Layer Files
 COUNTY_ADJ_MUNI_LAYER = "COUNTY_ADJ_MUNI_LAYER"
 FIRE_DEPT_COVERAGE_INTERNAL_LYR = "FIRE_DEPT_COVERAGE_INTERNAL_LYR"
 STREET_CENTERLINE_Layer = "CL_Zipcode_JOIN_DELETE_Layer"
 
-#Temporary variables
+###Temporary variables
 ALS_JOIN_DELETE_Intersect_DELETE = DELETE_FILES + "\\ALS_JOIN_DELETE_Intersect_DELETE"
 BLS_ALS_INTERSECT_Spatial_Join = DELETE_FILES + "\\BLS_ALS_INTERSECT_Spatial_Join"
 BLS_COVERAGE_DELETE = DELETE_FILES + "\\BLS_COVERAGE_DELETE"
@@ -166,6 +173,7 @@ Police_Department_CrawfordCo = NORTHERN_TIER_CAD_FGDB_CC + "\\Police_Department_
 Police_Reporting_CrawfordCo = NORTHERN_TIER_CAD_FGDB_CC + "\\Police_Reporting_CrawfordCo"
 Police_Response_CrawfordCo = NORTHERN_TIER_CAD_FGDB_CC + "\\Police_Response_CrawfordCo"
 Railroads_CrawfordCo = NORTHERN_TIER_CAD_FGDB_CC + "\\Railroads_CrawfordCo"
+Trails_CrawfordCo = NORTHERN_TIER_CAD_FGDB_CC + "\\Trails_CrawfordCo"
 
 print ("\n")
 print (" ===============================================================================================================")
@@ -180,7 +188,7 @@ write_log("\n Appending Address Points from CRAW_INTERNAL to Northern Tier FGDB"
 
 try:
     # Append_AddressPoint_CrawfordCo (append Crawford Address points to staging FGDB created in steps above)
-    arcpy.Append_management(ADDRESS_POINTS_INTERNAL, NTAddressPoint_CrawfordCo, "NO_TEST", 'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_DiscrpAgID,-1,-1;DateUpdate "DateUpdate" true true false 8 Date 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_EDIT_DATE,-1,-1;Effective "Effective" true true false 8 Date 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_ADD_DATE,-1,-1;Expire "Expire" true true false 8 Date 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_TEMP_ADDR_EXPIRATION,-1,-1;Site_NGUID "Site_NGUID" true true false 254 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_CAD_NGUID,-1,-1;Country "Country" true true false 2 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_COUNTRY,-1,-1;State "State" true true false 2 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_STATE,-1,-1;County "County" true true false 40 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_COUNTY_NAME,-1,-1;AddCode "AddCode" true true false 506 Text 0 0 ,First,#;AddDataURI "AddDataURI" true true false 254 Text 0 0 ,First,#;Inc_Muni "Inc_Muni" true true false 100 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_MUNI,-1,-1;Uninc_Comm "Uninc_Comm" true true false 100 Text 0 0 ,First,#;Nbrhd_Comm "Nbrhd_Comm" true true false 100 Text 0 0 ,First,#;AddNum_Pre "AddNum_Pre" true true false 50 Text 0 0 ,First,#;Add_Number "Add_Number" true true false 4 Long 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_HSENUMBER,-1,-1;AddNum_Suf "AddNum_Suf" true true false 15 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_ADD_SUF,-1,-1;St_PreMod "St_PreMod" true true false 15 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_POST_MOD,-1,-1;St_PreDir "ST_PreDir" true true false 9 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_PRE_DIR,-1,-1;St_PreTyp "St_PreTyp" true true false 50 Text 0 0 ,First,#;St_PreSep "St_PreSep" true true false 20 Text 0 0 ,First,#;St_Name "St_Name" true true false 60 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_STREETNAME,-1,-1;St_PosTyp "St_PosTyp" true true false 50 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_STREET_SUF,-1,-1;St_PosDir "St_PosDir" true true false 9 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_POST_DIR,-1,-1;St_PosMod "St_PosMod" true true false 25 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_POST_MOD,-1,-1;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0 ,First,#;LSt_Name "LSt_Name" true true false 75 Text 0 0 ,First,#;LSt_Type "LSt_Type" true true false 4 Text 0 0 ,First,#;LStPosDir "LStPosDir" true true false 2 Text 0 0 ,First,#;ESN "ESN" true true false 5 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_ESN,-1,-1;MSAGComm "MSAGComm" true true false 30 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_MUNI,-1,-1;Post_Comm "Post_Comm" true true false 40 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_POST_OFFICE,-1,-1;Post_Code "Post_Code" true true false 7 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_ZIPCODE,-1,-1;Post_Code4 "Post_Code4" true true false 4 Text 0 0 ,First,#;Building "Building" true true false 75 Text 0 0 ,First,#;Floor "Floor" true true false 75 Text 0 0 ,First,#;Unit "Unit" true true false 75 Text 0 0 ,First,#;Room "Room" true true false 75 Text 0 0 ,First,#;Seat "Seat" true true false 75 Text 0 0 ,First,#;Addtl_Loc "Addtl_Loc" true true false 225 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_ADD_EXT,-1,-1;LandmkName "LandmkName" true true false 150 Text 0 0 ,First,#;Mile_Post "Mile_Post" true true false 150 Text 0 0 ,First,#;Place_Type "Place_Type" true true false 50 Text 0 0 ,First,#;Placement "Placement" true true false 25 Text 0 0 ,First,#;Long "Long" true true false 8 Double 0 0 ,First,#;Lat "Lat" true true false 8 Double 0 0 ,First,#;Elev "Elev" true true false 4 Long 0 0 ,First,#;JOIN_ID "JOIN_ID" true true false 4 Long 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_STRU_NUM,-1,-1;FullName "FullName" true true false 80 Text 0 0 ,First,#,'+ADDRESS_POINTS_INTERNAL+',AD_HSE_STREET,-1,-1', "")
+    arcpy.management.Append(ADDRESS_POINTS_INTERNAL, NTAddressPoint_CrawfordCo, "NO_TEST", r'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',DiscrpAgID,0,75;DateUpdate "DateUpdate" true true false 8 Date 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',DateUpdate,-1,-1;Effective "Effective" true true false 8 Date 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Effective,-1,-1;Expire "Expire" true true false 8 Date 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Expire,-1,-1;Site_NGUID "Site_NGUID" true true false 254 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Site_NGUID,0,254;Country "Country" true true false 2 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Country,0,2;State "State" true true false 2 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',State,0,2;County "County" true true false 40 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',CountyName,0,50;AddCode "AddCode" true true false 506 Text 0 0,First,#;AddDataURI "AddDataURI" true true false 254 Text 0 0,First,#;Inc_Muni "Inc_Muni" true true false 100 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Inc_Muni,0,100;Uninc_Comm "Uninc_Comm" true true false 100 Text 0 0,First,#;Nbrhd_Comm "Nbrhd_Comm" true true false 100 Text 0 0,First,#;AddNum_Pre "AddNum_Pre" true true false 50 Text 0 0,First,#;Add_Number "Add_Number" true true false 4 Long 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Add_Number,-1,-1;AddNum_Suf "AddNum_Suf" true true false 15 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',AddNum_Suf,0,15;St_PreMod "St_PreMod" true true false 15 Text 0 0,First,#;St_PreDir "ST_PreDir" true true false 9 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',St_PreDir,0,9;St_PreTyp "St_PreTyp" true true false 50 Text 0 0,First,#;St_PreSep "St_PreSep" true true false 20 Text 0 0,First,#;St_Name "St_Name" true true false 60 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',St_Name,0,60;St_PosTyp "St_PosTyp" true true false 50 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',St_PosTyp,0,50;St_PosDir "St_PosDir" true true false 9 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',St_PosDir,0,9;St_PosMod "St_PosMod" true true false 25 Text 0 0,First,#;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0,First,#;LSt_Name "LSt_Name" true true false 75 Text 0 0,First,#;LSt_Type "LSt_Type" true true false 4 Text 0 0,First,#;LStPosDir "LStPosDir" true true false 2 Text 0 0,First,#;ESN "ESN" true true false 5 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',ESN,-1,-1;MSAGComm "MSAGComm" true true false 30 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Inc_Muni,0,100;Post_Comm "Post_Comm" true true false 40 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Post_Comm,0,40;Post_Code "Post_Code" true true false 7 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Post_Code,0,255;Post_Code4 "Post_Code4" true true false 4 Text 0 0,First,#;Building "Building" true true false 75 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Building,0,75;Floor "Floor" true true false 75 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Floor,0,75;Unit "Unit" true true false 75 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Unit,0,75;Room "Room" true true false 75 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Room,0,75;Seat "Seat" true true false 75 Text 0 0,First,#;Addtl_Loc "Addtl_Loc" true true false 225 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',AddNum_Suf,0,15;LandmkName "LandmkName" true true false 150 Text 0 0,First,#;Mile_Post "Mile_Post" true true false 150 Text 0 0,First,#;Place_Type "Place_Type" true true false 50 Text 0 0,First,#;Placement "Placement" true true false 25 Text 0 0,First,#;Long "Long" true true false 8 Double 0 0,First,#;Lat "Lat" true true false 8 Double 0 0,First,#;Elev "Elev" true true false 4 Long 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',Elevation,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',UniqueStructureNumber,-1,-1;FullName "FullName" true true false 80 Text 0 0,First,#,'+ADDRESS_POINTS_INTERNAL+',FullAddress,0,200', '', '')
     address_result = arcpy.GetCount_management(NTAddressPoint_CrawfordCo)
     print ('{} has {} records'.format(NTAddressPoint_CrawfordCo, address_result[0]))
     write_log('{} has {} records'.format(NTAddressPoint_CrawfordCo, address_result[0]), logfile)
@@ -249,7 +257,7 @@ write_log("\n Processing Street Centerline from CRAW_INTERNAL to Northern Tier F
 
 try: 
     # Spatial Join CL and Zipcode - creating CL_Zipcode_JOIN_DELETE (join centerline and zipcode as CAD needs the zipcode of centerlines and it's not carried at the county level)
-    arcpy.SpatialJoin_analysis(STREET_CENTERLINE_PS, ZIPCODES_INTERNAL, CL_Zipcode_JOIN_DELETE, "JOIN_ONE_TO_ONE", "KEEP_ALL", 'CL_UNIQUEID "UNIQUE ID" true true false 4 Long 0 10 ,First,#,'+STREET_CENTERLINE_PS+',CL_UNIQUEID,-1,-1;CL_PRE_MOD "PRE MODIFIER" true true false 15 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_PRE_MOD,-1,-1;CL_PRE_DIR "PRE DIRECTIONAL" true true false 4 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_PRE_DIR,-1,-1;CL_PRE_TYPE "PRE TYPE" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_PRE_TYPE,-1,-1;CL_NAME "NAME" true true false 75 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_NAME,-1,-1;CL_SUFFIX "SUFFIX" true true false 6 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_SUFFIX,-1,-1;CL_POST_DIR "POST DIRECTIONAL" true true false 4 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_POST_DIR,-1,-1;CL_POST_MOD "POST MODIFIER" true true false 100 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_POST_MOD,-1,-1;CL_FULL_NAME "FULL NAME" true true false 100 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_FULL_NAME,-1,-1;CL_MUNI "MUNICIPALITY" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_MUNI,-1,-1;CL_MUNI_L "MUNICIPALITY LEFT" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_MUNI_L,-1,-1;CL_MUNI_R "MUNICIPALITY RIGHT" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_MUNI_R,-1,-1;CL_STATE_L "STATE LEFT" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_STATE_L,-1,-1;CL_STATE_R "STATE RIGHT" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_STATE_R,-1,-1;CL_FIPS_L "FIPS LEFT" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_FIPS_L,-1,-1;CL_FIPS_R "FIPS RIGHT" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_FIPS_R,-1,-1;CL_RTNO "ROUTE NUMBER" true true false 4 Long 0 10 ,First,#,'+STREET_CENTERLINE_PS+',CL_RTNO,-1,-1;CL_ST_MUNI "STREET | MUNI" true true false 120 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_ST_MUNI,-1,-1;CL_ESN_L "ESN L" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_ESN_L,-1,-1;CL_ESN_R "ESN R" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_ESN_R,-1,-1;CL_L_LO "LEFT LOW #" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_L_LO,-1,-1;CL_L_HI "LEFT HIGH #" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_L_HI,-1,-1;CL_R_LO "RIGHT LOW #" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_R_LO,-1,-1;CL_R_HI "RIGHT HIGH #" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_R_HI,-1,-1;CL_RANGE "ADDRESS RANGE" true true false 13 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_RANGE,-1,-1;CL_TILE "TILE #" true true false 6 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_TILE,-1,-1;CL_ONE_WAY "ONE WAY" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_ONE_WAY,-1,-1;CL_Z_ELEV_F "Z ELEVATION FROM" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_Z_ELEV_F,-1,-1;CL_Z_ELEV_T "Z ELEVATION TO" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_Z_ELEV_T,-1,-1;CL_CONST_STATUS "CONSTRUCTION STATUS" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_CONST_STATUS,-1,-1;CL_OWNER "OWNER" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_OWNER,-1,-1;CL_SURF_TYPE "SURFACE TYPE" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_SURF_TYPE,-1,-1;CL_WEIGHT_LMT "WEIGHT LIMIT" true true false 2 Short 0 5 ,First,#,'+STREET_CENTERLINE_PS+',CL_WEIGHT_LMT,-1,-1;CL_HEIGHT_LMT "HEIGHT LIMIT" true true false 2 Short 0 5 ,First,#,'+STREET_CENTERLINE_PS+',CL_HEIGHT_LMT,-1,-1;CL_SPEED_LMT "SPEED LIMIT" true true false 2 Short 0 5 ,First,#,'+STREET_CENTERLINE_PS+',CL_SPEED_LMT,-1,-1;CL_FT_COST "FROM-TO COST" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_FT_COST,-1,-1;CL_TF_COST "TO_FROM COST" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_TF_COST,-1,-1;CL_DIVIDED "ROADWAY DIVIDED" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_DIVIDED,-1,-1;CL_IN_WATER "IN WATER" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_IN_WATER,-1,-1;CL_IN_COUNTY "IN COUNTY" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_IN_COUNTY,-1,-1;CL_CFCC "CFCC" true true false 6 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_CFCC,-1,-1;CL_MTFCC "MTFCC" true true false 6 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_MTFCC,-1,-1;CL_RD_CLASS "ROAD CLASS" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_RD_CLASS,-1,-1;CL_P_LL "PARITY LEFT LOW #" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_P_LL,-1,-1;CL_P_LH "PARITY LEFT HIGH #" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_P_LH,-1,-1;CL_P_RL "PARITY RIGHT LOW #" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_P_RL,-1,-1;CL_P_RH "PARITY RIGHT HIGH #" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_P_RH,-1,-1;CL_P_ALL "PARITY ALL" true true false 4 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_P_ALL,-1,-1;CL_LO_CROSS "LOW CROSS STREET" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_LO_CROSS,-1,-1;CL_HI_CROSS "HIGH CROSS STREET" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_HI_CROSS,-1,-1;CL_UPD_CODE "UPDATE CODE" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_UPD_CODE,-1,-1;CL_ADD_DATE "ADD DATE" false true false 8 Date 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_ADD_DATE,-1,-1;CL_UPD_DATE "UPDATE DATE" false true false 8 Date 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_UPD_DATE,-1,-1;CL_UPD_USER "UPDATE USER" false true false 100 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_UPD_USER,-1,-1;CL_COUNTY_NAME_L "COUNTY NAME LEFT" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_COUNTY_NAME_L,-1,-1;CL_COUNTY_NAME_R "COUNTY NAME RIGHT" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_COUNTY_NAME_R,-1,-1;CL_COUNTY_FIPS_L "COUNTY FIPS LEFT" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_COUNTY_FIPS_L,-1,-1;CL_COUNTY_FIPS_R "COUNTY FIPS RIGHT" true true false 8 Double 8 38 ,First,#,'+STREET_CENTERLINE_PS+',CL_COUNTY_FIPS_R,-1,-1;CL_CAD_NTID "CAD NTID" true true false 254 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_CAD_NTID,-1,-1;CL_ADDRESS_COUNT "ADDRESS COUNT" true true false 4 Long 0 10 ,First,#,'+STREET_CENTERLINE_PS+',CL_ADDRESS_COUNT,-1,-1;CL_DiscrpAGID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_DiscrpAGID,-1,-1;CL_COUNTRY_L "Country Left" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_COUNTRY_L,-1,-1;CL_COUNTRY_R "Country Right" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_PS+',CL_COUNTRY_R,-1,-1;SHAPE_STLength__ "SHAPE.STLength()" false false true 0 Double 0 0 ,First,#,'+STREET_CENTERLINE_PS+',SHAPE.STLength(),-1,-1;POST_OFFICE "POST OFFICE" true true false 50 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,POST_OFFICE,-1,-1;ZIPCODE "ZIPCODE" true true false 8 Double 8 38 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,ZIPCODE,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,UPDATE_DATE,-1,-1;GLOBALID "GLOBALID" false false false 38 GlobalID 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,GLOBALID,-1,-1;SHAPE_STArea__ "SHAPE_STArea__" false false true 0 Double 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,SHAPE.STArea(),-1,-1;SHAPE_STLength_1 "SHAPE_STLength_1" false false true 0 Double 0 0 ,First,#,Database Connections\craw_internal@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,SHAPE.STLength(),-1,-1', "HAVE_THEIR_CENTER_IN", "", "")
+    arcpy.analysis.SpatialJoin(STREET_CENTERLINE, ZIPCODES_INTERNAL, CL_Zipcode_JOIN_DELETE, "JOIN_ONE_TO_ONE", "KEEP_ALL", r'CL_UniqueID "Unique ID" true true false 4 Long 0 10,First,#,'+STREET_CENTERLINE+',CL_UniqueID,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0,First,#,'+STREET_CENTERLINE+',DiscrpAgID,0,75;DateUpdate "Date record last updated" true true false 8 Date 0 0,First,#,'+STREET_CENTERLINE+',DateUpdate,-1,-1;DateAdded "Date record was added" true true false 8 Date 0 0,First,#,'+STREET_CENTERLINE+',DateAdded,-1,-1;RCL_NGUID "Road Centerline NENA Globaly Unique ID" true true false 254 Text 0 0,First,#,'+STREET_CENTERLINE+',RCL_NGUID,0,254;FromAddr_L "Left FROM Address" true true false 4 Long 0 10,First,#,'+STREET_CENTERLINE+',FromAddr_L,-1,-1;ToAddr_L "Left TO Address" true true false 4 Long 0 10,First,#,'+STREET_CENTERLINE+',ToAddr_L,-1,-1;FromAddr_R "Right FROM Address" true true false 4 Long 0 10,First,#,'+STREET_CENTERLINE+',FromAddr_R,-1,-1;ToAddr_R "Right TO Address" true true false 4 Long 0 10,First,#,'+STREET_CENTERLINE+',ToAddr_R,-1,-1;Parity_L "Parity Left" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE+',Parity_L,0,1;Parity_R "Parity Right" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE+',Parity_R,0,1;ParityAll "Parity of centerline segment" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE+',ParityAll,0,1;St_PreDir "Street Name Pre Directional" true true false 9 Text 0 0,First,#,'+STREET_CENTERLINE+',St_PreDir,0,9;St_Name "Street Name" true true false 60 Text 0 0,First,#,'+STREET_CENTERLINE+',St_Name,0,60;St_PostTyp "Street Name Post Type" true true false 50 Text 0 0,First,#,'+STREET_CENTERLINE+',St_PostTyp,0,50;St_PosDir "Street Name Post Directional" true true false 9 Text 0 0,First,#,'+STREET_CENTERLINE+',St_PosDir,0,9;St_FullName "Street Full Name" true true false 160 Text 0 0,First,#,'+STREET_CENTERLINE+',St_FullName,0,160;ESN_L "ESN Left" true true false 5 Text 0 0,First,#,'+STREET_CENTERLINE+',ESN_L,0,5;ESN_R "ESN Right" true true false 5 Text 0 0,First,#,'+STREET_CENTERLINE+',ESN_R,0,5;Country_L "Country Left" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE+',Country_L,0,2;Country_R "Country Right" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE+',Country_R,0,2;State_L "State Left" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE+',State_L,0,2;State_R "State Right" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE+',State_R,0,2;County_L "County Left" true true false 40 Text 0 0,First,#,'+STREET_CENTERLINE+',County_L,0,40;County_R "County Right" true true false 40 Text 0 0,First,#,'+STREET_CENTERLINE+',County_R,0,40;County_R_FIPS "County FIPS Code Right" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',County_R_FIPS,-1,-1;County_L_FIPS "County FIPS Code Left" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',County_L_FIPS,-1,-1;IncMuni "Incorporated Municipality" true true false 100 Text 0 0,First,#,'+STREET_CENTERLINE+',IncMuni,0,100;IncMuni_L "Incorporated Municipality Left" true true false 100 Text 0 0,First,#,'+STREET_CENTERLINE+',IncMuni_L,0,100;IncMuni_R "Incorporated Municipality Right" true true false 100 Text 0 0,First,#,'+STREET_CENTERLINE+',IncMuni_R,0,100;IncMuniFIPS_L "Incorporated Municipality FIPS Code Left" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',IncMuniFIPS_L,-1,-1;IncMuniFIPS_R "Incorporated Municipality FIPS Code Right" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',IncMuniFIPS_R,-1,-1;OneWay "One Way" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE+',OneWay,0,2;SpeedLimit "Speed Limit (MPH)" true true false 2 Short 0 5,First,#,'+STREET_CENTERLINE+',SpeedLimit,-1,-1;TF_RoutingCost "To-From Routing Cost" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',TF_RoutingCost,-1,-1;FT_RoutingCost "From-To Routing Cost" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',FT_RoutingCost,-1,-1;RouteNumber "Route Number" true true false 25 Text 0 0,First,#,'+STREET_CENTERLINE+',RouteNumber,0,25;LegislativeRouteNumber "Legislative Route Number" true true false 30 Text 0 0,First,#,'+STREET_CENTERLINE+',LegislativeRouteNumber,0,30;AddressCount "# of addresses assigned to segment" true true false 2 Short 0 5,First,#,'+STREET_CENTERLINE+',AddressCount,-1,-1;AddressRange "Address Range assigned to segment" true true false 15 Text 0 0,First,#,'+STREET_CENTERLINE+',AddressRange,0,15;Tile "Grid Tile ID" true true false 10 Text 0 0,First,#,'+STREET_CENTERLINE+',Tile,0,10;ZElev_F "Z Elevation From" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',ZElev_F,-1,-1;ZElev_T "Z Elevation To" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',ZElev_T,-1,-1;ConstructionStatus "Construction Status" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',ConstructionStatus,-1,-1;MaintenanceOwner "Maintenance Owner" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',MaintenanceOwner,-1,-1;SurfaceType "Surface Type" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',SurfaceType,-1,-1;WeightLimit "Weight Limit (Tons)" true true false 2 Short 0 5,First,#,'+STREET_CENTERLINE+',WeightLimit,-1,-1;HeightLimit "Height Limit (Feet)" true true false 2 Short 0 5,First,#,'+STREET_CENTERLINE+',HeightLimit,-1,-1;Divided "Is roadway divded?" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE+',Divided,0,1;OverWater "Is segment over water?" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE+',OverWater,0,1;InCounty "Is segment within Crawford County?" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE+',InCounty,0,1;CFCC "Census Feature Class Code" true true false 6 Text 0 0,First,#,'+STREET_CENTERLINE+',CFCC,0,6;MTFCC "Map/Tiger Feature Class Code" true true false 6 Text 0 0,First,#,'+STREET_CENTERLINE+',MTFCC,0,6;F_CrossStreet "FROM Cross Street" true true false 160 Text 0 0,First,#,'+STREET_CENTERLINE+',F_CrossStreet,0,160;T_CrossStreet "TO Cross Street" true true false 160 Text 0 0,First,#,'+STREET_CENTERLINE+',T_CrossStreet,0,160;UpdateCode "Update Code" true true false 8 Double 8 38,First,#,'+STREET_CENTERLINE+',UpdateCode,-1,-1;UpdateUser "UpdateUser" true true false 75 Text 0 0,First,#,'+STREET_CENTERLINE+',UpdateUser,0,75;RoadClass "Road Classification" true true false 255 Text 0 0,First,#,'+STREET_CENTERLINE+',RoadClass,0,255;GlobalID "GlobalID" false false false 38 GlobalID 0 0,First,#,'+STREET_CENTERLINE+',GlobalID,-1,-1;POST_OFFICE "POST OFFICE" true true false 50 Text 0 0,First,#,R:\GIS\ArcAutomations\Database_Connections\PUBLIC_SAFETY@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,POST_OFFICE,0,50;ZIPCODE "ZIPCODE" true true false 8 Double 8 38,First,#,R:\GIS\ArcAutomations\Database_Connections\PUBLIC_SAFETY@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,ZIPCODE,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0,First,#,R:\GIS\ArcAutomations\Database_Connections\PUBLIC_SAFETY@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,COUNTY_NAME,0,50;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38,First,#,R:\GIS\ArcAutomations\Database_Connections\PUBLIC_SAFETY@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0,First,#,R:\GIS\ArcAutomations\Database_Connections\PUBLIC_SAFETY@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,UPDATE_DATE,-1,-1;GLOBALID_1 "GLOBALID" false false false 38 GlobalID 0 0,First,#,R:\GIS\ArcAutomations\Database_Connections\PUBLIC_SAFETY@ccsde.sde\CCSDE.CRAW_INTERNAL.Boundaries\CCSDE.CRAW_INTERNAL.ZIPCODES_INTERNAL,GLOBALID,-1,-1', "HAVE_THEIR_CENTER_IN", None, '')
 except:
     print ("\n Unable to Spatial Join CL and Zipcode - creating CL_Zipcode_JOIN_DELETE")
     write_log("Unable to Spatial Join CL and Zipcode - creating CL_Zipcode_JOIN_DELETE", logfile)
@@ -259,7 +267,7 @@ except:
 
 try:    
     # Make Feature Layer -- STREET_CENTERLINE_Layer (make a temporary layer of centerline, to manipulate in steps below)
-    arcpy.MakeFeatureLayer_management(CL_Zipcode_JOIN_DELETE, STREET_CENTERLINE_Layer, "CL_CONST_STATUS <> 1 OR CL_CONST_STATUS IS NULL", "", "OBJECTID OBJECTID VISIBLE NONE;SHAPE SHAPE VISIBLE NONE;Join_Count Join_Count VISIBLE NONE;TARGET_FID TARGET_FID VISIBLE NONE;CL_UNIQUEID CL_UNIQUEID VISIBLE NONE;CL_PRE_MOD CL_PRE_MOD VISIBLE NONE;CL_PRE_DIR CL_PRE_DIR VISIBLE NONE;CL_PRE_TYPE CL_PRE_TYPE VISIBLE NONE;CL_NAME CL_NAME VISIBLE NONE;CL_SUFFIX CL_SUFFIX VISIBLE NONE;CL_POST_DIR CL_POST_DIR VISIBLE NONE;CL_POST_MOD CL_POST_MOD VISIBLE NONE;CL_FULL_NAME CL_FULL_NAME VISIBLE NONE;CL_MUNI CL_MUNI VISIBLE NONE;CL_MUNI_L CL_MUNI_L VISIBLE NONE;CL_MUNI_R CL_MUNI_R VISIBLE NONE;CL_STATE_L CL_STATE_L VISIBLE NONE;CL_STATE_R CL_STATE_R VISIBLE NONE;CL_FIPS_L CL_FIPS_L VISIBLE NONE;CL_FIPS_R CL_FIPS_R VISIBLE NONE;CL_RTNO CL_RTNO VISIBLE NONE;CL_ST_MUNI CL_ST_MUNI VISIBLE NONE;CL_ESN_L CL_ESN_L VISIBLE NONE;CL_ESN_R CL_ESN_R VISIBLE NONE;CL_L_LO CL_L_LO VISIBLE NONE;CL_L_HI CL_L_HI VISIBLE NONE;CL_R_LO CL_R_LO VISIBLE NONE;CL_R_HI CL_R_HI VISIBLE NONE;CL_RANGE CL_RANGE VISIBLE NONE;CL_TILE CL_TILE VISIBLE NONE;CL_ONE_WAY CL_ONE_WAY VISIBLE NONE;CL_Z_ELEV_F CL_Z_ELEV_F VISIBLE NONE;CL_Z_ELEV_T CL_Z_ELEV_T VISIBLE NONE;CL_CONST_STATUS CL_CONST_STATUS VISIBLE NONE;CL_OWNER CL_OWNER VISIBLE NONE;CL_SURF_TYPE CL_SURF_TYPE VISIBLE NONE;CL_WEIGHT_LMT CL_WEIGHT_LMT VISIBLE NONE;CL_HEIGHT_LMT CL_HEIGHT_LMT VISIBLE NONE;CL_SPEED_LMT CL_SPEED_LMT VISIBLE NONE;CL_FT_COST CL_FT_COST VISIBLE NONE;CL_TF_COST CL_TF_COST VISIBLE NONE;CL_DIVIDED CL_DIVIDED VISIBLE NONE;CL_IN_WATER CL_IN_WATER VISIBLE NONE;CL_IN_COUNTY CL_IN_COUNTY VISIBLE NONE;CL_CFCC CL_CFCC VISIBLE NONE;CL_MTFCC CL_MTFCC VISIBLE NONE;CL_RD_CLASS CL_RD_CLASS VISIBLE NONE;CL_P_LL CL_P_LL VISIBLE NONE;CL_P_LH CL_P_LH VISIBLE NONE;CL_P_RL CL_P_RL VISIBLE NONE;CL_P_RH CL_P_RH VISIBLE NONE;CL_P_ALL CL_P_ALL VISIBLE NONE;CL_LO_CROSS CL_LO_CROSS VISIBLE NONE;CL_HI_CROSS CL_HI_CROSS VISIBLE NONE;CL_UPD_CODE CL_UPD_CODE VISIBLE NONE;CL_ADD_DATE CL_ADD_DATE VISIBLE NONE;CL_UPD_DATE CL_UPD_DATE VISIBLE NONE;CL_UPD_USER CL_UPD_USER VISIBLE NONE;CL_COUNTY_NAME_L CL_COUNTY_NAME_L VISIBLE NONE;CL_COUNTY_NAME_R CL_COUNTY_NAME_R VISIBLE NONE;CL_COUNTY_FIPS_L CL_COUNTY_FIPS_L VISIBLE NONE;CL_COUNTY_FIPS_R CL_COUNTY_FIPS_R VISIBLE NONE;CL_CAD_NTID CL_CAD_NTID VISIBLE NONE;CL_ADDRESS_COUNT CL_ADDRESS_COUNT VISIBLE NONE;CL_DiscrpAGID CL_DiscrpAGID VISIBLE NONE;CL_COUNTRY_L CL_COUNTRY_L VISIBLE NONE;CL_COUNTRY_R CL_COUNTRY_R VISIBLE NONE;POST_OFFICE POST_OFFICE VISIBLE NONE;ZIPCODE ZIPCODE VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;UPDATE_DATE UPDATE_DATE VISIBLE NONE;SHAPE_STLength_1 SHAPE_STLength_1 VISIBLE NONE;SHAPE_Length SHAPE_Length VISIBLE NONE")
+    arcpy.management.MakeFeatureLayer(CL_Zipcode_JOIN_DELETE, STREET_CENTERLINE_Layer, "ConstructionStatus <> 1", None, "OBJECTID OBJECTID VISIBLE NONE;Shape Shape VISIBLE NONE;Join_Count Join_Count VISIBLE NONE;TARGET_FID TARGET_FID VISIBLE NONE;CL_UniqueID CL_UniqueID VISIBLE NONE;DiscrpAgID DiscrpAgID VISIBLE NONE;DateUpdate DateUpdate VISIBLE NONE;DateAdded DateAdded VISIBLE NONE;RCL_NGUID RCL_NGUID VISIBLE NONE;FromAddr_L FromAddr_L VISIBLE NONE;ToAddr_L ToAddr_L VISIBLE NONE;FromAddr_R FromAddr_R VISIBLE NONE;ToAddr_R ToAddr_R VISIBLE NONE;Parity_L Parity_L VISIBLE NONE;Parity_R Parity_R VISIBLE NONE;ParityAll ParityAll VISIBLE NONE;St_PreDir St_PreDir VISIBLE NONE;St_Name St_Name VISIBLE NONE;St_PostTyp St_PostTyp VISIBLE NONE;St_PosDir St_PosDir VISIBLE NONE;St_FullName St_FullName VISIBLE NONE;ESN_L ESN_L VISIBLE NONE;ESN_R ESN_R VISIBLE NONE;Country_L Country_L VISIBLE NONE;Country_R Country_R VISIBLE NONE;State_L State_L VISIBLE NONE;State_R State_R VISIBLE NONE;County_L County_L VISIBLE NONE;County_R County_R VISIBLE NONE;County_R_FIPS County_R_FIPS VISIBLE NONE;County_L_FIPS County_L_FIPS VISIBLE NONE;IncMuni IncMuni VISIBLE NONE;IncMuni_L IncMuni_L VISIBLE NONE;IncMuni_R IncMuni_R VISIBLE NONE;IncMuniFIPS_L IncMuniFIPS_L VISIBLE NONE;IncMuniFIPS_R IncMuniFIPS_R VISIBLE NONE;OneWay OneWay VISIBLE NONE;SpeedLimit SpeedLimit VISIBLE NONE;TF_RoutingCost TF_RoutingCost VISIBLE NONE;FT_RoutingCost FT_RoutingCost VISIBLE NONE;RouteNumber RouteNumber VISIBLE NONE;LegislativeRouteNumber LegislativeRouteNumber VISIBLE NONE;AddressCount AddressCount VISIBLE NONE;AddressRange AddressRange VISIBLE NONE;Tile Tile VISIBLE NONE;ZElev_F ZElev_F VISIBLE NONE;ZElev_T ZElev_T VISIBLE NONE;ConstructionStatus ConstructionStatus VISIBLE NONE;MaintenanceOwner MaintenanceOwner VISIBLE NONE;SurfaceType SurfaceType VISIBLE NONE;WeightLimit WeightLimit VISIBLE NONE;HeightLimit HeightLimit VISIBLE NONE;Divided Divided VISIBLE NONE;OverWater OverWater VISIBLE NONE;InCounty InCounty VISIBLE NONE;CFCC CFCC VISIBLE NONE;MTFCC MTFCC VISIBLE NONE;F_CrossStreet F_CrossStreet VISIBLE NONE;T_CrossStreet T_CrossStreet VISIBLE NONE;UpdateCode UpdateCode VISIBLE NONE;UpdateUser UpdateUser VISIBLE NONE;RoadClass RoadClass VISIBLE NONE;POST_OFFICE POST_OFFICE VISIBLE NONE;ZIPCODE ZIPCODE VISIBLE NONE;COUNTY_NAME COUNTY_NAME VISIBLE NONE;COUNTY_FIPS COUNTY_FIPS VISIBLE NONE;UPDATE_DATE UPDATE_DATE VISIBLE NONE;Shape_Length Shape_Length VISIBLE NONE")
 except:
     print ("\n Unable to Make Feature Layer -- STREET_CENTERLINE_Layer - Calc ALL COSTS to FT COST FIELD")
     write_log("Unable to Make Feature Layer -- STREET_CENTERLINE_Layer - Calc ALL COSTS to FT COST FIELD", logfile)
@@ -269,7 +277,7 @@ except:
 
 try:
     # Calc ALL COSTS to FT COST FIELD (iterate through centerline layer file, calculate any costs from the TF_COST field over to the FT cost field if the One way is TF, otherwise the correct cost already exists in the FT cost field - which will be calculated in append in steps below)
-    CENTERLINE_FIELDS = ['CL_ONE_WAY', 'CL_FT_COST', 'CL_TF_COST']
+    CENTERLINE_FIELDS = ['OneWay', 'FT_RoutingCost', 'TF_RoutingCost']
     cursor = arcpy.da.UpdateCursor(STREET_CENTERLINE_Layer, CENTERLINE_FIELDS)
     for row in cursor:
         if (row[0] == 'B' or row[0] is None or row[0] == 'FT' or row[0] == 'N'):
@@ -290,7 +298,7 @@ except:
 
 try:
     # Output STREET_CENTERLINE_Layer to DELETE_FILE, to append to Centerline_CrawfordCo - Northern Tier FGDB (append Crawford centerline to staging FGDB created in steps above)
-    arcpy.FeatureClassToFeatureClass_conversion(STREET_CENTERLINE_Layer, DELETE_FILES, "STREET_CENTERLINE_Layer_OUTPUT", "", 'Join_Count "Join_Count" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,Join_Count,-1,-1;TARGET_FID "TARGET_FID" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,TARGET_FID,-1,-1;CL_UNIQUEID "UNIQUE ID" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_UNIQUEID,-1,-1;CL_PRE_MOD "PRE MODIFIER" true true false 15 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_PRE_MOD,-1,-1;CL_PRE_DIR "PRE DIRECTIONAL" true true false 4 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_PRE_DIR,-1,-1;CL_PRE_TYPE "PRE TYPE" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_PRE_TYPE,-1,-1;CL_NAME "NAME" true true false 75 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_NAME,-1,-1;CL_SUFFIX "SUFFIX" true true false 6 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_SUFFIX,-1,-1;CL_POST_DIR "POST DIRECTIONAL" true true false 4 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_POST_DIR,-1,-1;CL_POST_MOD "POST MODIFIER" true true false 100 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_POST_MOD,-1,-1;CL_FULL_NAME "FULL NAME" true true false 100 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_FULL_NAME,-1,-1;CL_MUNI "MUNICIPALITY" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI,-1,-1;CL_MUNI_L "MUNICIPALITY LEFT" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI_L,-1,-1;CL_MUNI_R "MUNICIPALITY RIGHT" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI_R,-1,-1;CL_STATE_L "STATE LEFT" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_STATE_L,-1,-1;CL_STATE_R "STATE RIGHT" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_STATE_R,-1,-1;CL_FIPS_L "FIPS LEFT" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_FIPS_L,-1,-1;CL_FIPS_R "FIPS RIGHT" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_FIPS_R,-1,-1;CL_RTNO "ROUTE NUMBER" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_RTNO,-1,-1;CL_ST_MUNI "STREET | MUNI" true true false 120 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ST_MUNI,-1,-1;CL_ESN_L "ESN L" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ESN_L,-1,-1;CL_ESN_R "ESN R" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ESN_R,-1,-1;CL_L_LO "LEFT LOW #" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_L_LO,-1,-1;CL_L_HI "LEFT HIGH #" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_L_HI,-1,-1;CL_R_LO "RIGHT LOW #" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_R_LO,-1,-1;CL_R_HI "RIGHT HIGH #" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_R_HI,-1,-1;CL_RANGE "ADDRESS RANGE" true true false 13 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_RANGE,-1,-1;CL_TILE "TILE #" true true false 6 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_TILE,-1,-1;CL_ONE_WAY "ONE WAY" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ONE_WAY,-1,-1;CL_Z_ELEV_F "Z ELEVATION FROM" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_Z_ELEV_F,-1,-1;CL_Z_ELEV_T "Z ELEVATION TO" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_Z_ELEV_T,-1,-1;CL_CONST_STATUS "CONSTRUCTION STATUS" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_CONST_STATUS,-1,-1;CL_OWNER "OWNER" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_OWNER,-1,-1;CL_SURF_TYPE "SURFACE TYPE" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_SURF_TYPE,-1,-1;CL_WEIGHT_LMT "WEIGHT LIMIT" true true false 2 Short 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_WEIGHT_LMT,-1,-1;CL_HEIGHT_LMT "HEIGHT LIMIT" true true false 2 Short 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_HEIGHT_LMT,-1,-1;CL_SPEED_LMT "SPEED LIMIT" true true false 2 Short 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_SPEED_LMT,-1,-1;CL_FT_COST "FROM-TO COST" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_FT_COST,-1,-1;CL_TF_COST "TO_FROM COST" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_TF_COST,-1,-1;CL_DIVIDED "ROADWAY DIVIDED" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_DIVIDED,-1,-1;CL_IN_WATER "IN WATER" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_IN_WATER,-1,-1;CL_IN_COUNTY "IN COUNTY" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_IN_COUNTY,-1,-1;CL_CFCC "CFCC" true true false 6 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_CFCC,-1,-1;CL_MTFCC "MTFCC" true true false 6 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MTFCC,-1,-1;CL_RD_CLASS "ROAD CLASS" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_RD_CLASS,-1,-1;CL_P_LL "PARITY LEFT LOW #" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_LL,-1,-1;CL_P_LH "PARITY LEFT HIGH #" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_LH,-1,-1;CL_P_RL "PARITY RIGHT LOW #" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_RL,-1,-1;CL_P_RH "PARITY RIGHT HIGH #" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_RH,-1,-1;CL_P_ALL "PARITY ALL" true true false 4 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_ALL,-1,-1;CL_LO_CROSS "LOW CROSS STREET" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_LO_CROSS,-1,-1;CL_HI_CROSS "HIGH CROSS STREET" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_HI_CROSS,-1,-1;CL_UPD_CODE "UPDATE CODE" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_UPD_CODE,-1,-1;CL_ADD_DATE "ADD DATE" true true false 8 Date 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ADD_DATE,-1,-1;CL_UPD_DATE "UPDATE DATE" true true false 8 Date 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_UPD_DATE,-1,-1;CL_UPD_USER "UPDATE USER" true true false 100 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_UPD_USER,-1,-1;CL_COUNTY_NAME_L "COUNTY NAME LEFT" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTY_NAME_L,-1,-1;CL_COUNTY_NAME_R "COUNTY NAME RIGHT" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTY_NAME_R,-1,-1;CL_COUNTY_FIPS_L "COUNTY FIPS LEFT" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTY_FIPS_L,-1,-1;CL_COUNTY_FIPS_R "COUNTY FIPS RIGHT" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTY_FIPS_R,-1,-1;CL_CAD_NTID "CAD NTID" true true false 254 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_CAD_NTID,-1,-1;CL_ADDRESS_COUNT "ADDRESS COUNT" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ADDRESS_COUNT,-1,-1;CL_DiscrpAGID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_DiscrpAGID,-1,-1;CL_COUNTRY_L "Country Left" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTRY_L,-1,-1;CL_COUNTRY_R "Country Right" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTRY_R,-1,-1;POST_OFFICE "POST OFFICE" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,POST_OFFICE,-1,-1;ZIPCODE "ZIPCODE" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,ZIPCODE,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,COUNTY_NAME,-1,-1;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0 ,First,#,STREET_CENTERLINE_Layer,UPDATE_DATE,-1,-1;SHAPE_STLength_1 "SHAPE_STLength_1" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,SHAPE_STLength_1,-1,-1;SHAPE_Length "SHAPE_Length" false true true 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,SHAPE_Length,-1,-1', "")
+    arcpy.conversion.FeatureClassToFeatureClass(STREET_CENTERLINE_Layer, DELETE_FILES, "STREET_CENTERLINE_Layer_OUTPUT", '', 'Join_Count "Join_Count" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,Join_Count,-1,-1;TARGET_FID "TARGET_FID" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,TARGET_FID,-1,-1;CL_UniqueID "Unique ID" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,CL_UniqueID,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0,First,#,STREET_CENTERLINE_Layer,DiscrpAgID,0,75;DateUpdate "Date record last updated" true true false 8 Date 0 0,First,#,STREET_CENTERLINE_Layer,DateUpdate,-1,-1;DateAdded "Date record was added" true true false 8 Date 0 0,First,#,STREET_CENTERLINE_Layer,DateAdded,-1,-1;RCL_NGUID "Road Centerline NENA Globaly Unique ID" true true false 254 Text 0 0,First,#,STREET_CENTERLINE_Layer,RCL_NGUID,0,254;FromAddr_L "Left FROM Address" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,FromAddr_L,-1,-1;ToAddr_L "Left TO Address" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,ToAddr_L,-1,-1;FromAddr_R "Right FROM Address" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,FromAddr_R,-1,-1;ToAddr_R "Right TO Address" true true false 4 Long 0 0,First,#,STREET_CENTERLINE_Layer,ToAddr_R,-1,-1;Parity_L "Parity Left" true true false 1 Text 0 0,First,#,STREET_CENTERLINE_Layer,Parity_L,0,1;Parity_R "Parity Right" true true false 1 Text 0 0,First,#,STREET_CENTERLINE_Layer,Parity_R,0,1;ParityAll "Parity of centerline segment" true true false 1 Text 0 0,First,#,STREET_CENTERLINE_Layer,ParityAll,0,1;St_PreDir "Street Name Pre Directional" true true false 9 Text 0 0,First,#,STREET_CENTERLINE_Layer,St_PreDir,0,9;St_Name "Street Name" true true false 60 Text 0 0,First,#,STREET_CENTERLINE_Layer,St_Name,0,60;St_PostTyp "Street Name Post Type" true true false 50 Text 0 0,First,#,STREET_CENTERLINE_Layer,St_PostTyp,0,50;St_PosDir "Street Name Post Directional" true true false 9 Text 0 0,First,#,STREET_CENTERLINE_Layer,St_PosDir,0,9;St_FullName "Street Full Name" true true false 160 Text 0 0,First,#,STREET_CENTERLINE_Layer,St_FullName,0,160;ESN_L "ESN Left" true true false 5 Text 0 0,First,#,STREET_CENTERLINE_Layer,ESN_L,0,5;ESN_R "ESN Right" true true false 5 Text 0 0,First,#,STREET_CENTERLINE_Layer,ESN_R,0,5;Country_L "Country Left" true true false 2 Text 0 0,First,#,STREET_CENTERLINE_Layer,Country_L,0,2;Country_R "Country Right" true true false 2 Text 0 0,First,#,STREET_CENTERLINE_Layer,Country_R,0,2;State_L "State Left" true true false 2 Text 0 0,First,#,STREET_CENTERLINE_Layer,State_L,0,2;State_R "State Right" true true false 2 Text 0 0,First,#,STREET_CENTERLINE_Layer,State_R,0,2;County_L "County Left" true true false 40 Text 0 0,First,#,STREET_CENTERLINE_Layer,County_L,0,40;County_R "County Right" true true false 40 Text 0 0,First,#,STREET_CENTERLINE_Layer,County_R,0,40;County_R_FIPS "County FIPS Code Right" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,County_R_FIPS,-1,-1;County_L_FIPS "County FIPS Code Left" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,County_L_FIPS,-1,-1;IncMuni "Incorporated Municipality" true true false 100 Text 0 0,First,#,STREET_CENTERLINE_Layer,IncMuni,0,100;IncMuni_L "Incorporated Municipality Left" true true false 100 Text 0 0,First,#,STREET_CENTERLINE_Layer,IncMuni_L,0,100;IncMuni_R "Incorporated Municipality Right" true true false 100 Text 0 0,First,#,STREET_CENTERLINE_Layer,IncMuni_R,0,100;IncMuniFIPS_L "Incorporated Municipality FIPS Code Left" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,IncMuniFIPS_L,-1,-1;IncMuniFIPS_R "Incorporated Municipality FIPS Code Right" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,IncMuniFIPS_R,-1,-1;OneWay "One Way" true true false 2 Text 0 0,First,#,STREET_CENTERLINE_Layer,OneWay,0,2;SpeedLimit "Speed Limit (MPH)" true true false 2 Short 0 0,First,#,STREET_CENTERLINE_Layer,SpeedLimit,-1,-1;TF_RoutingCost "To-From Routing Cost" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,TF_RoutingCost,-1,-1;FT_RoutingCost "From-To Routing Cost" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,FT_RoutingCost,-1,-1;RouteNumber "Route Number" true true false 25 Text 0 0,First,#,STREET_CENTERLINE_Layer,RouteNumber,0,25;LegislativeRouteNumber "Legislative Route Number" true true false 30 Text 0 0,First,#,STREET_CENTERLINE_Layer,LegislativeRouteNumber,0,30;AddressCount "# of addresses assigned to segment" true true false 2 Short 0 0,First,#,STREET_CENTERLINE_Layer,AddressCount,-1,-1;AddressRange "Address Range assigned to segment" true true false 15 Text 0 0,First,#,STREET_CENTERLINE_Layer,AddressRange,0,15;Tile "Grid Tile ID" true true false 10 Text 0 0,First,#,STREET_CENTERLINE_Layer,Tile,0,10;ZElev_F "Z Elevation From" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,ZElev_F,-1,-1;ZElev_T "Z Elevation To" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,ZElev_T,-1,-1;ConstructionStatus "Construction Status" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,ConstructionStatus,-1,-1;MaintenanceOwner "Maintenance Owner" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,MaintenanceOwner,-1,-1;SurfaceType "Surface Type" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,SurfaceType,-1,-1;WeightLimit "Weight Limit (Tons)" true true false 2 Short 0 0,First,#,STREET_CENTERLINE_Layer,WeightLimit,-1,-1;HeightLimit "Height Limit (Feet)" true true false 2 Short 0 0,First,#,STREET_CENTERLINE_Layer,HeightLimit,-1,-1;Divided "Is roadway divded?" true true false 1 Text 0 0,First,#,STREET_CENTERLINE_Layer,Divided,0,1;OverWater "Is segment over water?" true true false 1 Text 0 0,First,#,STREET_CENTERLINE_Layer,OverWater,0,1;InCounty "Is segment within Crawford County?" true true false 1 Text 0 0,First,#,STREET_CENTERLINE_Layer,InCounty,0,1;CFCC "Census Feature Class Code" true true false 6 Text 0 0,First,#,STREET_CENTERLINE_Layer,CFCC,0,6;MTFCC "Map/Tiger Feature Class Code" true true false 6 Text 0 0,First,#,STREET_CENTERLINE_Layer,MTFCC,0,6;F_CrossStreet "FROM Cross Street" true true false 160 Text 0 0,First,#,STREET_CENTERLINE_Layer,F_CrossStreet,0,160;T_CrossStreet "TO Cross Street" true true false 160 Text 0 0,First,#,STREET_CENTERLINE_Layer,T_CrossStreet,0,160;UpdateCode "Update Code" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,UpdateCode,-1,-1;UpdateUser "UpdateUser" true true false 75 Text 0 0,First,#,STREET_CENTERLINE_Layer,UpdateUser,0,75;RoadClass "Road Classification" true true false 255 Text 0 0,First,#,STREET_CENTERLINE_Layer,RoadClass,0,255;POST_OFFICE "POST OFFICE" true true false 50 Text 0 0,First,#,STREET_CENTERLINE_Layer,POST_OFFICE,0,50;ZIPCODE "ZIPCODE" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,ZIPCODE,-1,-1;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0,First,#,STREET_CENTERLINE_Layer,COUNTY_NAME,0,50;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,COUNTY_FIPS,-1,-1;UPDATE_DATE "UPDATE_DATE" true true false 8 Date 0 0,First,#,STREET_CENTERLINE_Layer,UPDATE_DATE,-1,-1;Shape_Length "Shape_Length" false true true 8 Double 0 0,First,#,STREET_CENTERLINE_Layer,Shape_Length,-1,-1', '')
 except:
     print ("\n Unable to Output STREET_CENTERLINE_Layer to DELETE_FILE, to append to Centerline_CrawfordCo - Northern Tier FGDB")
     write_log("Unable to Output STREET_CENTERLINE_Layer to DELETE_FILE, to append to Centerline_CrawfordCo - Northern Tier FGDB", logfile)
@@ -300,8 +308,7 @@ except:
 
 try:
     # Append STREET_CENTERLINE_Layer to Centerline_CrawfordCo - Northern Tier FGDB (append Crawford centerline to staging FGDB created in steps above)
-#    arcpy.Append_management(STREET_CENTERLINE_Layer, Centerline_CrawfordCo, "NO_TEST", 'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_DiscrpAGID,-1,-1;DateUpdate "DateUpdate" true true false 8 Date 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_UPD_DATE,-1,-1;Effective "Effective" true true false 8 Date 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ADD_DATE,-1,-1;Expire "Expire" true true false 8 Date 0 0 ,First,#;RCL_NGUID "RCL_NGUID" true true false 254 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_CAD_NTID,-1,-1;AdNumPre_L "AdNumPre_L" true true false 15 Text 0 0 ,First,#;AdNumPre_R "AdNumPre_R" true true false 15 Text 0 0 ,First,#;FromAddr_L "FromAddr_L" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_L_LO,-1,-1;ToAddr_L "ToAddr_L" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_L_HI,-1,-1;FromAddr_R "FromAddr_R" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_R_LO,-1,-1;ToAddr_R "ToAddr_R" true true false 4 Long 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_R_HI,-1,-1;Parity_L "Parity_L" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_LL,-1,-1;Parity_R "Parity_R" true true false 1 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_P_RL,-1,-1;St_PreMod "St_PreMod" true true false 15 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_PRE_MOD,-1,-1;St_PreDir "St_PreDir" true true false 9 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_PRE_DIR,-1,-1;St_PreTyp "St_PreTyp" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_PRE_TYPE,-1,-1;St_PreSep "St_PreSep" true true false 20 Text 0 0 ,First,#;St_Name "St_Name" true true false 60 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_NAME,-1,-1;St_PosTyp "St_PosTyp" true true false 50 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_SUFFIX,-1,-1;St_PosDir "St_PosDir" true true false 9 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_POST_DIR,-1,-1;St_PosMod "St_PosMod" true true false 25 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_POST_MOD,-1,-1;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0 ,First,#;LSt_Name "LSt_Name" true true false 75 Text 0 0 ,First,#;LSt_Type "LSt_Type" true true false 4 Text 0 0 ,First,#;LStPosDir "LStPosDir" true true false 2 Text 0 0 ,First,#;ESN_L "ESN_L" true true false 5 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ESN_L,-1,-1;ESN_R "ESN_R" true true false 5 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ESN_R,-1,-1;MSAGComm_L "MSAGComm_L" true true false 30 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI_L,-1,-1;MSAGComm_R "MSAGComm_R" true true false 30 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI_R,-1,-1;Country_L "Country_L" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTRY_L,-1,-1;Country_R "Country_R" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTRY_R,-1,-1;State_L "State_L" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_STATE_L,-1,-1;State_R "State_R" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_STATE_R,-1,-1;County_L "County_L" true true false 40 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTY_NAME_L,-1,-1;County_R "County_R" true true false 40 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_COUNTY_NAME_R,-1,-1;AddCode_L "AddCode_L" true true false 6 Text 0 0 ,First,#;AddCode_R "AddCode_R" true true false 6 Text 0 0 ,First,#;IncMuni_L "IncMuni_L" true true false 100 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI_L,-1,-1;IncMuni_R "IncMuni_R" true true false 100 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_MUNI_R,-1,-1;UnincCom_L "UnicCom_L" true true false 100 Text 0 0 ,First,#;UnincCom_R "Uninc" true true false 100 Text 0 0 ,First,#;NbrhdCom_L "NbrhdCom_L" true true false 100 Text 0 0 ,First,#;NbrhdCom_R "NbrhdCom_R" true true false 100 Text 0 0 ,First,#;PostCode_L "PostCode_L" true true false 7 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,ZIPCODE,-1,-1;PostCode_R "PostCode_R" true true false 7 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,ZIPCODE,-1,-1;PostComm_L "PostComm_L" true true false 40 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,POST_OFFICE,-1,-1;PostComm_R "PostComm_R" true true false 40 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,POST_OFFICE,-1,-1;RoadClass "RoadClass" true true false 15 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_RD_CLASS,-1,-1;OneWay "OneWay" true true false 2 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_ONE_WAY,-1,-1;SpeedLimit "SpeedLimit" true true false 2 Short 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_SPEED_LMT,-1,-1;Valid_L "Valid_L" true true false 1 Text 0 0 ,First,#;Valid_R "Valid_R" true true false 1 Text 0 0 ,First,#;Time "Time" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_FT_COST,-1,-1;Max_Height "Max_Height" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_HEIGHT_LMT,-1,-1;Max_Weight "Max_Weight" true true false 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_WEIGHT_LMT,-1,-1;T_ZLev "T_ZLev" true true false 2 Short 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_Z_ELEV_T,-1,-1;F_ZLev "F_ZLev" true true false 2 Short 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_Z_ELEV_F,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 0 ,First,#;FullName "FullName" true true false 80 Text 0 0 ,First,#,STREET_CENTERLINE_Layer,CL_FULL_NAME,-1,-1;Shape_Length "Shape_Length" false true true 8 Double 0 0 ,First,#,STREET_CENTERLINE_Layer,SHAPE_Length,-1,-1', "")
-    arcpy.Append_management(STREET_CENTERLINE_Layer_OUTPUT, Centerline_CrawfordCo, "NO_TEST", 'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_DiscrpAGID,-1,-1;DateUpdate "DateUpdate" true true false 8 Date 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_UPD_DATE,-1,-1;Effective "Effective" true true false 8 Date 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_ADD_DATE,-1,-1;Expire "Expire" true true false 8 Date 0 0 ,First,#;RCL_NGUID "RCL_NGUID" true true false 254 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_CAD_NTID,-1,-1;AdNumPre_L "AdNumPre_L" true true false 15 Text 0 0 ,First,#;AdNumPre_R "AdNumPre_R" true true false 15 Text 0 0 ,First,#;FromAddr_L "FromAddr_L" true true false 4 Long 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_L_LO,-1,-1;ToAddr_L "ToAddr_L" true true false 4 Long 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_L_HI,-1,-1;FromAddr_R "FromAddr_R" true true false 4 Long 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_R_LO,-1,-1;ToAddr_R "ToAddr_R" true true false 4 Long 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_R_HI,-1,-1;Parity_L "Parity_L" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_P_LL,-1,-1;Parity_R "Parity_R" true true false 1 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_P_RL,-1,-1;St_PreMod "St_PreMod" true true false 15 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_PRE_MOD,-1,-1;St_PreDir "St_PreDir" true true false 9 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_PRE_DIR,-1,-1;St_PreTyp "St_PreTyp" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_PRE_TYPE,-1,-1;St_PreSep "St_PreSep" true true false 20 Text 0 0 ,First,#;St_Name "St_Name" true true false 60 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_NAME,-1,-1;St_PosTyp "St_PosTyp" true true false 50 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_SUFFIX,-1,-1;St_PosDir "St_PosDir" true true false 9 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_POST_DIR,-1,-1;St_PosMod "St_PosMod" true true false 25 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_POST_MOD,-1,-1;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0 ,First,#;LSt_Name "LSt_Name" true true false 75 Text 0 0 ,First,#;LSt_Type "LSt_Type" true true false 4 Text 0 0 ,First,#;LStPosDir "LStPosDir" true true false 2 Text 0 0 ,First,#;ESN_L "ESN_L" true true false 5 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_ESN_L,-1,-1;ESN_R "ESN_R" true true false 5 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_ESN_R,-1,-1;MSAGComm_L "MSAGComm_L" true true false 30 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_MUNI_L,-1,-1;MSAGComm_R "MSAGComm_R" true true false 30 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_MUNI_R,-1,-1;Country_L "Country_L" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_COUNTRY_L,-1,-1;Country_R "Country_R" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_COUNTRY_R,-1,-1;State_L "State_L" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_STATE_L,-1,-1;State_R "State_R" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_STATE_R,-1,-1;County_L "County_L" true true false 40 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_COUNTY_NAME_L,-1,-1;County_R "County_R" true true false 40 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_COUNTY_NAME_R,-1,-1;AddCode_L "AddCode_L" true true false 6 Text 0 0 ,First,#;AddCode_R "AddCode_R" true true false 6 Text 0 0 ,First,#;IncMuni_L "IncMuni_L" true true false 100 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_MUNI_L,-1,-1;IncMuni_R "IncMuni_R" true true false 100 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_MUNI_R,-1,-1;UnincCom_L "UnicCom_L" true true false 100 Text 0 0 ,First,#;UnincCom_R "Uninc" true true false 100 Text 0 0 ,First,#;NbrhdCom_L "NbrhdCom_L" true true false 100 Text 0 0 ,First,#;NbrhdCom_R "NbrhdCom_R" true true false 100 Text 0 0 ,First,#;PostCode_L "PostCode_L" true true false 7 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ZIPCODE,-1,-1;PostCode_R "PostCode_R" true true false 7 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ZIPCODE,-1,-1;PostComm_L "PostComm_L" true true false 40 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',POST_OFFICE,-1,-1;PostComm_R "PostComm_R" true true false 40 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',POST_OFFICE,-1,-1;RoadClass "RoadClass" true true false 15 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_RD_CLASS,-1,-1;OneWay "OneWay" true true false 2 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_ONE_WAY,-1,-1;SpeedLimit "SpeedLimit" true true false 2 Short 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_SPEED_LMT,-1,-1;Valid_L "Valid_L" true true false 1 Text 0 0 ,First,#;Valid_R "Valid_R" true true false 1 Text 0 0 ,First,#;Time "Time" true true false 8 Double 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_FT_COST,-1,-1;Max_Height "Max_Height" true true false 8 Double 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_HEIGHT_LMT,-1,-1;Max_Weight "Max_Weight" true true false 8 Double 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_WEIGHT_LMT,-1,-1;T_ZLev "T_ZLev" true true false 2 Short 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_Z_ELEV_T,-1,-1;F_ZLev "F_ZLev" true true false 2 Short 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_Z_ELEV_F,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 0 ,First,#;FullName "FullName" true true false 80 Text 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_FULL_NAME,-1,-1;Shape_Length "Shape_Length" false true true 8 Double 0 0 ,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',SHAPE_Length,-1,-1', "")
+    arcpy.management.Append(STREET_CENTERLINE_Layer_OUTPUT, Centerline_CrawfordCo, "NO_TEST", r'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',DiscrpAgID,0,75;DateUpdate "DateUpdate" true true false 8 Date 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',DateUpdate,-1,-1;Effective "Effective" true true false 8 Date 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',DateAdded,-1,-1;Expire "Expire" true true false 8 Date 0 0,First,#;RCL_NGUID "RCL_NGUID" true true false 254 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',RCL_NGUID,0,254;AdNumPre_L "AdNumPre_L" true true false 15 Text 0 0,First,#;AdNumPre_R "AdNumPre_R" true true false 15 Text 0 0,First,#;FromAddr_L "FromAddr_L" true true false 4 Long 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',FromAddr_L,-1,-1;ToAddr_L "ToAddr_L" true true false 4 Long 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ToAddr_L,-1,-1;FromAddr_R "FromAddr_R" true true false 4 Long 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',FromAddr_R,-1,-1;ToAddr_R "ToAddr_R" true true false 4 Long 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ToAddr_R,-1,-1;Parity_L "Parity_L" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',Parity_L,0,1;Parity_R "Parity_R" true true false 1 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',Parity_R,0,1;St_PreMod "St_PreMod" true true false 15 Text 0 0,First,#;St_PreDir "St_PreDir" true true false 9 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',St_PreDir,0,9;St_PreTyp "St_PreTyp" true true false 50 Text 0 0,First,#;St_PreSep "St_PreSep" true true false 20 Text 0 0,First,#;St_Name "St_Name" true true false 60 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',St_Name,0,60;St_PosTyp "St_PosTyp" true true false 50 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',St_PostTyp,0,50;St_PosDir "St_PosDir" true true false 9 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',St_PosDir,0,9;St_PosMod "St_PosMod" true true false 25 Text 0 0,First,#;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0,First,#;LSt_Name "LSt_Name" true true false 75 Text 0 0,First,#;LSt_Type "LSt_Type" true true false 4 Text 0 0,First,#;LStPosDir "LStPosDir" true true false 2 Text 0 0,First,#;ESN_L "ESN_L" true true false 5 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ESN_L,0,5;ESN_R "ESN_R" true true false 5 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ESN_R,0,5;MSAGComm_L "MSAGComm_L" true true false 30 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',IncMuni_L,0,100;MSAGComm_R "MSAGComm_R" true true false 30 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',IncMuni_R,0,100;Country_L "Country_L" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',Country_L,0,2;Country_R "Country_R" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',Country_R,0,2;State_L "State_L" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',State_L,0,2;State_R "State_R" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',State_R,0,2;County_L "County_L" true true false 40 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',County_L,0,40;County_R "County_R" true true false 40 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',County_R,0,40;AddCode_L "AddCode_L" true true false 6 Text 0 0,First,#;AddCode_R "AddCode_R" true true false 6 Text 0 0,First,#;IncMuni_L "IncMuni_L" true true false 100 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',IncMuni_L,0,100;IncMuni_R "IncMuni_R" true true false 100 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',IncMuni_R,0,100;UnincCom_L "UnicCom_L" true true false 100 Text 0 0,First,#;UnincCom_R "Uninc" true true false 100 Text 0 0,First,#;NbrhdCom_L "NbrhdCom_L" true true false 100 Text 0 0,First,#;NbrhdCom_R "NbrhdCom_R" true true false 100 Text 0 0,First,#;PostCode_L "PostCode_L" true true false 7 Text 0 0,First,#;PostCode_R "PostCode_R" true true false 7 Text 0 0,First,#;PostComm_L "PostComm_L" true true false 40 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ZIPCODE,-1,-1;PostComm_R "PostComm_R" true true false 40 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ZIPCODE,-1,-1;RoadClass "RoadClass" true true false 15 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',RoadClass,0,255;OneWay "OneWay" true true false 2 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',OneWay,0,2;SpeedLimit "SpeedLimit" true true false 2 Short 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',SpeedLimit,-1,-1;Valid_L "Valid_L" true true false 1 Text 0 0,First,#;Valid_R "Valid_R" true true false 1 Text 0 0,First,#;Time "Time" true true false 8 Double 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',FT_RoutingCost,-1,-1;Max_Height "Max_Height" true true false 8 Double 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',HeightLimit,-1,-1;Max_Weight "Max_Weight" true true false 8 Double 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',WeightLimit,-1,-1;T_ZLev "T_ZLev" true true false 2 Short 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ZElev_T,-1,-1;F_ZLev "F_ZLev" true true false 2 Short 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',ZElev_F,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',CL_UniqueID,-1,-1;FullName "FullName" true true false 80 Text 0 0,First,#,'+STREET_CENTERLINE_Layer_OUTPUT+',St_FullName,0,160', '', '')
     Centerline_result = arcpy.GetCount_management(Centerline_CrawfordCo)
     print ('{} has {} records'.format(Centerline_CrawfordCo, Centerline_result[0]))
     write_log('{} has {} records'.format(Centerline_CrawfordCo, Centerline_result[0]), logfile)
@@ -313,7 +320,7 @@ except:
     sys.exit ()
 
 # Convert Road Classification (iterate through centerline export and convert road classification from Crawford County system to Northern Tier System)
-Crawford_Road_Class = ["1", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
+Crawford_Road_Class = ["INTERSTATE", "RAMP", "MAJOR ARTERIAL", "MINOR ARTERIAL", "COLLECTOR", "LOCAL", "SERVICE", "4 WHEEL DRIVE", "RECREATION", "RESOURCE", "OTHER", "UNKNOWN", "MINOR COLLECTOR"]
 NT_Road_Class = ["Interstate", "Other Road", "US Highway", "State Highway", "State Road", "Local Road", "Other Road", "Other Road", "Other Road", "Other Road", "Other Road", "Other Road", "State Road"]
     
 try:    
@@ -814,7 +821,6 @@ except:
 print ("       Municipalities append completed")
 write_log("       Municipalities append completed", logfile)
 
-
 print ("\n Append Tax Parcels from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Tax Parcels from CRAW_INTERNAL to Northern Tier FGDB", logfile)
 
@@ -827,7 +833,7 @@ except:
     logging.exception('Got exception on Append TAX_PARCELS_INTERNAL to Parcels in Northern Tier FGDB logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
-
+    
 try:
     # Calculate County/State/Contry field (With tax parcels within staging FGDB)
     arcpy.CalculateField_management(Parcels_CrawfordCo, "County", "'CRAWFORD'", "PYTHON", "")
@@ -845,7 +851,6 @@ except:
     
 print ("       Tax Parcels to Parcels append completed")
 write_log("       Tax Parcels to Parcels append completed", logfile)
-
 
 print ("\n Append Railroads from CRAW_INTERNAL to Northern Tier FGDB")
 write_log("\n Append Railroads from CRAW_INTERNAL to Northern Tier FGDB", logfile)
@@ -940,19 +945,375 @@ except:
     logging.exception('Got exception on delete **Delete Files** feature dataset logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
+
+print ("****Preparing PA NG911 Export FGDB*****")
+write_log("****Preparing PA NG911 Export FGDB*****", logfile)
+
+try:
+    # Create PA_NG911_Export_YYYYMMDD geodatabase
+    arcpy.management.CreateFileGDB(PA_NG911_EXPORT_FLDR, "PA_NG911_Export_YYYYMMDD", "CURRENT")
+    print ("\n PA_NG911_Export_YYYYMMDD geodatabase created")
+    write_log("\n PA_NG911_Export_YYYYMMDD geodatabase created",logfile)
+except:
+    print ("\n Unable to create PA_NG911_Export_YYYYMMDD geodatabase")
+    write_log("\n Unable to create PA_NG911_Export_YYYYMMDD geodatabase", logfile)
+    logging.exception('Got exception on creation of PA_NG911_Export_YYYYMMDD geodatabase logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+# Define Work Paths for NG911 Database:
+PA_NG911_FGDB = PA_NG911_EXPORT_FLDR + "\\PA_NG911_Export_YYYYMMDD.gdb"
+Ambulance_Company_NG911 = PA_NG911_FGDB + "\\Ambulance_Company_CrawfordCo"
+Centerline_NG911 = PA_NG911_FGDB + "\\Centerline_CrawfordCo"
+Counties_NG911 = PA_NG911_FGDB + "\\Counties_CrawfordCo"
+EMS_Districts_NG911 = PA_NG911_FGDB + "\\EMS_Districts_CrawfordCo"
+Fire_Department_NG911 = PA_NG911_FGDB + "\\Fire_Department_CrawfordCo"
+Fire_Response_NG911 = PA_NG911_FGDB + "\\Fire_Response_CrawfordCo"
+Hydrants_NG911 = PA_NG911_FGDB + "\\NWS_Hydrants_CrawfordCo"
+Landmarks_NG911 = PA_NG911_FGDB + "\\Landmarks_CrawfordCo"
+MilePosts_NG911 = PA_NG911_FGDB + "\\MilePosts_CrawfordCo"
+Municipalities_NG911 = PA_NG911_FGDB + "\\Municipalities_CrawfordCo"
+AddressPoint_NG911 = PA_NG911_FGDB + "\\AddressPoint_CrawfordCo"
+Police_Department_NG911 = PA_NG911_FGDB + "\\Police_Department_CrawfordCo"
+Police_Reporting_NG911 = PA_NG911_FGDB + "\\Police_Reporting_CrawfordCo"
+Railroads_NG911 = PA_NG911_FGDB + "\\Railroads_CrawfordCo"
+DELETE_FILES_NG911 = PA_NG911_FGDB + "\\DELETE_FILES"
+ESZ_DISSOLVE = DELETE_FILES_NG911 + "\\ESZ_DISSOLVE_DELETE"
+
+print ("\n Copy data from Northern Tier FGDB to PA_NG911_Export FGDB for alterations")
+write_log ("\n Copy data from Northern Tier FGDB to PA_NG911_Export FGDB for alterations",logfile)
+
+NT_FC_LIST = [NTAddressPoint_CrawfordCo,Ambulance_Company_CrawfordCo,Centerline_CrawfordCo,Counties_CrawfordCo,EMS_Districts_CrawfordCo,Fire_Department_CrawfordCo,Fire_Response_CrawfordCo,Landmarks_CrawfordCo,MilePosts_CrawfordCo,Municipalities_CrawfordCo,Hydrants_CrawfordCo,Police_Department_CrawfordCo,Police_Reporting_CrawfordCo,Police_Response_CrawfordCo,Railroads_CrawfordCo]
+
+try:
+    # Copy some of the data from Northern Tier FGDB to PA NG911 FGDB
+    arcpy.conversion.FeatureClassToGeodatabase(NT_FC_LIST, PA_NG911_FGDB)
+    print ("\n Feature classes copied over to PA_NG911 FGDB")
+    write_log("\n  Feature classes copied over to PA_NG911 FGDB",logfile)
+except:
+    print ("\n Unable to copy feature classes from Northern Tier FGDB to PA_NG911 FGDB")
+    write_log("\n Unable to copy feature classes from Northern Tier FGDB to PA_NG911 FGDB", logfile)
+    logging.exception('Got exception on copy feature classes from Northern Tier FGDB to PA_NG911 FGDB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Add Full_Street_Name field to Address Points
+    arcpy.management.AddField(AddressPoint_NG911, "Full_Street_Name", "TEXT", None, None, None, "Full Street Name", "NULLABLE", "NON_REQUIRED", '')
+    print ("\n   Full_Street_Name field added to address points")
+    write_log("\n  Full_Street_Name field added to address points",logfile)
+except:
+    print ("\n Unable to add Full_Street_Name field to Address Points")
+    write_log("\n Unable to add Full_Street_Name field to Address Points", logfile)
+    logging.exception('Got exception on add Full_Street_Name field to Address Points logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("\n  Convert Pre & Post Directional as well as Post Type in Centerline FC within PA NG911 FGDB")
+write_log ("\n  Convert Pre & Post Directional as well as Post Type in Centerline FC within PA NG911 FGDB",logfile)
+
+# Convert Centerline Pre & Post Directional as well as Post Type (iterate through centerline export and convert fields from Crawford County system to NG911 standards)
+Directionals_ABRV = ["E", "N", "S", "W", "NW", "SW", "NE", "SE"]
+Directionals_NG911 = ["EAST", "NORTH", "SOUTH", "WEST", "NORTHWEST", "SOUTHWEST", "NORTHEAST", "SOUTHEAST"]
+PostType_ABRV = ["ALY","AVE","BCH","BLVD","CIR","CLB","CP","CT","DR","EXT","HOLW","HTS","HWY","KNL","LK","LN","LNDG","MDWS","MNR","PKWY","PL","PLZ","PT","RD","RDG","RTE","SQ","ST","TER","TRL","XING"]
+PostType_NG911 = ["ALLEY","AVENUE","BEACH","BOULEVARD","CIRCLE","CLUB","CAMP","COURT","DRIVE","EXTENSION","HOLLOW","HEIGHTS","HIGHWAY","KNOLL","LAKE","LANE","LANDING","MEADOWS","MANOR","PARKWAY","PLACE","PLAZA","POINT","ROAD","RIDGE","ROUTE","SQUARE","STREET","TERRACE","TRAIL","CROSSING"]
+    
+try:    
+    with arcpy.da.UpdateCursor(Centerline_NG911, 'St_PreDir') as cursor:
+        for row in cursor:
+            if row[0] in Directionals_ABRV:
+                row[0] = Directionals_NG911[Directionals_ABRV.index(row[0])]
+                cursor.updateRow(row)
+            else:
+                pass
+        del row 
+        del cursor
+        print ("    Centerline Pre directional field converted to NG911 standards...")
+    with arcpy.da.UpdateCursor(Centerline_NG911, 'St_PosDir') as cursor:
+        for row in cursor:
+            if row[0] in Directionals_ABRV:
+                row[0] = Directionals_NG911[Directionals_ABRV.index(row[0])]
+                cursor.updateRow(row)
+            else:
+                pass
+        del row 
+        del cursor
+        print ("    Centerline Post directional field converted to NG911 standards...")
+except:
+    print ("\n Unable to convert Centerline Directional Fields")
+    write_log("Unable to convert Centerline Directional Fields", logfile)
+    logging.exception('Got exception on convert Centerline Directional Fields logged at:'  + str(Day) + " " + str(Time))
+    raise
+    pass
+    sys.exit ()
+
+try:    
+    with arcpy.da.UpdateCursor(Centerline_NG911, 'St_PosTyp') as cursor:
+        for row in cursor:
+            if row[0] in PostType_ABRV:
+                row[0] = PostType_NG911[PostType_ABRV.index(row[0])]
+                cursor.updateRow(row)
+            else:
+                pass
+        del row 
+        del cursor
+        print ("    Centerline post type field converted to NG911 standards...")
+except:
+    print ("\n Unable to convert Centerline Post Type Field")
+    write_log("Unable to convert Centerline Post Type Field", logfile)
+    logging.exception('Got exception on convert Centerline Post Type Field logged at:'  + str(Day) + " " + str(Time))
+    raise
+    pass
+    sys.exit ()
+
+print ("\n  Convert Pre & Post Directional as well as Post Type in Adress Point FC within PA NG911 FGDB")
+write_log ("\n  Convert Pre & Post Directional as well as Post Type in Address Point FC within PA NG911 FGDB",logfile)
+
+try:    
+    with arcpy.da.UpdateCursor(AddressPoint_NG911, 'St_PreDir') as cursor:
+        for row in cursor:
+            if row[0] in Directionals_ABRV:
+                row[0] = Directionals_NG911[Directionals_ABRV.index(row[0])]
+                cursor.updateRow(row)
+            else:
+                pass
+        del row 
+        del cursor
+        print ("    Address Points street pre directional field converted to NG911 standards...")
+    with arcpy.da.UpdateCursor(AddressPoint_NG911, 'St_PosDir') as cursor:
+        for row in cursor:
+            if row[0] in Directionals_ABRV:
+                row[0] = Directionals_NG911[Directionals_ABRV.index(row[0])]
+                cursor.updateRow(row)
+            else:
+                pass
+        del row 
+        del cursor
+        print ("    Address Points street post directional fields converted to NG911 standards...")
+except:
+    print ("\n Unable to convert Address Points Street Directional Fields")
+    write_log("Unable to convert Address Points Street Directional Fields", logfile)
+    logging.exception('Got exception on convert Address Points Street Directional Fields logged at:'  + str(Day) + " " + str(Time))
+    raise
+    pass
+    sys.exit ()
+
+try:    
+    with arcpy.da.UpdateCursor(AddressPoint_NG911, 'St_PosTyp') as cursor:
+        for row in cursor:
+            if row[0] in PostType_ABRV:
+                row[0] = PostType_NG911[PostType_ABRV.index(row[0])]
+                cursor.updateRow(row)
+            else:
+                pass
+        del row 
+        del cursor
+        print ("    Address Points street post type field converted to NG911 standards...")
+except:
+    print ("\n Unable to convert Address Points Street Post Type Field")
+    write_log("Unable to convert Address Points Street Post Type Field", logfile)
+    logging.exception('Got exception on convert Address Points Street Post Type Field logged at:'  + str(Day) + " " + str(Time))
+    raise
+    pass
+    sys.exit ()
+
+print ("\n Update Full Street Name field in Centerline FC within PA_NG911_Export FGDB")
+write_log ("\n Update Full Street Name field in Centerline FC within PA_NG911_Export FGDB",logfile)
+
+try:
+    # Field Calculate Full Street Name field in Centerline (NG911 FGDB)
+    arcpy.management.CalculateField(Centerline_NG911, "FullName", "ifelse(!St_PreDir!,!St_Name!,!St_PosTyp!,!St_PosDir!)", "PYTHON3", """def ifelse(St_PreDir,St_Name,St_PosTyp,St_PosDir):
+    if (St_PreDir and St_PosDir) is not None:
+        return St_PreDir+" "+St_Name+" "+St_PosTyp+" "+St_PosDir
+    elif (not St_PreDir) and (St_PosTyp and St_PosDir) is not None:
+        return St_Name+" "+St_PosTyp+" "+St_PosDir
+    elif not (St_PreDir and St_PosTyp) and (St_Name and St_PosDir) is not None:
+        return St_Name+" "+St_PosDir
+    elif not St_PosDir and (St_PreDir and St_Name and St_PosTyp) is not None:
+        return St_PreDir+" "+St_Name+" "+St_PosTyp
+    elif not (St_PreDir and St_PosDir) and (St_Name and St_PosTyp) is not None:
+        return St_Name+" "+St_PosTyp
+    elif not (St_PosTyp and St_PosDir) and (St_PreDir and St_Name) is not None:
+        return St_PreDir+" "+St_Name
+    else:
+        return St_Name""", "TEXT", "NO_ENFORCE_DOMAINS")
+    print ("\n     Full Street Name field updated in Centerline FC within PA_NG911_Export FGDB")
+    write_log ("\n     Full Street Name field updated in Centerline FC within PA_NG911_Export FGDB",logfile)
+except:
+    print ("\n Unable to calculate Full Street Name field for Centerlines within PA_NG911 FGDB")
+    write_log("\n Unable to calculate Full Street Name field for Centerlines within PA_NG911 FGDB", logfile)
+    logging.exception('Got exception on calculate Full Street Name field for Centerlines within PA_NG911 FGDB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("\n Update Full Street Name field in Centerline FC within PA_NG911_Export FGDB")
+write_log ("\n Update Full Street Name field in Centerline FC within PA_NG911_Export FGDB",logfile)
+
+try:
+    # Field Calculate Full Street Name field in Address Points (NG911 FGDB)
+    arcpy.management.CalculateField(AddressPoint_NG911, "Full_Street_Name", "ifelse(!St_PreDir!,!St_Name!,!St_PosTyp!,!St_PosDir!)", "PYTHON3", """def ifelse(St_PreDir,St_Name,St_PosTyp,St_PosDir):
+    if (St_PreDir and St_PosDir) is not None:
+        return St_PreDir+" "+St_Name+" "+St_PosTyp+" "+St_PosDir
+    elif (not St_PreDir) and (St_PosTyp and St_PosDir) is not None:
+        return St_Name+" "+St_PosTyp+" "+St_PosDir
+    elif not (St_PreDir and St_PosTyp) and (St_Name and St_PosDir) is not None:
+        return St_Name+" "+St_PosDir
+    elif not St_PosDir and (St_PreDir and St_Name and St_PosTyp) is not None:
+        return St_PreDir+" "+St_Name+" "+St_PosTyp
+    elif not (St_PreDir and St_PosDir) and (St_Name and St_PosTyp) is not None:
+        return St_Name+" "+St_PosTyp
+    elif not (St_PosTyp and St_PosDir) and (St_PreDir and St_Name) is not None:
+        return St_PreDir+" "+St_Name
+    else:
+        return St_Name""", "TEXT", "NO_ENFORCE_DOMAINS")
+    print ("\n     Full Street Name field updated in Address Point FC within PA_NG911_Export FGDB")
+    write_log ("\n     Full Street Name field updated in Address Point FC within PA_NG911_Export FGDB",logfile)
+except:
+    print ("\n Unable to calculate Full Street Name field for Address Points within PA_NG911 FGDB")
+    write_log("\n Unable to calculate Full Street Name field for Address Points within PA_NG911 FGDB", logfile)
+    logging.exception('Got exception on calculate Full Street Name field for Address Points within PA_NG911 FGDB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("\n Update Full Name field in Address Points FC within PA_NG911_Export FGDB")
+write_log ("\n Update Full Name field in Address Points FC within PA_NG911_Export FGDB",logfile)
+
+try:
+    # Field Calculate Full Street Name field in Centerline (NG911 FGDB)
+    arcpy.management.CalculateField(AddressPoint_NG911, "FullName", "ifelse(!Unit!,!Building!,!Add_Number!,!AddNum_Suf!,!Full_Street_Name!)", "PYTHON3", """def ifelse(Unit,Building,Add_Number,AddNum_Suf,Full_Street_Name):
+    if not (Unit) and AddNum_Suf is not None:
+        return str(Add_Number)+" "+AddNum_Suf+" "+Full_Street_Name
+    elif (Unit and AddNum_Suf) is not None:
+        return str(Add_Number)+" "+AddNum_Suf+" "+Full_Street_Name+" Unit: "+Unit
+    elif not (AddNum_Suf) and Unit is not None:
+        return str(Add_Number)+" "+Full_Street_Name+" Unit: "+Unit
+    elif not (AddNum_Suf) and (Building and Unit) is not None:
+        return str(Add_Number)+" "+Full_Street_Name+" Building: "+Building+" | Unit: "+Unit
+    elif not (Building) and (AddNum_Suf and Unit) is not None:
+        return str(Add_Number)+" "+AddNum_Suf+" "+Full_Street_Name+" Unit: "+Unit
+    else:
+        return str(Add_Number)+" "+Full_Street_Name""", "TEXT", "NO_ENFORCE_DOMAINS")
+
+    print ("\n     Full Name field updated in Address Points FC within PA_NG911_Export FGDB")
+    write_log ("\n     Full Name field updated in Address Points FC within PA_NG911_Export FGDB",logfile)
+except:
+    print ("\n Unable to calculate Full Name field updated in Address Points FC within PA_NG911 FGDB")
+    write_log("\n Unable to calculate Full Name field updated in Address Points FC within PA_NG911 FGDB", logfile)
+    logging.exception('Got exception on calculate Full Name field updated in Address Points FC within PA_NG911 FGDB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Create DELETE_FILES FDS - for temp geoprocessing files
+    arcpy.management.CreateFeatureDataset(PA_NG911_FGDB, "DELETE_FILES", 'PROJCS["NAD_1983_StatePlane_Pennsylvania_North_FIPS_3701_Feet",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Conformal_Conic"],PARAMETER["False_Easting",1968500.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",-77.75],PARAMETER["Standard_Parallel_1",40.88333333333333],PARAMETER["Standard_Parallel_2",41.95],PARAMETER["Latitude_Of_Origin",40.16666666666666],UNIT["Foot_US",0.3048006096012192]];-118829700 -96587800 3048.00609601219;-100000 10000;-100000 10000;3.28083333333333E-03;0.001;0.001;IsHighPrecision')
+    print ("\n DELETE_FILES FDS created within PA_NG911_Export_YYYYMMDD geodatabase")
+    write_log("\n DELETE_FILES FDS created within PA_NG911_Export_YYYYMMDD geodatabase",logfile)
+except:
+    print ("\n Unable to create DELETE_FILES FDS within PA_NG911_Export_YYYYMMDD geodatabase")
+    write_log("\n Unable to create DELETE_FILES FDS within PA_NG911_Export_YYYYMMDD geodatabase", logfile)
+    logging.exception('Got exception on creation of DELETE_FILES FDS within PA_NG911_Export_YYYYMMDD geodatabase logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Delete rows - Counties FC
+    arcpy.management.DeleteRows(Counties_NG911)
+    print ("\n Deleted rows in Counties_NG911 FC")
+    write_log("\n Deleted rows in Counties_NG911 FC",logfile)
+except:
+    print ("\n Unable to Delete rows in Counties_NG911 FC")
+    write_log("\n Unable to Delete rows in Counties_NG911 FC", logfile)
+    logging.exception('Got exception on Delete rows in Counties_NG911 FC logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Dissolve ESZ Layer for new County Boundary
+    arcpy.management.Dissolve(ESZ_PS, DELETE_FILES_NG911+"\\ESZ_DISSOLVE_DELETE", "COUNTY_NAME", None, "MULTI_PART", "DISSOLVE_LINES")
+    print ("\n Dissolved ESZ FC into temp file")
+    write_log("\n Dissolved ESZ FC into temp file",logfile)
+except:
+    print ("\n Unable to dissolve ESZ FC into temp file")
+    write_log("\n Unable to dissolve ESZ FC into temp file", logfile)
+    logging.exception('Got exception on dissolve ESZ FC into temp file" logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Append Temp ESZ dissolved FC into Counties_NG911
+    arcpy.management.Append(ESZ_DISSOLVE, Counties_NG911, "NO_TEST", r'Shape_Leng "Shape_Leng" true true false 8 Double 0 0,First,#,'+ESZ_DISSOLVE+',SHAPE_Length,-1,-1;DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0,First,#;DateUpdate "DateUpdate" true true false 8 Date 0 0,First,#;Effective "Effective" true true false 8 Date 0 0,First,#;Expire "Expire" true true false 8 Date 0 0,First,#;CntyNGUID "CntyNGUID" true true false 254 Text 0 0,First,#;Country "Country" true true false 2 Text 0 0,First,#;State "State" true true false 2 Text 0 0,First,#;County "County" true true false 75 Text 0 0,First,#,'+ESZ_DISSOLVE+',COUNTY_NAME,0,50', '', "COUNTY_NAME = 'CRAWFORD'")
+    print ("\n Appended Temp ESZ dissolved FC into Counties_NG911")
+    write_log("\n Appended Temp ESZ dissolved FC into Counties_NG911",logfile)
+except:
+    print ("\n Unable to Append Temp ESZ dissolved FC into Counties_NG911")
+    write_log("\n Unable to Append Temp ESZ dissolved FC into Counties_NG911", logfile)
+    logging.exception('Got exception on Append Temp ESZ dissolved FC into Counties_NG911" logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Calculate DateUpdate, Effective fields, DiscrpAgID, Country, State, CntyNGUID in Counties_NG911 FC
+    arcpy.management.CalculateField(Counties_NG911, "DateUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Counties_NG911, "Effective", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Counties_NG911, "DiscrpAgID", '"crawford.state.pa.us"', "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Counties_NG911, "CntyNGUID", '"42039"', "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Counties_NG911, "Country", '"US"', "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Counties_NG911, "State", '"PA"', "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+
+    print("  DateUpdate, Effective, DiscrpAgID, Country, State & CntyNGUID fields updated...")
+except:
+    print ("\n Unable to calculate DateUpdate, Effective, DiscrpAgID, Country, State & CntyNGUID fields in Counties_CrawfordCo FC")
+    write_log("Unable to calculate DateUpdate, Effective, DiscrpAgID, Country, State & CntyNGUID fields in Counties_CrawfordCo FC", logfile)
+    logging.exception('Got exception on calculate DateUpdate, Effective, DiscrpAgID, Country, State & CntyNGUID fields in Counties_CrawfordCo FC logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Delete **Delete Files** feature dataset to save room (temporary files aren't needed for step 2 of process and take up additional room on file server when archiving prior exports)
+    arcpy.Delete_management(DELETE_FILES_NG911)
+    print ("\n Delete Files feature dataset has been deleted from PA NG911 FGDB")
+except:
+    print ("\n Unable to delete **Delete Files** feature dataset from PA NG911 FGDB")
+    write_log("Unable to delete **Delete Files** feature dataset from PA NG911 FGDB", logfile)
+    logging.exception('Got exception on delete **Delete Files** feature dataset from PA NG911 FGDB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+
+print ("       Waiting for script to release schema lock on FGDB...taking a 3 minute intermission, please wait")
+write_log("       Waiting for script to release schema lock on FGDB...taking a 3 minute intermission, please wait",logfile)
+
+#Wait 180 seconds (3 minutes) to release lock from FGDB
+time.sleep(180)
+
+print ("\n Renaming PA_NG911_Export_YYYYMMDD.gdb to PA_NG911_Export_" + date + ".gdb")
+write_log("\n Renaming PA_NG911_Export_YYYYMMDD.gdb to PA_NG911_Export_" + date + ".gdb",logfile)
+
+try:
+    # Rename PA_NG911_Export_YYYYMMDD.gdb to FGDB with current date as file name (rename the YYYYMMDD portion of the FGDB name name to the current date in the same format)
+    arcpy.management.Rename(PA_NG911_FGDB, r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\PA_NG911_Exports\\PA_NG911_Export_" + date + ".gdb", "Workspace")
+except: 
+    print ("\n Unable to rename PA_NG911_Export_YYYYMMDD.gdb to PA_NG911_Export_" + date + ".gdb")
+    write_log("Unable to rename PA_NG911_Export_YYYYMMDD.gdb to  PA_NG911_Export_" + date + ".gdb", logfile)
+    logging.exception('Got exception on rename PA_NG911_Export_YYYYMMDD.gdb to  PA_NG911_Export_" + date + ".gdb logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("     Renaming PA_NG911_Export_YYYYMMDD.gdb to PA_NG911_Export_" + date + ".gdb completed")
+write_log("     Renaming PA_NG911_Export_YYYYMMDD.gdb to PA_NG911_Export_" + date + ".gdb completed",logfile)
     
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
 
 print ("\n===================================================================")
-print ("Northern Tier CAD Data Export to local staging DB completed: " + str(Day) + " " + str(end_time))
+print ("Northern Tier CAD Data Export to local staging DB & PA_NG911_Export FGDB completed: " + str(Day) + " " + str(end_time))
 print (time.strftime("\n %H:%M:%S", time.gmtime(elapsed_time)))
 print ("===================================================================")
 write_log("\n Elapsed time: " + str (time.strftime(" %H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " + str(Day) + " " + str(end_time)), logfile)
 
-print ("\n                   Northern Tier CAD Data Export to local staging DB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB")
+print ("\n                   Northern Tier CAD Data Export to local staging DB & PA_NG911_Export FGDB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB")
 print ("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+")
-write_log("\n                   Northern Tier CAD Data Export to local staging DB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB", logfile)
+write_log("\n                   Northern Tier CAD Data Export to local staging DB & PA_NG911_Export FGDB completed // Connect Elk County VPN and run STEP 2 to process to Elk Staging DB", logfile)
 write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+", logfile)
 
 del arcpy

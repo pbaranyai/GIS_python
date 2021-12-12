@@ -23,6 +23,8 @@ import os
 import traceback
 import logging
 import shutil
+import time
+import zipfile
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -144,7 +146,7 @@ write_log("Police Reporting", logfile)
 write_log("Police Response", logfile)
 write_log("\n From " + NORTHERN_TIER_CAD_FGDB + " to " + NWPS_STAGING_SVR, logfile)
 write_log("Works in ArcGIS Pro", logfile)
-write_log("============================================================================")
+write_log("============================================================================", logfile)
 
 
 print ("\n Checking for connectivity to ELK Co server via VPN")
@@ -708,12 +710,18 @@ except:
 print ("     Updating Railroads completed")
 write_log("     Updating Railroads completed", logfile)
 
+print ("       Waiting for script to release schema lock on FGDB...taking a 3 minute intermission, please wait")
+write_log("       Waiting for script to release schema lock on FGDB...taking a 3 minute intermission, please wait",logfile)
+
+#Wait 180 seconds (3 minutes) to release lock from FGDB
+time.sleep(180)
+
 print ("\n Renaming Northern_Tier_County_Data_YYYYMMDD.gdb to Northern_Tier_County_Data_" + date + ".gdb")
 write_log("\n Renaming Northern_Tier_County_Data_YYYYMMDD.gdb to Northern_Tier_County_Data_" + date + ".gdb",logfile)
 
 try:
     # Rename Northern_Tier_County_Data_YYYYMMDD.gdb to FGDB with current date as file name (rename the YYYYMMDD portion of the FGDB name name to the current date in the same format)
-    arcpy.Rename_management(NORTHERN_TIER_CAD_FGDB, "rR:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_" + date + ".gdb", "Workspace")
+    arcpy.management.Rename(NORTHERN_TIER_CAD_FGDB, r"R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_" + date + ".gdb", "Workspace")
 except: 
     print ("\n Unable to rename Northern_Tier_County_Data_YYYYMMDD.gdb to Northern_Tier_County_Data_" + date + ".gdb")
     write_log("Unable to rename Northern_Tier_County_Data_YYYYMMDD.gdb to  Northern_Tier_County_Data_" + date + ".gdb", logfile)
@@ -723,39 +731,47 @@ except:
 
 print ("     Renaming Northern_Tier_County_Data_YYYYMMDD.gdb to Northern_Tier_County_Data_" + date + ".gdb completed")
 write_log("     Renaming Northern_Tier_County_Data_YYYYMMDD.gdb to Northern_Tier_County_Data_" + date + ".gdb completed",logfile)
+
+##print ("       Waiting for script to release schema lock on FGDB...taking another 3 minute intermission, please wait")
+##write_log("       Waiting for script to release schema lock on FGDB...taking another 3 minute intermission, please wait",logfile)
 ##
-print ("\n Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive")
-write_log("Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive",logfile)
-
-NTCurrentFGDB = NORTHERN_TIER_CAD_FLDR + "\\Northern_Tier_County_Data_" + date + ".gdb"
-
-try:
-    # Creating ZIP file from existing FGDB with current date stamp
-    if arcpy.Exists(NTCurrentFGDB):
-        shutil.make_archive(NTCurrentZIP, 'zip', NTCurrentFGDB)
-        print ("\n  Compressing Current FGDB into ZIP file...")
-        write_log("  Compressing Current FGDB into ZIP file...",logfile)
-except:
-    print ("\n Unable to compress Northern_Tier_County_Data_" + date + ".gdb into zipfile")
-    write_log("Unable to compress Northern_Tier_County_Data_" + date + ".gdb into zipfile", logfile)
-    logging.exception('Got exception on compress Northern_Tier_County_Data_" + date + ".gdb into zipfile logged at:'  + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-try:
-    # Once FGDB is compressed into ZIP, delete source FGDB
-    if os.path.exists("R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_" + date + ".gdb.zip"):
-        arcpy.Delete_management(NTCurrentFGDB)
-        print ("\n   Deleting Northern_Tier_County_Data_" + date + ".gdb...")
-        write_log("   Deleting Northern_Tier_County_Data_" + date + ".gdb...",logfile)
-except:
-    print ("\n Unable to delete Northern_Tier_County_Data_" + date + ".gdb")
-    write_log("Unable to delete Northern_Tier_County_Data_" + date + ".gdb", logfile)
-    logging.exception('Got exception on delete Northern_Tier_County_Data_" + date + ".gdb logged at:'  + str(Day) + " " + str(Time))
-    raise
-    sys.exit ()
-
-print ("     Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive completed")
-write_log("     Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive completed",logfile)  
+###Wait 180 seconds (3 minutes) to release lock from FGDB
+##time.sleep(180)
+##
+##print ("\n Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive")
+##write_log("Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive",logfile)
+##
+##NTCurrentFGDB = NORTHERN_TIER_CAD_FLDR + "\\Northern_Tier_County_Data_" + date + ".gdb"
+##
+##try:
+##    # Creating ZIP file from existing FGDB with current date stamp
+##    if arcpy.Exists(NTCurrentFGDB):
+##        shutil.make_archive(NTCurrentFGDB, 'zip', NORTHERN_TIER_CAD_FLDR)
+##        print ("\n  Compressing Current FGDB into ZIP file...")
+##        write_log("  Compressing Current FGDB into ZIP file...",logfile)
+##except:
+##    print ("\n Unable to compress Northern_Tier_County_Data_" + date + ".gdb into zipfile")
+##    write_log("Unable to compress Northern_Tier_County_Data_" + date + ".gdb into zipfile", logfile)
+##    logging.exception('Got exception on compress Northern_Tier_County_Data_" + date + ".gdb into zipfile logged at:'  + str(Day) + " " + str(Time))
+##    raise
+##    sys.exit ()
+##
+##
+##try:
+##    # Once FGDB is compressed into ZIP, delete source FGDB
+##    if os.path.exists("R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_" + date + ".gdb.zip"):
+##        arcpy.Delete_management(NTCurrentFGDB)
+##        print ("\n   Deleting Northern_Tier_County_Data_" + date + ".gdb...")
+##        write_log("   Deleting Northern_Tier_County_Data_" + date + ".gdb...",logfile)
+##except:
+##    print ("\n Unable to delete Northern_Tier_County_Data_" + date + ".gdb")
+##    write_log("Unable to delete Northern_Tier_County_Data_" + date + ".gdb", logfile)
+##    logging.exception('Got exception on delete Northern_Tier_County_Data_" + date + ".gdb logged at:'  + str(Day) + " " + str(Time))
+##    raise
+##    sys.exit ()
+##
+##print ("     Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive completed")
+##write_log("     Compressing Northern_Tier_County_Data_" + date + ".gdb into ZIP file for archive completed",logfile)  
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
@@ -771,7 +787,7 @@ print ("==============================================================")
 try:
     # Opening folder where Northern Tier FGDB exists, to allow user to archive/delete older versions
     print ("\n Opening "+NORTHERN_TIER_CAD_FLDR)
-    print ("     You need to manually delete prior FGDBs in folder, leaving only Northern_Tier_County_Data_" + date + ".gdb.zip")
+    print ("     You need to ZIP the  current FGDB, delete the orignal when that's completed, and then manually delete prior FGDBs in folder, leaving only Northern_Tier_County_Data_" + date + ".gdb.zip")
     NORTHERN_TIER_CAD_FLDR=os.path.realpath(NORTHERN_TIER_CAD_FLDR)
     os.startfile(NORTHERN_TIER_CAD_FLDR)
 except: 
