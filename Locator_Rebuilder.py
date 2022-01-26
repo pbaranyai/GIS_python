@@ -90,8 +90,8 @@ IntranetLocators =  Locators + "\\Intranet_Locators"
 PublicLocators = Locators + "\\Public_Locators"
 
 # Staging location
-ArcServer_Admin = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections\\Servers\\services on ccgis.crawfordcountypa.net (admin).ags"
-ArcServer_Staging = MACHINE + "\\AppData\\Local\\ESRI\\ArcGISPro\\Staging\\arcgis on ccgis.crawfordcountypa.net (admin)"
+ArcServer_Admin = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections\\Servers\\services on ccgis.crawfordcountypa.net (admin)"
+ArcServer_Staging = MACHINE + "\\AppData\\Local\\ESRI\\ArcGISPro\\Staging"#\\arcgis on ccgis.crawfordcountypa.net (admin)"
 Draft_Staging = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Draft_Services"
 
 # Local variables:
@@ -99,13 +99,14 @@ CC_Roads_Locator = IntranetLocators + "\\CC_Roads_Locator"
 CC_Parcel_Locator = IntranetLocators + "\\CC_Parcel_Locator"
 CC_Name_Locator = IntranetLocators + "\\CC_Name_Locator"
 CC_Address_Search = IntranetLocators + "\\CC_Address_Search"
-BuildingOnly_UPI_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_UPI_CCLocator"
-BuildingOnly_PID_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_PID_CCLocator"
-BuildingOnly_Name_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_Name_CCLocator"
-BuildingOnly_ADDR3_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_ADDR3_CCLocator"
-BuildingOnly_ADDR2_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_ADDR2_CCLocator"
-BuildingOnly_ADDR1_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_ADDR1_CCLocator"
-BuildingOnly_Control_CCLocator = IntranetLocatorsWorkspace + "\\BuildingOnly_Control_CCLocator"
+CAMA_PID_Locator = IntranetLocators + "\\CAMA_PID_Locator"
+AirParcels_UPI_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_UPI_CCLocator.loc"
+AirParcels_PID_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_PID_CCLocator.loc"
+AirParcels_Name_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_Name_CCLocator.loc"
+AirParcels_ADDR3_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_ADDR3_CCLocator.loc"
+AirParcels_ADDR2_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_ADDR2_CCLocator.loc"
+AirParcels_ADDR1_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_ADDR1_CCLocator.loc"
+AirParcels_Control_CCLocator = IntranetLocatorsWorkspace + "\\AirParcels_Control_CCLocator.loc"
 TaxParcel_UPI_CCLocator = IntranetLocatorsWorkspace + "\\TaxParcel_UPI_CCLocator"
 TaxParcel_PID_CCLocator = IntranetLocatorsWorkspace + "\\TaxParcel_PID_CCLocator"
 TaxParcel_Name_CCLocator = IntranetLocatorsWorkspace + "\\TaxParcel_Name_CCLocator"
@@ -125,6 +126,13 @@ Crawford_Name_Locator = PublicLocators + "\\Crawford_Name_Locator"
 Crawford_Address_Search = PublicLocators + "\\Crawford_Address_Search"
 Crawford_Landmarks_Locator = PublicLocators + "\\Crawford_Landmarks_Locator"
 Crawford_Cemeteries_Locator = PublicLocators + "\\Crawford_Cemeteries_Locator"
+AirParcels_UPI_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_UPI_PubLocator.loc"
+AirParcels_PID_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_PID_PubLocator.loc"
+AirParcels_Name_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_Name_PubLocator.loc"
+AirParcels_ADDR3_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_ADDR3_PubLocator.loc"
+AirParcels_ADDR2_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_ADDR2_PubLocator.loc"
+AirParcels_ADDR1_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_ADDR1_PubLocator.loc"
+AirParcels_Control_PubLocator = PublicLocatorsWorkspace + "\\AirParcels_Control_PubLocator.loc"
 BuildingOnly_UPI_PubLocator = PublicLocatorsWorkspace + "\\BuildingOnly_UPI_PubLocator"
 BuildingOnly_PID_PubLocator = PublicLocatorsWorkspace + "\\BuildingOnly_PID_PubLocator"
 BuildingOnly_Name_PubLocator = PublicLocatorsWorkspace + "\\BuildingOnly_Name_PubLocator"
@@ -146,7 +154,10 @@ ADDR_Name_PubLocator = PublicLocatorsWorkspace + "\\ADDR_Name_PubLocator"
 ADDR_FName_PubLocator = PublicLocatorsWorkspace + "\\ADDR_FName_PubLocator"
 ADDR_HSESTREET_PubLocator = PublicLocatorsWorkspace + "\\ADDR_HSESTREET_PubLocator"
 TAX_PARCELS_PID_AUTO = IntranetLocatorsWorkspace + "\\TAX_PARCELS_PID_AUTOMATION_LOC"
-BUILDINGONLY_PID_AUTO = IntranetLocatorsWorkspace + "\\BUILDINGONLY_PID_AUTOMATION_LOC"
+TAXPARCELS_AIR_PID_AUTO = IntranetLocatorsWorkspace + "\\TAXPARCELS_AIR_PID_AUTOMATION_LOC.loc"
+DPS_CAD_ADDR = IntranetLocatorsWorkspace + "\\DPS_CAD_Report_ADDR.loc"
+DPS_CAD_RCL = IntranetLocatorsWorkspace + "\\DPS_CAD_Report_RCL.loc"
+DPS_CAD_REPORTS = IntranetLocators + "\\DPS_CAD_Reports.loc"
 
 # Publishing variables
 gis_server_connection_file = ArcServer_Admin
@@ -258,7 +269,7 @@ write_log("\n Rebuilding ADDR_HSESTREET Locator from Address_Points - PUBLIC_WEB
 
 try:
     # Rebuild ADDR_HSESTREET Locator from Address_Points - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(ADDR_HSESTREET_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_HSESTREET_PubLocator) 
 except:
     print ("\n Unable to rebuild ADDR_HSESTREET Locator from Address_Points - PUBLIC_WEB")
     write_log("Unable to rebuild ADDR_HSESTREET Locator from Address_Points - PUBLIC_WEB", logfile)
@@ -274,7 +285,7 @@ write_log("\n Rebuilding ADDR_Name Locator from Address_Points - PUBLIC_WEB ", l
 
 try:
     # Rebuild ADDR_Name Locator from Address_Points - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(ADDR_Name_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_Name_PubLocator)
 except:
     print ("\n Unable to rebuild ADDR_Name Locator from Address_Points - PUBLIC_WEB")
     write_log("\n Unable to rebuild ADDR_Name Locator from Address_Points - PUBLIC_WEB", logfile)
@@ -290,7 +301,7 @@ write_log("\n Rebuilding ADDR_FName Locator from Address_Points - PUBLIC_WEB ", 
 
 try:
     # Rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(ADDR_FName_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_FName_PubLocator)
 except:
     print ("\n Unable to rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB")
     write_log("\n Unable to rebuild ADDR_FName Locator from Address_Points - PUBLIC_WEB", logfile)
@@ -306,7 +317,7 @@ write_log("\n Rebuilding ADDR_OldAdd Locator - Public", logfile)
 
 try:
     # Rebuild ADDR_OldAdd Locator from Address_Points - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(ADDR_OldAdd_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_OldAdd_PubLocator)
 except:
     print ("\n Unable to rebuild ADDR_OldAdd Locator from Address_Points - PUBLIC_WEB")
     write_log("\n Unable to rebuild ADDR_OldAdd Locator from Address_Points - PUBLIC_WEB", logfile)
@@ -322,7 +333,7 @@ write_log("\n Rebuilding Crawford_Roads_Locator - Public", logfile)
 
 try:
     # Rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(Crawford_Roads_Locator)
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Roads_Locator)
 except:
     print ("\n Unable to rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB")
     write_log("\n Unable to rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB", logfile)
@@ -338,7 +349,7 @@ write_log("\n Rebuilding TaxParcel_ADDR1 Locator from Tax Parcels - PUBLIC_WEB",
 
 try:
     # Rebuild TaxParcel_ADDR1 Locator
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ADDR1_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ADDR1_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ADDR1 Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_ADDR1 Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -354,7 +365,7 @@ write_log("\n Rebuilding TaxParcel_ADDR2 Locator - Public", logfile)
 
 try:
     # Rebuild TaxParcel_ADDR2 Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ADDR2_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ADDR2_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ADDR2 Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_ADDR2 Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -370,7 +381,7 @@ write_log("\n Rebuilding TaxParcel_ADDR3 Locator - Public", logfile)
 
 try:
     # Rebuild TaxParcel_ADDR3 Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ADDR3_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ADDR3_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ADDR3 Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_ADDR3 Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -386,7 +397,7 @@ write_log("\n Rebuilding TaxParcel_CAMA(MBLU) Locator - Public", logfile)
 
 try:
     # Rebuild TaxParcel_CAMA(MBLU) Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_CAMA_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_CAMA_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_CAMA(MBLU) Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_CAMA(MBLU) Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -402,7 +413,7 @@ write_log("\n Rebuilding TaxParcel_Name Locator - Public", logfile)
 
 try:
     # Rebuild TaxParcel_Name Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_Name_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_Name_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_Name Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_Name Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -418,7 +429,7 @@ write_log("\n Rebuilding TaxParcel_PID Locator from Tax Parcels - PUBLIC_WEB", l
 
 try:
     # TaxParcel_PID Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_PID_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_PID_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_PID Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_PID Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -434,7 +445,7 @@ write_log("\n Rebuilding TaxParcel_UPI Locator from Tax Parcels - PUBLIC_WEB", l
 
 try:
     # TaxParcel_UPI Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_UPI_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_UPI_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_UPI Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_UPI Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -450,7 +461,7 @@ write_log("\n Rebuilding TaxParcel_Control Locator from Tax Parcels - PUBLIC_WEB
 
 try:
     # TaxParcel_Control Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_Control_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_Control_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_Control Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_Control Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -466,7 +477,7 @@ write_log("\n Rebuilding TaxParcel_ALTPRCLID Locator from Tax Parcels - PUBLIC_W
 
 try:
     # Rebuild TaxParcel_ALTPRCLID Locator from Tax Parcels - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ALTPRCLID_PubLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ALTPRCLID_PubLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ALTPRCLID Locator from Tax Parcels - PUBLIC_WEB")
     write_log("\n Unable to rebuild TaxParcel_ALTPRCLID Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -477,124 +488,124 @@ except:
 print ("       Rebuilding TaxParcel_ALTPRCLID Locator from Tax Parcels - PUBLIC_WEB completed")
 write_log("       Rebuilding TaxParcel_ALTPRCLID Locator from Tax Parcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_ADDR1_PubLocator)
+    # AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_ADDR1_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_ADDR1 Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_ADDR1 Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels_Control Locator from AirParcels - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels_Control Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_Control_PubLocator)
+    # AirParcels_Control Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_Control_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_Control Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_Control Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_Control Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_Control Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_Control Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_Control Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_ADDR2_PubLocator)
+    # AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_ADDR2_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_ADDR2 Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_ADDR2 Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels Locator from AirParcels - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_ADDR3_PubLocator)
+    # AirParcels_ADDR3 Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_ADDR3_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_ADDR3 Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_ADDR3 Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_ADDR3 Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_ADDR3 Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_ADDR3 Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_ADDR3 Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels_Name Locator from AirParcels Only - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels_Name Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_Name_PubLocator)
+    # AirParcels_Name Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_Name_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_Name Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_Name Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_Name Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_Name Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_Name Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_Name Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels_PID Locator from AirParcels - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels_PID Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_PID_PubLocator)
+    # AirParcels_PID Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_PID_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_PID Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_PID Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_PID Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_PID Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_PID Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_PID Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB")
-write_log("\n Rebuilding BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
+print ("\n Rebuilding AirParcels_UPI Locator from AirParcels - PUBLIC_WEB")
+write_log("\n Rebuilding AirParcels_UPI Locator from AirParcels - PUBLIC_WEB", logfile)
 
 try:
-    # Rebuild BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_UPI_PubLocator)
+    # Rebuild AirParcels_UPI Locator from AirParcels - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_UPI_PubLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB")
-    write_log("\n Unable to rebuild BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_UPI Locator from AirParcels - PUBLIC_WEB")
+    write_log("\n Unable to rebuild AirParcels_UPI Locator from AirParcels - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild AirParcels_UPI Locator from AirParcels - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB completed")
-write_log("       Rebuilding BuildingOnly_UPI Locator from Building/Trailer Only - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding AirParcels_UPI Locator from AirParcels - PUBLIC_WEB completed")
+write_log("       Rebuilding AirParcels_UPI Locator from AirParcels - PUBLIC_WEB completed", logfile)
 
 print ("\n Rebuilding Crawford Cemeteries locator from Cemeteries - PUBLIC_WEB")
 write_log("\n Rebuilding Crawford Cemeteries locator from Cemeteries - PUBLIC_WEB", logfile)
 
 try:
     # Rebuild Crawford Cemeteries from Cemeteries - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(Crawford_Cemeteries_Locator)
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Cemeteries_Locator)
 except:
     print ("\n Unable to rebuild Crawford Cemeteries locator from Cemeteries - PUBLIC_WEB")
     write_log("\n Unable to rebuild Crawford Cemeteries locator from Cemeteries - PUBLIC_WEB", logfile)
@@ -610,7 +621,7 @@ write_log("\n Rebuilding Crawford Landmarks locator from Landmarks - PUBLIC_WEB"
 
 try:
     # Rebuild Crawford Landmarks locator from Landmarks - PUBLIC_WEB
-    arcpy.RebuildAddressLocator_geocoding(Crawford_Landmarks_Locator)
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Landmarks_Locator)
 except:
     print ("\n Unable to rebuild Crawford Landmarks locator from Landmarks - PUBLIC_WEB")
     write_log("\n Unable to rebuild Crawford Landmarks locator from Landmarks - PUBLIC_WEB", logfile)
@@ -632,7 +643,7 @@ write_log("\n Rebuilding Crawford Address Search Locator from individual locator
 
 try:
     # Rebuild Crawford Address Search Locator from individual locators
-    arcpy.RebuildAddressLocator_geocoding(Crawford_Address_Search)
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Address_Search)
 except:
     print ("\n Unable to rebuild Crawford Address Search Locator from individual locators")
     write_log("\n Unable to rebuild Crawford Address Search Locator from individual locators", logfile)
@@ -648,7 +659,7 @@ write_log("\n Rebuilding Crawford Name Locator from individual locators", logfil
 
 try:
     # Rebuild Crawford Name Locator from individual locators
-    arcpy.RebuildAddressLocator_geocoding(Crawford_Name_Locator)
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Name_Locator)
 except:
     print ("\n Unable to rebuild Crawford Name Locator from individual locators")
     write_log("\n Unable to rebuild Crawford Name Locator from individual locators", logfile)
@@ -664,7 +675,7 @@ write_log("\n Rebuilding Crawford Parcel Locator from individual locators", logf
 
 try:
     # Crawford Parcel Locator from individual locators
-    arcpy.RebuildAddressLocator_geocoding(Crawford_Parcel_Locator)
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Parcel_Locator)
 except:
     print ("\n Unable to rebuild Crawford Parcel Locator from individual locators")
     write_log("\n Unable to rebuild Crawford Parcel Locator from individual locators", logfile)
@@ -686,8 +697,7 @@ write_log("\n Rebuilding HSESTREET_INTRA Locator from Address_Points - CRAW_INTE
 
 try:
     # Rebuild HSESTREET_INTRA Locator from Address_Points - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(ADDR_HSESTREET_CCLocator)
-    arcpy.RebuildAddressLocator_geocoding(in_address_locator="R:/GIS/CurrentWebsites/Locators/Intranet_Locators/Locator_workspace/ADDR_HSESTREET_CCLocator")
+    arcpy.geocoding.RebuildAddressLocator(ADDR_HSESTREET_CCLocator)
 except:
     print ("\n Unable to rebuild HSESTREET_INTRA Locator from Address_Points - CRAW_INTERNAL")
     write_log("Unable to rebuild HSESTREET_INTRA Locator from Address_Points - CRAW_INTERNAL", logfile)
@@ -703,7 +713,7 @@ write_log("\n Rebuilding ADDR_NAME_INTRA from Address_Points - CRAW_INTERNAL", l
 
 try:
     # Rebuild ADDR_NAME_INTRA Locator from Address_Points - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(ADDR_Name_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_Name_CCLocator)
 except:
     print ("\n Unable to rebuild ADDR_NAME_INTRA Locator from Address_Points - CRAW_INTERNAL")
     write_log("\n Unable to rebuild ADDR_NAME_INTRA Locator from Address_Points - CRAW_INTERNAL", logfile)
@@ -719,7 +729,7 @@ write_log("\n Rebuilding ADDR_FNAME_INTRA from Address_Points - CRAW_INTERNAL", 
 
 try:
     # Rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(ADDR_FName_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_FName_CCLocator)
 except:
     print ("\n Unable to rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL")
     write_log("\n Unable to rebuild ADDR_FNAME_INTRA Locator from Address_Points - CRAW_INTERNAL", logfile)
@@ -735,7 +745,7 @@ write_log("\n Rebuilding ADDR_OldAdd_INTRA from Address_Points - CRAW_INTERNAL",
 
 try:
     # ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(ADDR_OldAdd_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(ADDR_OldAdd_CCLocator)
 except:
     print ("\n Unable to rebuild ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL")
     write_log("\n Unable to rebuild ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL", logfile)
@@ -751,7 +761,7 @@ write_log("\n Rebuilding CC_Roads_Locator Locator from Street Centerline - CRAW_
 
 try:
     # CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(CC_Roads_Locator)
+    arcpy.geocoding.RebuildAddressLocator(CC_Roads_Locator)
 except:
     print ("\n Unable to rebuild CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL")
     write_log("\n Unable to rebuild CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL", logfile)
@@ -767,7 +777,7 @@ write_log("\n Rebuilding TaxParcel_ADDR1_INTRA Locator from Tax Parcels - CRAW_I
 
 try:
     # Rebuild TaxParcel_ADDR1_INTRA Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ADDR1_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ADDR1_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ADDR1_INTRA Locator from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_ADDR1_INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -783,7 +793,7 @@ write_log("\n Rebuilding TaxParcel_ADDR2_INTRA Locator from Tax Parcels - CRAW_I
 
 try:
     # Rebuild TaxParcel_ADDR2_INTRA Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ADDR2_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ADDR2_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ADDR2_INTRA Locator from Tax Parcel s- CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_ADDR2_INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -799,7 +809,7 @@ write_log("\n Rebuilding TaxParcel_ADDR3_INTRA Locator from Tax Parcels - CRAW_I
 
 try:
     # Rebuild TaxParcel_ADDR3_INTRA Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ADDR3_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ADDR3_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_ADDR3_INTRA Locator from Tax Parcel s- CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_ADDR3_INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -815,7 +825,7 @@ write_log("\n Rebuilding TaxParcel_CAMA_INTRA from Tax Parcels - CRAW_INTERNAL",
 
 try:
     # Rebuild TaxParcel_CAMA_INTRA Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_CAMA_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_CAMA_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_CAMA_INTRA Locator from Tax Parcels - CRAW_INTERNAL")
     write_log("Unable to rebuild TaxParcel_CAMA_INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -831,7 +841,7 @@ write_log("\n Rebuilding TaxParcel_Name_INTRA from Tax Parcels - CRAW_INTERNAL",
 
 try:
     # Rebuild TaxParcel_Name_INTRA from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_Name_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_Name_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_Name_INTRA from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_Name_INTRA from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -847,7 +857,7 @@ write_log("\n Rebuilding TaxParcel_PID_INTRA from Tax Parcels - CRAW_INTERNAL", 
 
 try:
     # Rebuild TaxParcel_PID_INTRA from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_PID_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_PID_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_PID_INTRA from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_PID_INTRA from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -863,7 +873,7 @@ write_log("\n Rebuilding TaxParcel_UPI_INTRA Locator from Tax Parcels - CRAW_INT
 
 try:
     # TaxParcel_UPI_INTRA Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_UPI_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_UPI_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_UPI_INTRA Locator from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_UPI_INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -879,7 +889,7 @@ write_log("\n Rebuilding TaxParcel_Control Locator from Tax Parcels - CRAW_INTER
 
 try:
     # TaxParcel_Control Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_Control_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_Control_CCLocator)
 except:
     print ("\n Unable to rebuild TaxParcel_Control Locator from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild TaxParcel_Control Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -895,7 +905,7 @@ write_log("\n Rebuilding Tax Parcel ALTPRCLID INTRA Locator from Tax Parcels - C
 
 try:
     # Rebuild Tax Parcel ALTPRCLID INTRA Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TaxParcel_ALTPRCLID_CCLocator)
+    arcpy.geocoding.RebuildAddressLocator(TaxParcel_ALTPRCLID_CCLocator)
 except:
     print ("\n Unable to rebuild Tax Parcel ALTPRCLID INTRA Locator from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild Tax Parcel ALTPRCLID INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -906,124 +916,124 @@ except:
 print ("       Rebuilding Tax Parcel ALTPRCLID INTRA Locator from Tax Parcels - CRAW_INTERNAL completed")
 write_log("       Rebuilding Tax Parcel ALTPRCLID INTRA Locator from Tax Parcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_Control_CCLocator)
+    # AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_Control_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_Control_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_Control_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_ADDR1_CCLocator)
+    # AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_ADDR1_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_ADDR1_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_ADDR1_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_ADDR2_CCLocator)
+    # AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_ADDR2_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_ADDR2_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_ADDR3_CCLocator)
+    # AirParcels_ADDR2_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_ADDR3_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_ADDR3_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_ADDR3_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_Name_CCLocator)
+    # AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_Name_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_Name_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_Name_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_PID_CCLocator)
+    # AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_PID_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_PID_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_PID_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-write_log("\n Rebuilding BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL")
+write_log("\n Rebuilding AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
 
 try:
-    # BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BuildingOnly_UPI_CCLocator)
+    # AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(AirParcels_UPI_CCLocator)
 except:
-    print ("\n Unable to rebuild BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed")
-write_log("       Rebuilding BuildingOnly_UPI_INTRA Locator from Building/Trailer Only - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding AirParcels_UPI_INTRA Locator from AirParcels - CRAW_INTERNAL completed", logfile)
 
 print ("\n Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
 write_log("\n Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
 
 try:
     # Rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(TAX_PARCELS_PID_AUTO)
+    arcpy.geocoding.RebuildAddressLocator(TAX_PARCELS_PID_AUTO)
 except:
     print ("\n Unable to rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
     write_log("\n Unable to rebuild TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -1034,21 +1044,53 @@ except:
 print ("       Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL completed")
 write_log("       Rebuilding TAX_PARCELS_PID_AUTOMATION Locator from Tax Parcels-  CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
-write_log("\n Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding TAXPARCELS_AIR_PID_AUTOMATION Locator from Air Parcels - CRAW_INTERNAL")
+write_log("\n Rebuilding TAXPARCELS_AIR_PID_AUTOATION Locator from Air Parcels - CRAW_INTERNAL", logfile)
 
 try:
-    # Rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL
-    arcpy.RebuildAddressLocator_geocoding(BUILDINGONLY_PID_AUTO)
+    # Rebuild TAXPARCELS_AIR_PID_AUTOMATION Locator from Air Parcels - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(TAXPARCELS_AIR_PID_AUTO)
 except:
-    print ("\n Unable to rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild TAXPARCELS_AIR_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild TAXPARCELS_AIR_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild TAXPARCELS_AIR_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels - CRAW_INTERNAL completed")
-write_log("       Rebuilding BUILDINGONLY_PID_AUTOMATION Locator from Tax Parcels-  CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding TAXPARCELS_AIR_PID_AUTOMATION Locator from Air Parcels - CRAW_INTERNAL completed")
+write_log("       Rebuilding TAXPARCELS_AIR_PID_AUTOMATION Locator from Air Parcels-  CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL")
+write_log("\n Rebuilding DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(DPS_CAD_ADDR)
+except:
+    print ("\n Unable to rebuild DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL completed")
+write_log("       Rebuilding DPS_CAD_Report_ADDR Locator from Site Structure Address Points - CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL")
+write_log("\n Rebuilding DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(DPS_CAD_RCL)
+except:
+    print ("\n Unable to rebuild DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL completed")
+write_log("       Rebuilding DPS_CAD_Report_RCL Locator from Street Centerlines - CRAW_INTERNAL completed", logfile)
 
 print ("\n Rebuild Composite Intranet Locators from individual locators")
 print ("==================================================================")
@@ -1061,7 +1103,7 @@ write_log("\n Rebuilding CC Address Search Locator from individual locators", lo
 
 try:
     # Rebuild CC Address Search Locator from individual locators
-    arcpy.RebuildAddressLocator_geocoding(CC_Address_Search)
+    arcpy.geocoding.RebuildAddressLocator(CC_Address_Search)
 except:
     print ("\n Unable to rebuild CC Address Search Locator from individual locators")
     write_log("Unable to rebuild CC Address Search Locator from individual locators", logfile)
@@ -1077,7 +1119,7 @@ write_log("\n Rebuilding CC Name Locator from individual locators", logfile)
 
 try:
     # Rebuild CC Name Locator from individual locators
-    arcpy.RebuildAddressLocator_geocoding(CC_Name_Locator)
+    arcpy.geocoding.RebuildAddressLocator(CC_Name_Locator)
 except:
     print ("\n Unable to rebuild CC Name Locator from individual locators")
     write_log("\n Unable to rebuild CC Name Locator from individual locators", logfile)
@@ -1093,16 +1135,48 @@ write_log("\n Rebuilding CC Parcel Locator from individual locators", logfile)
 
 try:
     # Rebuild CC Parcel Locator from individual locators
-    arcpy.RebuildAddressLocator_geocoding(CC_Parcel_Locator)
+    arcpy.geocoding.RebuildAddressLocator(CC_Parcel_Locator)
 except:
-    print ("\n Unable to rebuild CC Parcel Locator Locator from individual locators")
-    write_log("Unable to rebuild CC Parcel Locator Locator from individual locators", logfile)
-    logging.exception('Got exception on rebuild CC Parcel Locator Locator from individual locators logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild CC Parcel Locator from individual locators")
+    write_log("Unable to rebuild CC Parcel Locator from individual locators", logfile)
+    logging.exception('Got exception on rebuild CC Parcel Locator from individual locators logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding CC Parcel Locator Locator from individual locators completed")
-write_log("       Rebuilding CC Parcel Locator Locator from individual locators completed", logfile)
+print ("       Rebuilding CC Parcel Locator from individual locators completed")
+write_log("       Rebuilding CC Parcel Locator from individual locators completed", logfile)
+
+print ("\n Rebuilding CAMA_PID Locator from individual locators")
+write_log("\n Rebuilding CAMA_PID Locator from individual locators", logfile)
+
+try:
+    # Rebuild CC Parcel Locator from individual locators
+    arcpy.geocoding.RebuildAddressLocator(CAMA_PID_Locator)
+except:
+    print ("\n Unable to rebuild CAMA_PID Locator from individual locators")
+    write_log("Unable to rebuild CAMA_PID Locator from individual locators", logfile)
+    logging.exception('Got exception on rebuild CAMA_PID Locator from individual locators logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding CAMA_PID Locator Locator from individual locators completed")
+write_log("       Rebuilding CAMA_PID Locator Locator from individual locators completed", logfile)
+
+print ("\n Rebuilding CAMA_PID Locator from individual locators")
+write_log("\n Rebuilding CAMA_PID Locator from individual locators", logfile)
+
+try:
+    # Rebuild DPS CAD Reports Locator from individual locators
+    arcpy.geocoding.RebuildAddressLocator(DPS_CAD_REPORTS)
+except:
+    print ("\n Unable to rebuild DPS CAD Reports from individual locators")
+    write_log("Unable to rebuild DPS CAD Reports from individual locators", logfile)
+    logging.exception('Got exception on rebuild DPS CAD Reports from individual locators logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding DPS CAD Reports Locator from individual locators completed")
+write_log("       Rebuilding DPS CAD Reports Locator from individual locators completed", logfile)
 
 
 ##print ("\n Publishing Intranet Locators Services")
