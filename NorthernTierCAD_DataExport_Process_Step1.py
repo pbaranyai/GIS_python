@@ -48,9 +48,9 @@ except:
 # Define Work Paths for FGDB:
 NORTHERN_TIER_CAD_FLDR = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
 NORTHERN_TIER_COUNTY_DATA_XML = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\XML_Workspace\\NORTHERN_TIER_COUNTY_DATA.XML"
-NORTHERN_TIER_CAD_FGDB_OLD = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_YYYYMMDD.gdb"
+NORTHERN_TIER_CAD_FGDB_OLD = NORTHERN_TIER_CAD_FLDR+ "\\Northern_Tier_County_Data_YYYYMMDD.gdb"
 PA_NG911_EXPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\PA_NG911_Exports"
-PA_NG911_EXPORT_FGDB_OLD = r"\\CCFILE\\anybody\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\PA_NG911_Exports\\PA_NG911_Export_YYYYMMDD.gdb"
+PA_NG911_EXPORT_FGDB_OLD = PA_NG911_EXPORT_FLDR + "\\PA_NG911_Export_YYYYMMDD.gdb"
 
 start_time = time.time()
 
@@ -946,8 +946,8 @@ except:
     raise
     sys.exit ()
 
-print ("****Preparing PA NG911 Export FGDB*****")
-write_log("****Preparing PA NG911 Export FGDB*****", logfile)
+print ("\n ****Preparing PA NG911 Export FGDB*****")
+write_log("\n ****Preparing PA NG911 Export FGDB*****", logfile)
 
 try:
     # Create PA_NG911_Export_YYYYMMDD geodatabase
@@ -1006,6 +1006,34 @@ except:
     print ("\n Unable to add Full_Street_Name field to Address Points")
     write_log("\n Unable to add Full_Street_Name field to Address Points", logfile)
     logging.exception('Got exception on add Full_Street_Name field to Address Points logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+
+try:
+    # Delete rows from Address Points - NG911 FC and append from Northern Tier CAD address points to populate legacy street names
+    arcpy.management.DeleteRows(AddressPoint_NG911)
+    arcpy.management.Append(NTAddressPoint_CrawfordCo, AddressPoint_NG911, "NO_TEST", r'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',DiscrpAgID,0,75;DateUpdate "DateUpdate" true true false 8 Date 0 0,First,#,'+NTAddressPoint_CrawfordCo+',DateUpdate,-1,-1;Effective "Effective" true true false 8 Date 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Effective,-1,-1;Expire "Expire" true true false 8 Date 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Expire,-1,-1;Site_NGUID "Site_NGUID" true true false 254 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Site_NGUID,0,254;Country "Country" true true false 2 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Country,0,2;State "State" true true false 2 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',State,0,2;County "County" true true false 40 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',County,0,40;AddCode "AddCode" true true false 506 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',AddCode,0,506;AddDataURI "AddDataURI" true true false 254 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',AddDataURI,0,254;Inc_Muni "Inc_Muni" true true false 100 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Inc_Muni,0,100;Uninc_Comm "Uninc_Comm" true true false 100 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Uninc_Comm,0,100;Nbrhd_Comm "Nbrhd_Comm" true true false 100 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Nbrhd_Comm,0,100;AddNum_Pre "AddNum_Pre" true true false 50 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',AddNum_Pre,0,50;Add_Number "Add_Number" true true false 4 Long 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Add_Number,-1,-1;AddNum_Suf "AddNum_Suf" true true false 15 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',AddNum_Suf,0,15;St_PreMod "St_PreMod" true true false 15 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PreMod,0,15;St_PreDir "ST_PreDir" true true false 9 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PreDir,0,9;St_PreTyp "St_PreTyp" true true false 50 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PreTyp,0,50;St_PreSep "St_PreSep" true true false 20 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PreSep,0,20;St_Name "St_Name" true true false 60 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_Name,0,60;St_PosTyp "St_PosTyp" true true false 50 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PosTyp,0,50;St_PosDir "St_PosDir" true true false 9 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PosDir,0,9;St_PosMod "St_PosMod" true true false 25 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PosMod,0,25;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PreDir,0,9;LSt_Name "LSt_Name" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_Name,0,60;LSt_Type "LSt_Type" true true false 4 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PosTyp,0,50;LStPosDir "LStPosDir" true true false 2 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',St_PosDir,0,9;ESN "ESN" true true false 5 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',ESN,0,5;MSAGComm "MSAGComm" true true false 30 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',MSAGComm,0,30;Post_Comm "Post_Comm" true true false 40 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Post_Comm,0,40;Post_Code "Post_Code" true true false 7 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Post_Code,0,7;Post_Code4 "Post_Code4" true true false 4 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Post_Code4,0,4;Building "Building" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Building,0,75;Floor "Floor" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Floor,0,75;Unit "Unit" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Unit,0,75;Room "Room" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Room,0,75;Seat "Seat" true true false 75 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Seat,0,75;Addtl_Loc "Addtl_Loc" true true false 225 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Addtl_Loc,0,225;LandmkName "LandmkName" true true false 150 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',LandmkName,0,150;Mile_Post "Mile_Post" true true false 150 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Mile_Post,0,150;Place_Type "Place_Type" true true false 50 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Place_Type,0,50;Placement "Placement" true true false 25 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Placement,0,25;Long "Long" true true false 8 Double 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Long,-1,-1;Lat "Lat" true true false 8 Double 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Lat,-1,-1;Elev "Elev" true true false 4 Long 0 0,First,#,'+NTAddressPoint_CrawfordCo+',Elev,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 0,First,#,'+NTAddressPoint_CrawfordCo+',JOIN_ID,-1,-1;FullName "FullName" true true false 80 Text 0 0,First,#,'+NTAddressPoint_CrawfordCo+',FullName,0,80;Full_Street_Name "Full Street Name" true true false 255 Text 0 0,First,#', '', '')
+    print ("\n   Replaced rows in Address Points to populate Legacy Street Names")
+    write_log("\n  Replaced rows in Address Points to populate Legacy Street Names",logfile)
+except:
+    print ("\n Unable to replace rows in Address Points to populate Legacy Street Names")
+    write_log("\n Unable to replace rows in Address Points to populate Legacy Street Names", logfile)
+    logging.exception('Got exception on replace rows in Address Points to populate Legacy Street Names logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+
+try:
+    # Delete rows from Street Centerline - NG911 FC and append from Northern Tier CAD Street Centerline to populate legacy street names
+    arcpy.management.DeleteRows(Centerline_NG911)
+    arcpy.management.Append(Centerline_CrawfordCo, Centerline_NG911, "NO_TEST", r'DiscrpAgID "DiscrpAgID" true true false 75 Text 0 0,First,#,'+Centerline_CrawfordCo+',DiscrpAgID,0,75;DateUpdate "DateUpdate" true true false 8 Date 0 0,First,#,'+Centerline_CrawfordCo+',DateUpdate,-1,-1;Effective "Effective" true true false 8 Date 0 0,First,#,'+Centerline_CrawfordCo+',Effective,-1,-1;Expire "Expire" true true false 8 Date 0 0,First,#,'+Centerline_CrawfordCo+',Expire,-1,-1;RCL_NGUID "RCL_NGUID" true true false 254 Text 0 0,First,#,'+Centerline_CrawfordCo+',RCL_NGUID,0,254;AdNumPre_L "AdNumPre_L" true true false 15 Text 0 0,First,#,'+Centerline_CrawfordCo+',AdNumPre_L,0,15;AdNumPre_R "AdNumPre_R" true true false 15 Text 0 0,First,#,'+Centerline_CrawfordCo+',AdNumPre_R,0,15;FromAddr_L "FromAddr_L" true true false 4 Long 0 0,First,#,'+Centerline_CrawfordCo+',FromAddr_L,-1,-1;ToAddr_L "ToAddr_L" true true false 4 Long 0 0,First,#,'+Centerline_CrawfordCo+',ToAddr_L,-1,-1;FromAddr_R "FromAddr_R" true true false 4 Long 0 0,First,#,'+Centerline_CrawfordCo+',FromAddr_R,-1,-1;ToAddr_R "ToAddr_R" true true false 4 Long 0 0,First,#,'+Centerline_CrawfordCo+',ToAddr_R,-1,-1;Parity_L "Parity_L" true true false 1 Text 0 0,First,#,'+Centerline_CrawfordCo+',Parity_L,0,1;Parity_R "Parity_R" true true false 1 Text 0 0,First,#,'+Centerline_CrawfordCo+',Parity_R,0,1;St_PreMod "St_PreMod" true true false 15 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PreMod,0,15;St_PreDir "St_PreDir" true true false 9 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PreDir,0,9;St_PreTyp "St_PreTyp" true true false 50 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PreTyp,0,50;St_PreSep "St_PreSep" true true false 20 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PreSep,0,20;St_Name "St_Name" true true false 60 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_Name,0,60;St_PosTyp "St_PosTyp" true true false 50 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PosTyp,0,50;St_PosDir "St_PosDir" true true false 9 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PosDir,0,9;St_PosMod "St_PosMod" true true false 25 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PosMod,0,25;LSt_PreDir "LSt_PreDir" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PreDir,0,9;LSt_Name "LSt_Name" true true false 75 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_Name,0,60;LSt_Type "LSt_Type" true true false 4 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PosTyp,0,50;LStPosDir "LStPosDir" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',St_PosDir,0,9;ESN_L "ESN_L" true true false 5 Text 0 0,First,#,'+Centerline_CrawfordCo+',ESN_L,0,5;ESN_R "ESN_R" true true false 5 Text 0 0,First,#,'+Centerline_CrawfordCo+',ESN_R,0,5;MSAGComm_L "MSAGComm_L" true true false 30 Text 0 0,First,#,'+Centerline_CrawfordCo+',MSAGComm_L,0,30;MSAGComm_R "MSAGComm_R" true true false 30 Text 0 0,First,#,'+Centerline_CrawfordCo+',MSAGComm_R,0,30;Country_L "Country_L" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',Country_L,0,2;Country_R "Country_R" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',Country_R,0,2;State_L "State_L" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',State_L,0,2;State_R "State_R" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',State_R,0,2;County_L "County_L" true true false 40 Text 0 0,First,#,'+Centerline_CrawfordCo+',County_L,0,40;County_R "County_R" true true false 40 Text 0 0,First,#,'+Centerline_CrawfordCo+',County_R,0,40;AddCode_L "AddCode_L" true true false 6 Text 0 0,First,#,'+Centerline_CrawfordCo+',AddCode_L,0,6;AddCode_R "AddCode_R" true true false 6 Text 0 0,First,#,'+Centerline_CrawfordCo+',AddCode_R,0,6;IncMuni_L "IncMuni_L" true true false 100 Text 0 0,First,#,'+Centerline_CrawfordCo+',IncMuni_L,0,100;IncMuni_R "IncMuni_R" true true false 100 Text 0 0,First,#,'+Centerline_CrawfordCo+',IncMuni_R,0,100;UnincCom_L "UnicCom_L" true true false 100 Text 0 0,First,#,'+Centerline_CrawfordCo+',UnincCom_L,0,100;UnincCom_R "Uninc" true true false 100 Text 0 0,First,#,'+Centerline_CrawfordCo+',UnincCom_R,0,100;NbrhdCom_L "NbrhdCom_L" true true false 100 Text 0 0,First,#,'+Centerline_CrawfordCo+',NbrhdCom_L,0,100;NbrhdCom_R "NbrhdCom_R" true true false 100 Text 0 0,First,#,'+Centerline_CrawfordCo+',NbrhdCom_R,0,100;PostCode_L "PostCode_L" true true false 7 Text 0 0,First,#,'+Centerline_CrawfordCo+',PostCode_L,0,7;PostCode_R "PostCode_R" true true false 7 Text 0 0,First,#,'+Centerline_CrawfordCo+',PostCode_R,0,7;PostComm_L "PostComm_L" true true false 40 Text 0 0,First,#,'+Centerline_CrawfordCo+',PostComm_L,0,40;PostComm_R "PostComm_R" true true false 40 Text 0 0,First,#,'+Centerline_CrawfordCo+',PostComm_R,0,40;RoadClass "RoadClass" true true false 15 Text 0 0,First,#,'+Centerline_CrawfordCo+',RoadClass,0,15;OneWay "OneWay" true true false 2 Text 0 0,First,#,'+Centerline_CrawfordCo+',OneWay,0,2;SpeedLimit "SpeedLimit" true true false 2 Short 0 0,First,#,'+Centerline_CrawfordCo+',SpeedLimit,-1,-1;Valid_L "Valid_L" true true false 1 Text 0 0,First,#,'+Centerline_CrawfordCo+',Valid_L,0,1;Valid_R "Valid_R" true true false 1 Text 0 0,First,#,'+Centerline_CrawfordCo+',Valid_R,0,1;Time "Time" true true false 8 Double 0 0,First,#,'+Centerline_CrawfordCo+',Time,-1,-1;Max_Height "Max_Height" true true false 8 Double 0 0,First,#,'+Centerline_CrawfordCo+',Max_Height,-1,-1;Max_Weight "Max_Weight" true true false 8 Double 0 0,First,#,'+Centerline_CrawfordCo+',Max_Weight,-1,-1;T_ZLev "T_ZLev" true true false 2 Short 0 0,First,#,'+Centerline_CrawfordCo+',T_ZLev,-1,-1;F_ZLev "F_ZLev" true true false 2 Short 0 0,First,#,'+Centerline_CrawfordCo+',F_ZLev,-1,-1;JOIN_ID "JOIN_ID" true true false 4 Long 0 0,First,#,'+Centerline_CrawfordCo+',JOIN_ID,-1,-1;FullName "FullName" true true false 80 Text 0 0,First,#,'+Centerline_CrawfordCo+',FullName,0,80', '', "FullName <> 'DONATION HILL RD'")
+    print ("\n   Replaced rows in Street Centerline to populate Legacy Street Names")
+    write_log("\n  Replaced rows in Street Centerline to populate Legacy Street Names",logfile)
+except:
+    print ("\n Unable to replace rows in Street Centerline to populate Legacy Street Names")
+    write_log("\n Unable to replace rows in Street Centerline to populate Legacy Street Names", logfile)
+    logging.exception('Got exception on replace rows in Street Centerline to populate Legacy Street Names logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
@@ -1267,6 +1295,64 @@ except:
     logging.exception('Got exception on calculate DateUpdate, Effective, DiscrpAgID, Country, State & CntyNGUID fields in Counties_CrawfordCo FC logged at:'  + str(Day) + " " + str(Time))
     raise
     sys.exit ()
+
+print ("\n Replace Fire Department Coverage from Northern Tier FGDB from CRAW_INTERNAL excluding Spartansburg coverage in Erie County")
+write_log("\n Replace Fire Department Coverage from Northern Tier FGDB from CRAW_INTERNAL excluding Spartansburg coverage in Erie County", logfile)
+
+try:
+    # Delete rows - Counties FC
+    arcpy.management.DeleteRows(Fire_Department_NG911)
+    print ("\n Deleted rows in Fire_Department_NG911 FC")
+    write_log("\n Deleted rows in Fire_Department_NG911 FC",logfile)
+except:
+    print ("\n Unable to Delete rows in Fire_Department_NG911 FC")
+    write_log("\n Unable to Delete rows in Fire_Department_NG911 FC", logfile)
+    logging.exception('Got exception on Delete rows in Fire_Department_NG911 FC logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Fire Dept Coverage to Delete Files (create temporary fire dept feature in delete files FDS for manipulation into fire dept for NG911)
+    FIRE_DEPT_COVERAGE_DELETE_NG911 = arcpy.conversion.FeatureClassToFeatureClass(FIRE_DEPT_COVERAGE_INTERNAL, DELETE_FILES_NG911, "FIRE_DEPT_COVERAGE_DELETE_NG911", "COUNTY_NAME = 'CRAWFORD'", r'FIRE_DEPT "FIRE DEPARTMENT" true true false 50 Text 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',FIRE_DEPT,0,50;FIRE_FDID "FIRE DEPARTMENT FDID CODE" true true false 15 Text 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',FIRE_FDID,0,15;FIRE_NUM "FIRE DEPARTMENT #" true true false 10 Text 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',FIRE_NUM,0,10;COUNTY_NAME "COUNTY NAME" true true false 50 Text 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',COUNTY_NAME,0,50;COUNTY_FIPS "COUNTY FIPS CODE" true true false 8 Double 8 38,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',COUNTY_FIPS,-1,-1;GLOBALID "GLOBALID" false false true 38 GlobalID 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',GLOBALID,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',DiscrpAgID,0,75;STATE "State" true true false 2 Text 0 0,First,#,'+FIRE_DEPT_COVERAGE_INTERNAL+',STATE,0,2', '')
+except:
+    print ("\n Unable to export Fire Dept Coverage to Delete Files_NG911")
+    write_log("Unable to export Fire Dept Coverage to Delete Files_NG911", logfile)
+    logging.exception('Got exception on export Fire Dept Coverage to Delete Files_NG911 logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Add ID Field to FireDept_COVERAGE_DELETE
+    arcpy.AddField_management(FIRE_DEPT_COVERAGE_DELETE_NG911, "ID", "LONG", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+except:
+    print ("\n Unable to Add ID Field to FireDept_COVERAGE_DELETE")
+    write_log("Unable to Add ID Field to FireDept_COVERAGE_DELETE", logfile)
+    logging.exception('Got exception on Add ID Field to FireDept_COVERAGE_DELETE logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+   
+try:
+    # Calculate ID Field FIRE_DEPT_COVERAGE_DELETE (calculate 20+FIRE_FDID into field)
+    arcpy.CalculateField_management(FIRE_DEPT_COVERAGE_DELETE_NG911, "ID", '"20"+ !FIRE_FDID!', "PYTHON", "")
+except:
+    print ("\n Unable to Calculate ID Field FIRE_DEPT_COVERAGE_DELETE")
+    write_log("Unable to Calculate ID Field FIRE_DEPT_COVERAGE_DELETE", logfile)
+    logging.exception('Got exception on Calculate ID Field FIRE_DEPT_COVERAGE_DELETE logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+ 
+try:
+    # Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to NG911 FGDB (append fire dept coverage manipulated from steps above to staging FGDB)
+    arcpy.Append_management(FIRE_DEPT_COVERAGE_DELETE_NG911, Fire_Department_NG911, "NO_TEST", 'Description "Description" true true false 50 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_DELETE+',FIRE_DEPT,-1,-1;ID "ID" true true false 4 Long 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_DELETE+',ID,-1,-1;SHAPE_Length "SHAPE_Length" false true true 8 Double 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_DELETE+',Shape_Length,-1,-1;SHAPE_Area "SHAPE_Area" false true true 8 Double 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_DELETE+',Shape_Area,-1,-1;DiscrpAgID "Discrepancy Agency ID" true true false 75 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_DELETE+',DiscrpAgID,-1,-1;STATE "State" true true false 2 Text 0 0 ,First,#,'+FIRE_DEPT_COVERAGE_DELETE+',STATE,-1,-1', "")
+except:
+    print ("\n Unable to Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to NG911 FGDB")
+    write_log("Unable to Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to NG911 FGDB", logfile)
+    logging.exception('Got exception on Append FIRE_DEPT_COVERAGE_DELETE to Fire Department to NG911 FGDB logged at:'  + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+   
+print ("       Fire Department Coverage to Fire Department append completed")
+write_log("       Fire Department Coverage to Fire Department append completed", logfile)
 
 try:
     # Delete **Delete Files** feature dataset to save room (temporary files aren't needed for step 2 of process and take up additional room on file server when archiving prior exports)
