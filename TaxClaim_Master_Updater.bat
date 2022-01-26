@@ -26,7 +26,7 @@ call %SVRwrkspce%\CrawfordGISTaxSale.exe >> %prgLog%
 ::
 echo End Running CrawfordGISTaxSale.exe %date%, %time% >> %prgLog%
 ::
-::::::::::::::::::::::: Run Land Records Data Spreader (LandRecords_Data_Spreader.py) :::::::::::::::::::::::
+::::::::::::::::::::::: Run Tax Claim Data Spreader (TaxClaim_Data_Spreader.py) :::::::::::::::::::::::
 ::
 echo _TaxClaim_Master_Updater_bat, %date%, %time% >> %batLog% 
 ::
@@ -38,6 +38,19 @@ call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PYwrkspce%\TaxClaim_D
 echo End Running TaxClaim_Data_Spreader.py %date%, %time% >> %prgLog%
 ::
 echo _Finish Tax Claim Master Updater, %date%, %time% >> %batLog%
+::
+::::::::::::::::::::::: Run Active Tax Claim Missing GIS Report tool (Active_TaxClaim_Missing_GIS.py) :::::::::::::::::::::::
+::
+echo _TaxClaim_Master_Updater_bat, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\TaxClaim_Master_Updater_bat.log
+::
+echo Start Running Active_TaxClaim_Missing_GIS.py >> %prgLog% 
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %PYwrkspce%\Active_TaxClaim_Missing_GIS.py >> %prgLog%
+::
+echo End Running Active_TaxClaim_Missing_GIS.py %date%, %time% >> %prgLog%
+::
+echo _Finish Active Tax Claim Missing GIS Report tool, %date%, %time% >> %batLog%
 ::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times
