@@ -1,1 +1,0 @@
-select name from sde.sde_versions where name not in (select v.name from sde.gdb_items g joinsde.sde_versions von g.objectid = Left(SubString(v.name, PatIndex('%[0-9.-]%', v.name), 10), PatIndex('%[^0-9.-]%', SubString(v.name, PatIndex('%[0-9.-]%', v.name), 10) + 'X')-1)where g.type = '{4ED4A58E-621F-4043-95ED-850FBA45FCBC}') and name like 'SYNC%';
