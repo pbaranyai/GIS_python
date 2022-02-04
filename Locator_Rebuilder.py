@@ -158,6 +158,12 @@ TAXPARCELS_AIR_PID_AUTO = IntranetLocatorsWorkspace + "\\TAXPARCELS_AIR_PID_AUTO
 DPS_CAD_ADDR = IntranetLocatorsWorkspace + "\\DPS_CAD_Report_ADDR.loc"
 DPS_CAD_RCL = IntranetLocatorsWorkspace + "\\DPS_CAD_Report_RCL.loc"
 DPS_CAD_REPORTS = IntranetLocators + "\\DPS_CAD_Reports.loc"
+Roads_Name_PubLocator = PublicLocatorsWorkspace + "\\Roads_Name_PubLocator.loc"
+Roads_RouteNumber_PubLocator = PublicLocatorsWorkspace + "\\Roads_RouteNumber_PubLocator.loc"
+Roads_LegislativeNumber_PubLocator = PublicLocatorsWorkspace + "\\Roads_LegislativeNumber_PubLocator.loc" 
+Roads_Name_CC_Locator = IntranetLocatorsWorkspace + "\\Roads_Name_CC_Locator.loc"
+Roads_RouteNumber_CC_Locator = IntranetLocatorsWorkspace + "\\Roads_RouteNumber_CC_Locator.loc"
+Roads_LegislativeNumber_CC_Locator = IntranetLocatorsWorkspace + "\\Roads_LegislativeNumber_CC_Locator.loc"
 
 # Publishing variables
 gis_server_connection_file = ArcServer_Admin
@@ -328,21 +334,53 @@ except:
 print ("       Rebuilding ADDR_OldAdd Locator from Address_Points - PUBLIC_WEB completed")
 write_log("       Rebuilding ADDR_OldAdd Locator from Address_Points - PUBLIC_WEB completed", logfile)
     
-print ("\n Rebuilding Crawford_Roads_Locator - Public")
-write_log("\n Rebuilding Crawford_Roads_Locator - Public", logfile)
+print ("\n Rebuilding Roads_Name_CC_Locator - Public")
+write_log("\n Rebuilding Roads_Name_CC_Locator - Public", logfile)
 
 try:
-    # Rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB
-    arcpy.geocoding.RebuildAddressLocator(Crawford_Roads_Locator)
+    # Rebuild Roads_Name_PubLocator from Street Centerline - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(Roads_Name_PubLocator)
 except:
-    print ("\n Unable to rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB")
-    write_log("\n Unable to rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB", logfile)
-    logging.exception('Got exception on rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild Roads_Name_PubLocator from Street Centerline - PUBLIC_WEB")
+    write_log("\n Unable to rebuild Roads_Name_PubLocator from Street Centerline - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild Roads_Name_PubLocator from Street Centerline - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB completed")
-write_log("       Rebuilding Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB completed", logfile)
+print ("       Rebuilding Roads_Name_PubLocator from Street Centerline - PUBLIC_WEB completed")
+write_log("       Rebuilding Roads_Name_PubLocator from Street Centerline - PUBLIC_WEB completed", logfile)
+
+print ("\n Rebuilding Roads_RouteNumber_PubLocator - Public")
+write_log("\n Rebuilding Roads_RouteNumber_PubLocator - Public", logfile)
+
+try:
+    # Rebuild Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(Roads_RouteNumber_PubLocator)
+except:
+    print ("\n Unable to rebuild Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB")
+    write_log("\n Unable to rebuild Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB completed")
+write_log("       Rebuilding Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB completed", logfile)
+
+print ("\n Rebuilding Roads_LegislativeNumber_PubLocator - Public")
+write_log("\n Rebuilding Roads_LegislativeNumber_PubLocator - Public", logfile)
+
+try:
+    # Rebuild Roads_RouteNumber_PubLocator from Street Centerline - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(Roads_LegislativeNumber_PubLocator)
+except:
+    print ("\n Unable to rebuild Roads_LegislativeNumber_PubLocator from Street Centerline - PUBLIC_WEB")
+    write_log("\n Unable to rebuild Roads_LegislativeNumber_PubLocator from Street Centerline - PUBLIC_WEB", logfile)
+    logging.exception('Got exception on rebuild Roads_LegislativeNumber_PubLocator from Street Centerline - PUBLIC_WEB logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding Roads_LegislativeNumber_PubLocator from Street Centerline - PUBLIC_WEB completed")
+write_log("       Rebuilding Roads_LegislativeNumber_PubLocator from Street Centerline - PUBLIC_WEB completed", logfile)
 
 print ("\n Rebuilding TaxParcel_ADDR1 Locator from Tax Parcels - PUBLIC_WEB")
 write_log("\n Rebuilding TaxParcel_ADDR1 Locator from Tax Parcels - PUBLIC_WEB", logfile)
@@ -686,6 +724,22 @@ except:
 print ("       Rebuilding Crawford Parcel Locator from individual locators completed")
 write_log("       Rebuilding Crawford Parcel Locator from individual locators completed", logfile)
 
+print ("\n Rebuilding Crawford_Roads_Locator from individual locators")
+write_log("\n Rebuilding Crawford_Roads_Locator from individual locators", logfile)
+
+try:
+    # Rebuild Crawford_Roads_Locator from Street Centerline - PUBLIC_WEB
+    arcpy.geocoding.RebuildAddressLocator(Crawford_Roads_Locator)
+except:
+    print ("\n Unable to rebuild Crawford_Roads_Locator from individual locators")
+    write_log("\n Unable to rebuild Crawford_Roads_Locator from individual locators", logfile)
+    logging.exception('Got exception on rebuild Crawford_Roads_Locator from individual locators logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding Crawford_Roads_Locator from individual locators completed")
+write_log("       Rebuilding Crawford_Roads_Locator from individual locators completed", logfile)
+
 print ("\n Rebuild Individual Intranet Locators")
 print ("=======================================")
 
@@ -756,21 +810,53 @@ except:
 print ("       Rebuilding ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL completed")
 write_log("       Rebuilding ADDR_OldAdd_INTRA locator from Address_Points - CRAW_INTERNAL completed", logfile)
 
-print ("\n Rebuilding CC_Roads_Locator from Street Centerline - CRAW_INTERNAL")
-write_log("\n Rebuilding CC_Roads_Locator Locator from Street Centerline - CRAW_INTERNAL", logfile)
+print ("\n Rebuilding Roads_Name_CC_Locator from Street Centerline - CRAW_INTERNAL")
+write_log("\n Rebuilding Roads_Name_CC_Locator Locator from Street Centerline - CRAW_INTERNAL", logfile)
 
 try:
-    # CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL
-    arcpy.geocoding.RebuildAddressLocator(CC_Roads_Locator)
+    # Rebuild Roads_Name_CC_Locator from Street Centerline - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(Roads_Name_CC_Locator)
 except:
-    print ("\n Unable to rebuild CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL")
-    write_log("\n Unable to rebuild CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL", logfile)
-    logging.exception('Got exception on rebuild CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to rebuild Roads_Name_CC_Locator from Street Centerline - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild Roads_Name_CC_Locator from Street Centerline - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild Roads_Name_CC_Locator from Street Centerline - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
-print ("       Rebuilding CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL completed")
-write_log("       Rebuilding CC_Roads_Locator_INTRA Locator from Street Centerline - CRAW_INTERNAL completed", logfile)
+print ("       Rebuilding Roads_Name_CC_Locator from Street Centerline - CRAW_INTERNAL completed")
+write_log("       Rebuilding Roads_Name_CC_Locator Locator from Street Centerline - CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding Roads_RouteNumber_CC_Locator from Street Centerline - CRAW_INTERNAL")
+write_log("\n Rebuilding Roads_RouteNumber_CC_Locator Locator from Street Centerline - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild Roads_RouteNumber_CC_Locator from Street Centerline - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(Roads_RouteNumber_CC_Locator)
+except:
+    print ("\n Unable to rebuild Roads_RouteNumber_CC_Locator from Street Centerline - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild Roads_RouteNumber_CC_Locator from Street Centerline - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild Roads_RouteNumber_CC_Locator from Street Centerline - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding Roads_RouteNumber_CC_Locator from Street Centerline - CRAW_INTERNAL completed")
+write_log("       Rebuilding Roads_RouteNumber_CC_Locator Locator from Street Centerline - CRAW_INTERNAL completed", logfile)
+
+print ("\n Rebuilding Roads_LegislativeNumber_CC_Locator from Street Centerline - CRAW_INTERNAL")
+write_log("\n Rebuilding Roads_LegislativeNumber_CC_Locator Locator from Street Centerline - CRAW_INTERNAL", logfile)
+
+try:
+    # Rebuild Roads_LegislativeNumber_CC_Locator from Street Centerline - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(Roads_LegislativeNumber_CC_Locator)
+except:
+    print ("\n Unable to rebuild Roads_LegislativeNumber_CC_Locator from Street Centerline - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild Roads_LegislativeNumber_CC_Locator from Street Centerline - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild Roads_LegislativeNumber_CC_Locator from Street Centerline - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding Roads_LegislativeNumber_CC_Locator from Street Centerline - CRAW_INTERNAL completed")
+write_log("       Rebuilding Roads_LegislativeNumber_CC_Locator Locator from Street Centerline - CRAW_INTERNAL completed", logfile)
 
 print ("\n Rebuilding TaxParcel_ADDR1_INTRA Locator from Tax Parcels - CRAW_INTERNAL")
 write_log("\n Rebuilding TaxParcel_ADDR1_INTRA Locator from Tax Parcels - CRAW_INTERNAL", logfile)
@@ -1113,6 +1199,22 @@ except:
 
 print ("       Rebuilding CC Address Search Locator from individual locators completed")
 write_log("       Rebuilding CC Address Search Locator from individual locators completed", logfile)
+
+print ("\n Rebuilding CC_Roads_Locator from Street Centerline - CRAW_INTERNAL")
+write_log("\n Rebuilding CC_Roads_Locator Locator from Street Centerline - CRAW_INTERNAL", logfile)
+
+try:
+    # CC_Roads_Locator from Street Centerline - CRAW_INTERNAL
+    arcpy.geocoding.RebuildAddressLocator(CC_Roads_Locator)
+except:
+    print ("\n Unable to rebuild CC_Roads_Locator from Street Centerline - CRAW_INTERNAL")
+    write_log("\n Unable to rebuild CC_Roads_Locator from Street Centerline - CRAW_INTERNAL", logfile)
+    logging.exception('Got exception on rebuild CC_Roads_Locator from Street Centerline - CRAW_INTERNAL logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Rebuilding CC_Roads_Locator from Street Centerline - CRAW_INTERNAL completed")
+write_log("       Rebuilding CC_Roads_Locator from Street Centerline - CRAW_INTERNAL completed", logfile)
 
 print ("\n Rebuilding CC Name Locator from individual locators")
 write_log("\n Rebuilding CC Name Locator from individual locators", logfile)
