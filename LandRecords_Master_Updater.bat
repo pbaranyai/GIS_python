@@ -86,6 +86,17 @@ call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\Active_GI
 ::
 echo End Running Active_GIS_Missing_VISION.py %date%, %time% >> %prgLog%
 ::
+::::::::::::::::::::::: Run Mismatched Air Parcel records report (AirParcel_VISION_Mismatch.py) :::::::::::::::::::::::
+::
+echo _LandRecords_Master_Updater_bat, %date%, %time% >> %batLog% 
+::
+Set prgLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
+::
+echo Start Running AirParcel_VISION_Mismatch.py >> %prgLog% 
+call "%PROGRAMFILES%\ArcGIS\Pro\bin\Python\Scripts\propy" %ASTwrkspce%\AirParcel_VISION_Mismatch.py >> %prgLog%
+::
+echo End Running AirParcel_VISION_Mismatch.py %date%, %time% >> %prgLog%
+::
 set ENDTIME=%TIME%
 rem Change formatting for the start and end times
     for /F "tokens=1-4 delims=:.," %%a in ("%STARTTIME%") do (
