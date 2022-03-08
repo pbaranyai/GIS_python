@@ -90,8 +90,8 @@ IntranetLocators =  Locators + "\\Intranet_Locators"
 PublicLocators = Locators + "\\Public_Locators"
 
 # Staging location
-ArcServer_Admin = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections\\Servers\\services on ccgis.crawfordcountypa.net (admin)"
-ArcServer_Staging = MACHINE + "\\AppData\\Local\\ESRI\\ArcGISPro\\Staging"#\\arcgis on ccgis.crawfordcountypa.net (admin)"
+ArcServer_Admin = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections\\Servers\\arcgis on ccgis.crawfordcountypa.net MANAGER"
+ArcServer_Staging = MACHINE + "\\AppData\\Local\\ESRI\\ArcGISPro\\Staging"#\\arcgis on ccgis.crawfordcountypa.net MANAGER"
 Draft_Staging = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Draft_Services"
 
 # Local variables:
@@ -1281,467 +1281,467 @@ print ("       Rebuilding DPS CAD Reports Locator from individual locators compl
 write_log("       Rebuilding DPS CAD Reports Locator from individual locators completed", logfile)
 
 
-##print ("\n Publishing Intranet Locators Services")
-##write_log("\n Publishing Intranet Locators Services", logfile)
-##print ("===========================================")
-##write_log("===========================================", logfile)
-##
-##print ("\n Publishing (overwrite existing) CC Address Search service")
-##write_log("\n Publishing (overwrite existing) CC Address Search service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CCADD_locator_path, CCADD_sddraft_file, CCADD_service_name,
-##                                                  connection_file_path=gis_server_connection_file,
-##                                                  copy_data_to_server=True,
-##                                                  summary=CCADD_summary, tags=CCADD_tags, max_result_size=20,
-##                                                  max_batch_size=500, suggested_batch_size=150,
-##                                                  overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the CC Address Search SD draft file")
-##    write_log("Unable to create the CC Address Search SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CCADD_sddraft_file, CCADD_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CCADD_sd_file, gis_server_connection_file)
-##        print("     The CC Address Search geocode service was successfully published")
-##        write_log("     The CC Address Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log("Unable to publish CC Address Search geocode service", logfile)
-##        write_log(arcpy.GetMessages(2),logfile)
-##        logging.exception('Got exception on Unable to publish CC Address Search geocode service logged at:' + str(Day) + " " + str(Time))
-##        raise
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating CC Address Search geocode service definition draft")
-##    write_log("Errors were returned when creating CC Address Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) CC Name Locator service")
-##write_log("\n Publishing (overwrite existing) CC Name Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CCNAME_locator_path, CCNAME_sddraft_file, CCNAME_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CCNAME_summary, tags=CCNAME_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the CC Name Locator SD draft file")
-##    write_log("Unable to create the CC Name Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CCNAME_sddraft_file, CCNAME_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CCNAME_sd_file, gis_server_connection_file)
-##        print("     The CC Name search geocode service was successfully published")
-##        write_log("     The CC Name Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        write_log("Errors were returned when creating CC Name Search geocode service definition draft", logfile)
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating CC Name Search geocode service definition draft")
-##    write_log("Errors were returned when creating CC Name Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) CC Parcel Locator service")
-##write_log("\n Publishing (overwrite existing) CC Parcel Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CCPARCEL_locator_path, CCPARCEL_sddraft_file, CCPARCEL_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CCPARCEL_summary, tags=CCPARCEL_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the CC Parcel Locator SD draft file")
-##    write_log("Unable to create the CC Parcel Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CCPARCEL_sddraft_file, CCPARCEL_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CCPARCEL_sd_file, gis_server_connection_file)
-##        print("     The CC Parcel search geocode service was successfully published")
-##        write_log("     The CC Parcel Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating CC Parcel Search geocode service definition draft")
-##    write_log("Errors were returned when creating CC Parcel Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) CC Roads Locator service")
-##write_log("\n Publishing (overwrite existing) CC Roads Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CCROAD_locator_path, CCROAD_sddraft_file, CCROAD_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CCROAD_summary, tags=CCROAD_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the CC Roads Locator SD draft file")
-##    write_log("Unable to create the CC Roads Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CCROAD_sddraft_file, CCROAD_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CCROAD_sd_file, gis_server_connection_file)
-##        print("     The CC Roads search geocode service was successfully published")
-##        write_log("     The CC Roads Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating CC Roads Search geocode service definition draft")
-##    write_log("Errors were returned when creating CC Roads Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing Public Locators Services")
-##write_log("\n Publishing Public Locators Services", logfile)
-##print ("=======================================")
-##write_log("=======================================", logfile)
-##
-##print ("\n Publishing (overwrite existing) Crawford Address Search service")
-##write_log("\n Publishing (overwrite existing) Crawford Address Search service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWADD_locator_path, CRAWADD_sddraft_file, CRAWADD_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CRAWADD_summary, tags=CRAWADD_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##except:
-##    print ("Unable to create the Crawford Address Search SD draft file")
-##    write_log("Unable to create the Crawford Address Search SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CRAWADD_sddraft_file, CRAWADD_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CRAWADD_sd_file, gis_server_connection_file)
-##        print("     The Crawford Address search geocode service was successfully published")
-##        write_log("     The Crawford Address Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating Crawford Address Search geocode service definition draft")
-##    write_log("Errors were returned when creating Crawford Address Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) Crawford Cemetery Locator service")
-##write_log("\n Publishing (overwrite existing) Crawford Cemetery Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWCEM_locator_path, CRAWCEM_sddraft_file, CRAWCEM_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CRAWCEM_summary, tags=CRAWCEM_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the Crawford Cemetery Locator SD draft file")
-##    write_log("Unable to create the Crawford Cemetery Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CRAWCEM_sddraft_file, CRAWCEM_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CRAWCEM_sd_file, gis_server_connection_file)
-##        print("     The Crawford Cemetery search geocode service was successfully published")
-##        write_log("     The Crawford Cemetery Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating Crawford Cemetery Search geocode service definition draft")
-##    write_log("Errors were returned when creating Crawford Cemetery Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) Crawford Landmarks Locator service")
-##write_log("\n Publishing (overwrite existing) Crawford Landmarks Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWLMKS_locator_path, CRAWLMKS_sddraft_file, CRAWLMKS_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CRAWLMKS_summary, tags=CRAWLMKS_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the Crawford Landmarks Locator SD draft file")
-##    write_log("Unable to create the Crawford Landmarks Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CRAWLMKS_sddraft_file, CRAWLMKS_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CRAWLMKS_sd_file, gis_server_connection_file)
-##        print("     The Crawford Landmarks search geocode service was successfully published")
-##        write_log("     The Crawford Landmarks Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating Crawford Landmarks Search geocode service definition draft")
-##    write_log("Errors were returned when creating Crawford Landmarks Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) Crawford Name Locator service")
-##write_log("\n Publishing (overwrite existing) Crawford Name Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWNAME_locator_path, CRAWNAME_sddraft_file, CRAWNAME_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CRAWNAME_summary, tags=CRAWNAME_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the Crawford Name Locator SD draft file")
-##    write_log("Unable to create the Crawford Name Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CRAWNAME_sddraft_file, CRAWNAME_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CRAWNAME_sd_file, gis_server_connection_file)
-##        print("     The Crawford Name search geocode service was successfully published")
-##        write_log("     The Crawford Name Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating Crawford Name Search geocode service definition draft")
-##    write_log("Errors were returned when creating Crawford Name Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) Crawford Parcel Locator service")
-##write_log("\n Publishing (overwrite existing) Crawford Parcel Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWPCL_locator_path, CRAWPCL_sddraft_file, CRAWPCL_service_name,
-##                            connection_file_path=gis_server_connection_file, 
-##                            copy_data_to_server=True,
-##                            summary=CRAWPCL_summary, tags=CRAWPCL_tags, max_result_size=20,
-##                            max_batch_size=500, suggested_batch_size=150, 
-##                            overwrite_existing_service=True)
-##
-##except:
-##    print ("Unable to create the Crawford Parcel Locator SD draft file")
-##    write_log("Unable to create the Crawford Parcel Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CRAWPCL_sddraft_file, CRAWPCL_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CRAWPCL_sd_file, gis_server_connection_file)
-##        print("     The Crawford Parcel search geocode service was successfully published")
-##        write_log("     The Crawford Parcel Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating Crawford Parcel Search geocode service definition draft")
-##    write_log("Errors were returned when creating Crawford Parcel Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
-##
-##print ("\n Publishing (overwrite existing) Crawford Roads Locator service")
-##write_log("\n Publishing (overwrite existing) Crawford Roads Locator service", logfile)
-##
-##try:
-##    # Overwrite any existing outputs
-##    arcpy.env.overwriteOutput = True
-##except:
-##    print ("Unable to overwrite existing outputs")
-##    write_log("Unable to overwrite existing outputs", logfile)
-##
-##try:
-##    # Create the sd draft file
-##    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWROAD_locator_path, CRAWROAD_sddraft_file, CRAWROAD_service_name,
-##                           connection_file_path=gis_server_connection_file, 
-##                           copy_data_to_server=True,
-##                           summary=CRAWROAD_summary, tags=CRAWROAD_tags, max_result_size=20,
-##                           max_batch_size=500, suggested_batch_size=150, 
-##                           overwrite_existing_service=True)
-##except:
-##    print ("Unable to create the Crawford Roads Locator SD draft file")
-##    write_log("Unable to create the Crawford Roads Locator SD draft file", logfile)
-##
-### Stage and upload the service if the sddraft analysis did not contain errors
-##if analyze_messages['errors'] == {}:
-##    try:
-##        # Execute StageService to convert sddraft file to a service definition 
-##        # (sd) file 
-##        arcpy.server.StageService(CRAWROAD_sddraft_file, CRAWROAD_sd_file)
-##
-##        # Execute UploadServiceDefinition to publish the service definition 
-##        # file as a service
-##        arcpy.server.UploadServiceDefinition(CRAWROAD_sd_file, gis_server_connection_file)
-##        print("     The Crawford Roads search geocode service was successfully published")
-##        write_log("     The Crawford Roads Search geocode service was successfully published", logfile)
-##    except arcpy.ExecuteError:
-##        print("An error occurred")
-##        print(arcpy.GetMessages(2))
-##        write_log(arcpy.GetMessages(2),logfile)
-##else: 
-##    # If the sddraft analysis contained errors, display them
-##    print("Errors were returned when creating Crawford Roads Search geocode service definition draft")
-##    write_log("Errors were returned when creating Crawford Roads Search geocode service definition draft", logfile)
-##    pprint.pprint(analyze_messages['errors'], indent=2)
+print ("\n Publishing Intranet Locators Services")
+write_log("\n Publishing Intranet Locators Services", logfile)
+print ("===========================================")
+write_log("===========================================", logfile)
+
+print ("\n Publishing (overwrite existing) CC Address Search service")
+write_log("\n Publishing (overwrite existing) CC Address Search service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CCADD_locator_path, CCADD_sddraft_file, CCADD_service_name,
+                                                  connection_file_path=gis_server_connection_file,
+                                                  copy_data_to_server=True,
+                                                  summary=CCADD_summary, tags=CCADD_tags, max_result_size=20,
+                                                  max_batch_size=500, suggested_batch_size=150,
+                                                  overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the CC Address Search SD draft file")
+    write_log("Unable to create the CC Address Search SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CCADD_sddraft_file, CCADD_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CCADD_sd_file, gis_server_connection_file)
+        print("     The CC Address Search geocode service was successfully published")
+        write_log("     The CC Address Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log("Unable to publish CC Address Search geocode service", logfile)
+        write_log(arcpy.GetMessages(2),logfile)
+        logging.exception('Got exception on Unable to publish CC Address Search geocode service logged at:' + str(Day) + " " + str(Time))
+        raise
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating CC Address Search geocode service definition draft")
+    write_log("Errors were returned when creating CC Address Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) CC Name Locator service")
+write_log("\n Publishing (overwrite existing) CC Name Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CCNAME_locator_path, CCNAME_sddraft_file, CCNAME_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CCNAME_summary, tags=CCNAME_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the CC Name Locator SD draft file")
+    write_log("Unable to create the CC Name Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CCNAME_sddraft_file, CCNAME_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CCNAME_sd_file, gis_server_connection_file)
+        print("     The CC Name search geocode service was successfully published")
+        write_log("     The CC Name Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        write_log("Errors were returned when creating CC Name Search geocode service definition draft", logfile)
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating CC Name Search geocode service definition draft")
+    write_log("Errors were returned when creating CC Name Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) CC Parcel Locator service")
+write_log("\n Publishing (overwrite existing) CC Parcel Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CCPARCEL_locator_path, CCPARCEL_sddraft_file, CCPARCEL_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CCPARCEL_summary, tags=CCPARCEL_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the CC Parcel Locator SD draft file")
+    write_log("Unable to create the CC Parcel Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CCPARCEL_sddraft_file, CCPARCEL_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CCPARCEL_sd_file, gis_server_connection_file)
+        print("     The CC Parcel search geocode service was successfully published")
+        write_log("     The CC Parcel Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating CC Parcel Search geocode service definition draft")
+    write_log("Errors were returned when creating CC Parcel Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) CC Roads Locator service")
+write_log("\n Publishing (overwrite existing) CC Roads Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CCROAD_locator_path, CCROAD_sddraft_file, CCROAD_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CCROAD_summary, tags=CCROAD_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the CC Roads Locator SD draft file")
+    write_log("Unable to create the CC Roads Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CCROAD_sddraft_file, CCROAD_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CCROAD_sd_file, gis_server_connection_file)
+        print("     The CC Roads search geocode service was successfully published")
+        write_log("     The CC Roads Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating CC Roads Search geocode service definition draft")
+    write_log("Errors were returned when creating CC Roads Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing Public Locators Services")
+write_log("\n Publishing Public Locators Services", logfile)
+print ("=======================================")
+write_log("=======================================", logfile)
+
+print ("\n Publishing (overwrite existing) Crawford Address Search service")
+write_log("\n Publishing (overwrite existing) Crawford Address Search service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWADD_locator_path, CRAWADD_sddraft_file, CRAWADD_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CRAWADD_summary, tags=CRAWADD_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+except:
+    print ("Unable to create the Crawford Address Search SD draft file")
+    write_log("Unable to create the Crawford Address Search SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CRAWADD_sddraft_file, CRAWADD_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CRAWADD_sd_file, gis_server_connection_file)
+        print("     The Crawford Address search geocode service was successfully published")
+        write_log("     The Crawford Address Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating Crawford Address Search geocode service definition draft")
+    write_log("Errors were returned when creating Crawford Address Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) Crawford Cemetery Locator service")
+write_log("\n Publishing (overwrite existing) Crawford Cemetery Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWCEM_locator_path, CRAWCEM_sddraft_file, CRAWCEM_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CRAWCEM_summary, tags=CRAWCEM_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the Crawford Cemetery Locator SD draft file")
+    write_log("Unable to create the Crawford Cemetery Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CRAWCEM_sddraft_file, CRAWCEM_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CRAWCEM_sd_file, gis_server_connection_file)
+        print("     The Crawford Cemetery search geocode service was successfully published")
+        write_log("     The Crawford Cemetery Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating Crawford Cemetery Search geocode service definition draft")
+    write_log("Errors were returned when creating Crawford Cemetery Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) Crawford Landmarks Locator service")
+write_log("\n Publishing (overwrite existing) Crawford Landmarks Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWLMKS_locator_path, CRAWLMKS_sddraft_file, CRAWLMKS_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CRAWLMKS_summary, tags=CRAWLMKS_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the Crawford Landmarks Locator SD draft file")
+    write_log("Unable to create the Crawford Landmarks Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CRAWLMKS_sddraft_file, CRAWLMKS_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CRAWLMKS_sd_file, gis_server_connection_file)
+        print("     The Crawford Landmarks search geocode service was successfully published")
+        write_log("     The Crawford Landmarks Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating Crawford Landmarks Search geocode service definition draft")
+    write_log("Errors were returned when creating Crawford Landmarks Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) Crawford Name Locator service")
+write_log("\n Publishing (overwrite existing) Crawford Name Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWNAME_locator_path, CRAWNAME_sddraft_file, CRAWNAME_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CRAWNAME_summary, tags=CRAWNAME_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the Crawford Name Locator SD draft file")
+    write_log("Unable to create the Crawford Name Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CRAWNAME_sddraft_file, CRAWNAME_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CRAWNAME_sd_file, gis_server_connection_file)
+        print("     The Crawford Name search geocode service was successfully published")
+        write_log("     The Crawford Name Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating Crawford Name Search geocode service definition draft")
+    write_log("Errors were returned when creating Crawford Name Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) Crawford Parcel Locator service")
+write_log("\n Publishing (overwrite existing) Crawford Parcel Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWPCL_locator_path, CRAWPCL_sddraft_file, CRAWPCL_service_name,
+                            connection_file_path=gis_server_connection_file, 
+                            copy_data_to_server=True,
+                            summary=CRAWPCL_summary, tags=CRAWPCL_tags, max_result_size=20,
+                            max_batch_size=500, suggested_batch_size=150, 
+                            overwrite_existing_service=True)
+
+except:
+    print ("Unable to create the Crawford Parcel Locator SD draft file")
+    write_log("Unable to create the Crawford Parcel Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CRAWPCL_sddraft_file, CRAWPCL_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CRAWPCL_sd_file, gis_server_connection_file)
+        print("     The Crawford Parcel search geocode service was successfully published")
+        write_log("     The Crawford Parcel Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating Crawford Parcel Search geocode service definition draft")
+    write_log("Errors were returned when creating Crawford Parcel Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
+
+print ("\n Publishing (overwrite existing) Crawford Roads Locator service")
+write_log("\n Publishing (overwrite existing) Crawford Roads Locator service", logfile)
+
+try:
+    # Overwrite any existing outputs
+    arcpy.env.overwriteOutput = True
+except:
+    print ("Unable to overwrite existing outputs")
+    write_log("Unable to overwrite existing outputs", logfile)
+
+try:
+    # Create the sd draft file
+    analyze_messages = arcpy.CreateGeocodeSDDraft(CRAWROAD_locator_path, CRAWROAD_sddraft_file, CRAWROAD_service_name,
+                           connection_file_path=gis_server_connection_file, 
+                           copy_data_to_server=True,
+                           summary=CRAWROAD_summary, tags=CRAWROAD_tags, max_result_size=20,
+                           max_batch_size=500, suggested_batch_size=150, 
+                           overwrite_existing_service=True)
+except:
+    print ("Unable to create the Crawford Roads Locator SD draft file")
+    write_log("Unable to create the Crawford Roads Locator SD draft file", logfile)
+
+# Stage and upload the service if the sddraft analysis did not contain errors
+if analyze_messages['errors'] == {}:
+    try:
+        # Execute StageService to convert sddraft file to a service definition 
+        # (sd) file 
+        arcpy.server.StageService(CRAWROAD_sddraft_file, CRAWROAD_sd_file)
+
+        # Execute UploadServiceDefinition to publish the service definition 
+        # file as a service
+        arcpy.server.UploadServiceDefinition(CRAWROAD_sd_file, gis_server_connection_file)
+        print("     The Crawford Roads search geocode service was successfully published")
+        write_log("     The Crawford Roads Search geocode service was successfully published", logfile)
+    except arcpy.ExecuteError:
+        print("An error occurred")
+        print(arcpy.GetMessages(2))
+        write_log(arcpy.GetMessages(2),logfile)
+else: 
+    # If the sddraft analysis contained errors, display them
+    print("Errors were returned when creating Crawford Roads Search geocode service definition draft")
+    write_log("Errors were returned when creating Crawford Roads Search geocode service definition draft", logfile)
+    pprint.pprint(analyze_messages['errors'], indent=2)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
