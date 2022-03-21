@@ -976,6 +976,7 @@ Municipalities_NG911 = PA_NG911_FGDB + "\\Municipalities_CrawfordCo"
 AddressPoint_NG911 = PA_NG911_FGDB + "\\AddressPoint_CrawfordCo"
 Police_Department_NG911 = PA_NG911_FGDB + "\\Police_Department_CrawfordCo"
 Police_Reporting_NG911 = PA_NG911_FGDB + "\\Police_Reporting_CrawfordCo"
+Police_Response_NG911 = PA_NG911_FGDB + "\\Police_Response_CrawfordCo"
 Railroads_NG911 = PA_NG911_FGDB + "\\Railroads_CrawfordCo"
 DELETE_FILES_NG911 = PA_NG911_FGDB + "\\DELETE_FILES"
 ESZ_DISSOLVE = DELETE_FILES_NG911 + "\\ESZ_DISSOLVE_DELETE"
@@ -1197,7 +1198,7 @@ try:
     print ("\n     Full Street Name field updated in Address Point FC within PA_NG911_Export FGDB")
     write_log ("\n     Full Street Name field updated in Address Point FC within PA_NG911_Export FGDB",logfile)
 except:
-    print ("\n Unable to calculate Full Street Name field for Address Points within PA_NG911 FGDB")
+    print ("\n Unable to calcuPolice_Reporting_NG911late Full Street Name field for Address Points within PA_NG911 FGDB")
     write_log("\n Unable to calculate Full Street Name field for Address Points within PA_NG911 FGDB", logfile)
     logging.exception('Got exception on calculate Full Street Name field for Address Points within PA_NG911 FGDB logged at:' + str(Day) + " " + str(Time))
     raise
@@ -1353,6 +1354,48 @@ except:
    
 print ("       Fire Department Coverage to Fire Department append completed")
 write_log("       Fire Department Coverage to Fire Department append completed", logfile)
+
+print ("\n Add LastUpdate field to Fire/EMS/Law feature classes and calculate todays date into them")
+write_log("\n Add LastUpdate field to Fire/EMS/Law feature classes and calculate todays date into them", logfile)
+
+try:
+    # Add LastUpdate field to Fire/EMS/Law feature classes
+    arcpy.management.AddField(Ambulance_Company_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    arcpy.management.AddField(EMS_Districts_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    arcpy.management.AddField(Fire_Department_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    arcpy.management.AddField(Fire_Response_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    arcpy.management.AddField(Police_Department_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    arcpy.management.AddField(Police_Reporting_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    arcpy.management.AddField(Police_Response_NG911, "LastUpdate", "DATE", None, None, None, "Date Last Updated", "NULLABLE", "NON_REQUIRED", '')
+    print ("\n Added LastUpdate field to Fire/EMS/Law feature classes")
+    write_log("\n Added LastUpdate field to Fire/EMS/Law feature classes",logfile)
+except:
+    print ("\n Unable to Add LastUpdate field to Fire/EMS/Law feature classes")
+    write_log("\n Unable to Add LastUpdate field to Fire/EMS/Law feature classes", logfile)
+    logging.exception('Got exception on Add LastUpdate field to Fire/EMS/Law feature classes logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+try:
+    # Calculate LastUpdate field in Fire/EMS/Law feature classes to TODAY
+    arcpy.management.CalculateField(Ambulance_Company_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(EMS_Districts_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Fire_Department_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Fire_Response_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Police_Department_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Police_Reporting_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    arcpy.management.CalculateField(Police_Response_NG911, "LastUpdate", "datetime.datetime.now( )", "PYTHON3", '', "TEXT", "NO_ENFORCE_DOMAINS")
+    print ("\n Calculated LastUpdate field in Fire/EMS/Law feature classes to TODAY")
+    write_log("\n Calculated LastUpdate field in Fire/EMS/Law feature classes to TODAY",logfile)
+except:
+    print ("\n Unable to Calculate LastUpdate field in Fire/EMS/Law feature classes to TODAY")
+    write_log("\n Unable to Calculate LastUpdate field in Fire/EMS/Law feature classes to TODAY", logfile)
+    logging.exception('Got exception on Calculate LastUpdate field in Fire/EMS/Law feature classes to TODAY logged at:' + str(Day) + " " + str(Time))
+    raise
+    sys.exit ()
+
+print ("       Add LastUpdate field to Fire/EMS/Law feature classes and calculate todays date into them completed")
+write_log("       Add LastUpdate field to Fire/EMS/Law feature classes and calculate todays date into them completed", logfile)
 
 try:
     # Delete **Delete Files** feature dataset to save room (temporary files aren't needed for step 2 of process and take up additional room on file server when archiving prior exports)
