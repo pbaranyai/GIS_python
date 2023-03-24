@@ -9,7 +9,7 @@
 # Created 2023-03-23 // Phil Baranyai
 #
 # Works with:
-# Map/Feature Layers
+# Map Image/Feature Layers
 # Tables
 # GP Tools
 # Locators
