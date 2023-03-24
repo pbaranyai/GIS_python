@@ -4,6 +4,8 @@
 # Will find a list of web maps and/or web applications where the referenced 
 # layer is contained within a web map and/or a web mapping application
 #
+# Works with Enterprise GIS & ArcGIS Online
+#
 # Created 2023-03-23 // Phil Baranyai
 #
 # Works with:
