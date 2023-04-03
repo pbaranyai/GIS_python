@@ -145,6 +145,7 @@ for i in portalitems:
         
             # Some maps don't have data, so we'll just skip them if they throw a TypeError
             except:
+                print("\nNo Web map / Web App matches occur")
                 continue
         
 
@@ -168,6 +169,7 @@ for i in portalitems:
         
             # Some apps don't have data, so we'll just skip them if they throw a TypeError
             except:
+                print("\nNo dashboard matches occur")
                 continue
 
         print("Creating results dataframe for "+URL+" at " + time.strftime("%I:%M:%S %p", time.localtime()))
