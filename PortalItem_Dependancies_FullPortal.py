@@ -30,6 +30,10 @@ Portal = "PORTAL URL"
 
 #*********************************************************************************************************
 
+# Uncomment for CMD run
+##print("Enter portal URL below")
+##Portal = input()
+
 # Setup Date/time variables
 date = datetime.date.today().strftime("%Y%m%d")
 Day = time.strftime("%Y-%m-%d", time.localtime())
@@ -176,3 +180,7 @@ print(output)
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 print("Reporting process completed at " + str(end_time))
+
+# Uncomment for CMD run
+##input("Press any key to close program")
+##sys.exit()
