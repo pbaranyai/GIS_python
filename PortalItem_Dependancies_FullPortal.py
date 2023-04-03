@@ -1,6 +1,6 @@
 #######################################################
 #
-# PortalItem_Dependancies_FullPortal.py
+# PortalItem_Dependancies_FullPortal.py ( STILL EDITING - NOT WORKING)
 # Will find a list of web maps and/or web applications where the referenced 
 # layer is contained within a web map and/or a web mapping application
 #
