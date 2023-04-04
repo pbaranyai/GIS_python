@@ -24,7 +24,7 @@ import datetime
 
 #*********************************************************************************************************
 ##### Change portal address here  #####
-Portal = "https://wasarcgis02t.dqe.com/arcgis/home/"
+Portal = "PORTAL URL GOES HERE"
 ##### Change portal address here  #####
 
 #*********************************************************************************************************
