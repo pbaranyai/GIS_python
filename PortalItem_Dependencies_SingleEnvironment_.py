@@ -57,7 +57,7 @@ for url in Portal:
     LoggedInAs = gis.properties.user.username
     # Clean up Portal url for usable name in print statements and excel file name
     PortalPre = Portal.replace('https://','',1)
-    PortalName = Portal.replace('.com/arcgis','',1)
+    PortalName = PortalPre.replace('.com/arcgis','',1)
     print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
 else:
     print("Unable to login to "+str(Portal)+", check portal URL & password (if applicable) and try again, if portal URL is correct, ensure you have proper access via your login credentials")
