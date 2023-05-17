@@ -59,8 +59,7 @@ for url in Portal:
     gis = GIS(url,PortalUserName)
     LoggedInAs = gis.properties.user.username
     # Clean up Portal url for usable name in print statements and excel file name
-    PortalPre = Portal.replace('https://','',1)
-    PortalName = PortalPre.replace('.com/arcgis','',1)
+    PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
     print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
 else:
     print("Unable to login to "+str(Portal)+", check portal URL & password (if applicable) and try again, if portal URL is correct, ensure you have proper access via your login credentials")
@@ -71,8 +70,7 @@ for url2 in Portal2:
     gis2 = GIS(url2,Portal2UserName)
     LoggedInAs = gis2.properties.user.username
     # Clean up Portal url for usable name in print statements and excel file name
-    Portal2Pre = Portal2.replace('https://','',1)
-    Portal2Name = Portal2Pre.replace('.com/arcgis','',1)
+    Portal2Name = Portal2.replace('https://','',1).replace('.com/arcgis','',1)
     print("\nLogged into "+str(Portal2Name)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
 else:
     print("Unable to login to "+str(Portal2)+", check portal URL & password (if applicable) and try again, if portal URL is correct, ensure you have proper access via your login credentials")
