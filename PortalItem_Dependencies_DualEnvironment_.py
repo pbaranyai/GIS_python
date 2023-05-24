@@ -45,9 +45,8 @@ Time = time.strftime("%H%M", time.localtime())
 start_time = time.time()
 elapsed_time = time.time() - start_time
 
-# Setup export path to user's documents folder
-userprofile = os.environ['USERPROFILE']
-ReportDirectory = userprofile+"\\Documents\\PortalDependencies"
+# Setup export path to *script location* PortalDependencies_Reports folder
+ReportDirectory = os.getcwd()+"\\PortalDependencies_Reports"
 reportdirExists = os.path.exists(ReportDirectory)
 if not reportdirExists:
     os.makedirs(ReportDirectory)
