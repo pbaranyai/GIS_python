@@ -213,7 +213,18 @@ print('Finished Data Frame')
 print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
 # Exporting Dataframe to excel
 print('\nExporting to Excel, located at: '+ExcelOutput)
-new_df.to_excel(ExcelOutput, index=False)
+new_df.to_excel(ExcelOutput, 'Items', index=False)
+
+# Access exported excel workbook, and auto-size columns for easier read
+wb = load_workbook(ExcelOutput)
+ws = wb['Items']
+for letter in ['A','B','C','D','E','F','G','H','I','J']:
+    max_width = int(0)
+    for row_number in range(1,ws.max_row +1):
+        if len(ws[f'{letter}{row_number}'].value) > max_width:
+               max_width = len(ws[f'{letter}{row_number}'].value)
+    ws.column_dimensions[letter].width = max_width +1
+wb.save(ExcelOutput)
 
 # Calculating run time and printing end statement
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
