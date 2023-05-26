@@ -14,7 +14,7 @@
 #
 #######################################################
 
-print("This tool will will load layers and applications (listed in script) from both portal sites (or AGOL if that URL is entered) entered below, then compare them, and export out an excel report to show what dependencies (if any) each layer has to a map/app.")
+print("This tool will load layers and applications (listed in script) from both portal sites (or AGOL if that URL is entered) entered below, then compare them, and export out an excel report to show what dependencies (if any) each layer has to a map/app.")
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
