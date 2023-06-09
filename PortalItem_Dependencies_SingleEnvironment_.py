@@ -21,6 +21,7 @@ from arcgis.gis import GIS
 import pandas as pd
 import os
 import datetime
+from openpyxl import load_workbook
 
 # Comment out for manual run of script - Used for prompts within command window (Run with ArcGIS Pro)
 print("Enter portal URL below: | Example: https://PORTALNAME.com/arcgis")
