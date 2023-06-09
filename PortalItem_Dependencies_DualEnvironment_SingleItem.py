@@ -20,6 +20,7 @@ from arcgis.gis import GIS
 import pandas as pd
 import os
 import datetime
+from openpyxl import load_workbook
 
 # For command window run, requests user imput for portal URL (layer URL can be from either portal)
 print("Enter Portal/AGOL URLs below: | Example: https://PORTALNAME.com/arcgis")
