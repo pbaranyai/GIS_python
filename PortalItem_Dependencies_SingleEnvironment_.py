@@ -43,29 +43,60 @@ Time = time.strftime("%H%M", time.localtime())
 start_time = time.time()
 elapsed_time = time.time() - start_time
 
+# Setup export path to *script location* log folder
+try:
+    LogDirectory = os.getcwd()+"\\log"
+    logdirExists = os.path.exists(LogDirectory)
+    if not logdirExists:
+        os.makedirs(LogDirectory)
+        print(LogDirectory+" was not found, so it was created")
+except:
+    print('\n Unable to create log folder within '+os.getcwd()+' folder')
+    sys.exit()
+
+# Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
+logfile = ReportDirectory + "\\PortalDependencies_Reports_log.log"
+logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
+
 # Setup export path to *script location* PortalDependencies_Reports folder
-ReportDirectory = os.getcwd()+"\\PortalDependencies_Reports"
-reportdirExists = os.path.exists(ReportDirectory)
-if not reportdirExists:
-    os.makedirs(ReportDirectory)
-    print(ReportDirectory+" was not found, so it was created")
+try:
+    ReportDirectory = os.getcwd()+"\\PortalDependencies_Reports"
+    reportdirExists = os.path.exists(ReportDirectory)
+    if not reportdirExists:
+        os.makedirs(ReportDirectory)
+        print(ReportDirectory+" was not found, so it was created")
+        write_log(ReportDirectory+" was not found, so it was created",logfile)
+except:
+    print('\n Unable to establish PortalDependencies_Reports folder within '+os.getcwd()+' folder')
+    write_log('\n Unable to create PortalDependencies_Reports folder within '+os.getcwd()+' folder',logfile)
+    logging.exception('Got exception on create PortalDependencies_Reports folder within '+os.getcwd()+' folder logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
 
 # Confirm portal access was successful for Portal
-for url in Portal:
-    print("Attempting login on: "+str(url)+" | Password required for "+str(PortalUserName))
-    gis = GIS(url,PortalUserName)
-    LoggedInAs = gis.properties.user.username
-    # Clean up Portal url for usable name in print statements and excel file name
-    PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
-    print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
-else:
-    print("Unable to login to "+str(Portal)+", check portal URL & password (if applicable) and try again, if portal URL is correct, ensure you have proper access via your login credentials")
-
+try:
+    for url in Portal:
+        print("Attempting login on: "+str(url)+" | Password required for "+str(PortalUserName))
+        gis = GIS(url,PortalUserName)
+        LoggedInAs = gis.properties.user.username
+        # Clean up Portal url for usable name in print statements and excel file name
+        PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
+        print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
+    else:
+        print("Unable to login to "+str(Portal)+", check portal URL & password (if applicable) and try again, if portal URL is correct, ensure you have proper access via your login credentials")
+except:
+    print('\n Unable to establish connection to '+str(Portal))
+    write_log('\n Unable to establish connection to '+str(Portal),logfile)
+    logging.exception('Got exception on establish connection to '+str(Portal)+' logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
+        
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'__Dependencies_report__'+str(date)+"_"+str(Time)+'.xlsx')
 
 # Gathering Item Information (these item types will be reported and identified on the report)
 print('Collecting Item types & App types...')
+write_log('\nCollecting Item Data...',logfile)
 
 ItemList = ['Administrative Report', 'Apache Parquet', 'CAD Drawing', 'CSV', 'Color Set', 'Content Category Set',
             'Document Link', 'Esri Classifier Definition', 'Export Package', 'Feature Collection',
@@ -157,6 +188,7 @@ def gather_info(connection, item, webapps):
 
     except:
         print("Exception found gathering baseline item info.")
+        write_log('\nException found gathering baseline item info.',logfile)
         item_info = item
         find_id = item_info.id
         item_title = item_info.title
@@ -169,32 +201,59 @@ def gather_info(connection, item, webapps):
                             'Application Owner': 'N/A'})
 
 # Assembling list of all items based off of defined types (and not owned by ESRI)
-print('\nStarting Item inventory')
-for i in ItemList:
-    Temp = gis.content.search(query='NOT owner: esri',item_type=i,max_items=-1)
-    if len(Temp) > 0:
-        for Pi in Temp:
-            PortalItems.append(Pi)
-print('\nYou have ' + str(len(PortalItems)) + ' items in '+Portal+'.')
-print('    Finished Items')
+try:
+    print('\nStarting Item inventory')
+    for i in ItemList:
+        Temp = gis.content.search(query='NOT owner: esri',item_type=i,max_items=-1)
+        if len(Temp) > 0:
+            for Pi in Temp:
+                PortalItems.append(Pi)
+    print('\nYou have ' + str(len(PortalItems)) + ' items in '+Portal+'.')
+    write_log('\nYou have ' + str(len(PortalItems)) + ' items in '+Portal+'.',logfile)
+    print('    Finished Items')
+    write_log('    Finished Items',logfile)
+except:
+    print('\n Unable to gather inventory of items')
+    write_log('\n Unable to gather inventory of items',logfile)
+    logging.exception('Got exception on gather inventory of items logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
 
 # Assembling list of all apps based off of defined types (and not owned by ESRI)
-print('\nStarting App inventory')
-for app in AppList:
-    aTemp = gis.content.search(query='NOT owner: esri',item_type=app,max_items=-1)
-    if len(aTemp) > 0:
-        for Pa in aTemp:
-            PortalApps.append(Pa)
-print('\nYou have ' + str(len(PortalApps)) + ' apps in '+Portal+'.')
-print('    Finished Apps')
-
+try:
+    print('\nStarting App inventory')
+    write_log('\nStarting App inventory',logfile)
+    for app in AppList:
+        aTemp = gis.content.search(query='NOT owner: esri',item_type=app,max_items=-1)
+        if len(aTemp) > 0:
+            for Pa in aTemp:
+                PortalApps.append(Pa)
+    print('\nYou have ' + str(len(PortalApps)) + ' apps in '+Portal+'.')
+    write_log('\nYou have ' + str(len(PortalApps)) + ' apps in '+Portal+'.',logfile)
+    print('    Finished Apps')
+    write_log('    Finished Apps',logfile)
+except:
+    print('\n Unable to gather inventory of apps')
+    write_log('\n Unable to gather inventory of apps',logfile)
+    logging.exception('Got exception on gather inventory of apps logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
 
 # Running gather_info function through a loop for Portal
-print('\n****Starting '+Portal+' Items')
-for i in PortalItems:
-    print('Working on ' + str(i.title))
-    gather_info(gis, Portal, i, PortalApps)
-print('    Finished '+Portal+' Items')
+try:
+    print('\n****Starting '+Portal+' Items')
+    for i in PortalItems:
+        print('Working on ' + str(i.title))
+        write_log('Working on ' + str(i.title),logfile)
+        gather_info(gis, Portal, i, PortalApps)
+    print('    Finished '+Portal+' Items')
+    write_log('    Finished Apps',logfile)
+except:
+    print('\n Unable to check item list against app list for '+str(Portal))
+    write_log('\n Unable to check item list against app list for '+str(Portal),logfile)
+    logging.exception('Got exception on check item list against app list for '+str(Portal)+' logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
 
 # Creating a dataframe to organize the results
 df = pd.DataFrame(FuncResults)
@@ -208,29 +267,56 @@ mask = df2['Item Url'].ne(df2['Item Url'].shift(-1))
 df3 = pd.DataFrame('', index=mask.index[mask] + .5, columns=df.columns)
 
 # Creating the Final Dataframe to export to excel
-new_df = pd.concat([df2, df3]).sort_index().reset_index(drop=True).iloc[:-1]
-print('Finished Data Frame')
-
-print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+try:
+    new_df = pd.concat([df2, df3]).sort_index().reset_index(drop=True).iloc[:-1]
+    print('\n    Finished Creating Data Frame')
+    write_log('\n    Finished Creating Data Frame',logfile)
+except:
+    print('\n Unable to create dataframe')
+    write_log('\n Unable to create dataframe',logfile)
+    logging.exception('Got exception on create dataframe logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
+    
 # Exporting Dataframe to excel
-print('\nExporting to Excel, located at: '+ExcelOutput)
-new_df.to_excel(ExcelOutput, 'Items', index=False)
+try:
+    print('\nExporting to Excel, located at: '+ExcelOutput)
+    write_log('\nExporting to Excel, located at: '+ExcelOutput,logfile)
+    new_df.to_excel(ExcelOutput, 'Items', index=False)
+except:
+    print('\n Unable to export excel spreadsheet to: '+ExcelOutput)
+    write_log('\n Unable to export excel spreadsheet to: '+ExcelOutput,logfile)
+    logging.exception('Got exception on export excel spreadsheet to: '+ExcelOutput+' logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
 
 # Access exported excel workbook, and auto-size columns for easier read
-wb = load_workbook(ExcelOutput)
-ws = wb['Items']
-for letter in ['A','B','C','D','E','F','G','H','I','J']:
-    max_width = int(0)
-    for row_number in range(1,ws.max_row +1):
-        if len(ws[f'{letter}{row_number}'].value) > max_width:
-               max_width = len(ws[f'{letter}{row_number}'].value)
-    ws.column_dimensions[letter].width = max_width +1
-wb.save(ExcelOutput)
+try:
+    wb = load_workbook(ExcelOutput)
+    ws = wb['Items']
+    for letter in ['A','B','C','D','E','F','G','H','I','J']:
+        max_width = int(0)
+        for row_number in range(1,ws.max_row +1):
+            if len(ws[f'{letter}{row_number}'].value) > max_width:
+                   max_width = len(ws[f'{letter}{row_number}'].value)
+        ws.column_dimensions[letter].width = max_width +1
+    wb.save(ExcelOutput)
+    print('Excel spreadsheet columns have been resized to fit data')
+    write_log('Excel spreadsheet columns have been resized to fit data',logfile)
+except:
+    print('\n Unable to reformat excel spreadsheet to auto-size columns to data')
+    write_log('\n Unable to reformat excel spreadsheet to auto-size columns to data',logfile)
+    logging.exception('Got exception on reformat excel spreadsheet to auto-size columns to data logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    raise
+    sys.exit()
 
 # Calculating run time and printing end statement
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() -start_time
 print("\nReporting process completed at " + str(end_time)+" taking "+time.strftime("%H hours %M minutes %S seconds", time.gmtime(elapsed_time)))
+write_log("\nReporting process completed at " + str(end_time)+" taking "+time.strftime("%H hours %M minutes %S seconds", time.gmtime(elapsed_time)),logfile)
+print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+write_log("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+",logfile)
 
 # For command run, allows user to see all program print statements before closing the command window by pressing enter key.
 input("Press enter key to close program")
