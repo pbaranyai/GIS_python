@@ -22,6 +22,7 @@ import pandas as pd
 import os
 import datetime
 from openpyxl import load_workbook
+import logging
 
 ### Comment out for manual run of script - Used for prompts within command window (Run with ArcGIS Pro)
 print("Enter Portal/AGOL URLs below: | Example: https://PORTALNAME.com/arcgis")
@@ -76,7 +77,15 @@ except:
     raise
     sys.exit()
     
-
+# Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
+try:
+    def write_log(text, file):
+        f = open(file, 'a')           # 'a' will append to an existing file if it exists
+        f.write("{}\n".format(text))  # write the text to the logfile and move to next line
+        return
+except:
+    print ("\n Unable to write log file")
+    sys.exit ()
 
 # Confirm portal access was successful for Portal 1
 try:
