@@ -22,6 +22,7 @@ import pandas as pd
 import os
 import datetime
 from openpyxl import load_workbook
+import logging
 
 # Comment out for manual run of script - Used for prompts within command window (Run with ArcGIS Pro)
 print("Enter portal URL below: | Example: https://PORTALNAME.com/arcgis")
@@ -57,6 +58,17 @@ except:
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
 logfile = ReportDirectory + "\\PortalDependencies_Reports_log.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
+
+# Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
+try:
+    def write_log(text, file):
+        f = open(file, 'a')           # 'a' will append to an existing file if it exists
+        f.write("{}\n".format(text))  # write the text to the logfile and move to next line
+        return
+except:
+    print ("\n Unable to write log file")
+    write_log("Unable to write log file", logfile)
+    sys.exit ()
 
 # Setup export path to *script location* PortalDependencies_Reports folder
 try:
@@ -292,21 +304,26 @@ except:
 
 # Access exported excel workbook, and auto-size columns for easier read
 try:
+    print("\n Resizing excel columns to autofit columns")
+    write_log("\n Resizing excel columns to autofit columns",logfile)
     wb = load_workbook(ExcelOutput)
     ws = wb['Items']
-    for letter in ['A','B','C','D','E','F','G','H','I','J']:
-        max_width = int(0)
-        for row_number in range(1,ws.max_row +1):
-            if len(ws[f'{letter}{row_number}'].value) > max_width:
-                   max_width = len(ws[f'{letter}{row_number}'].value)
-        ws.column_dimensions[letter].width = max_width +1
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2) * 1.2
+        ws.column_dimensions[column_letter].width = adjusted_width
     wb.save(ExcelOutput)
-    print('Excel spreadsheet columns have been resized to fit data')
-    write_log('Excel spreadsheet columns have been resized to fit data',logfile)
 except:
-    print('\n Unable to reformat excel spreadsheet to auto-size columns to data')
-    write_log('\n Unable to reformat excel spreadsheet to auto-size columns to data',logfile)
-    logging.exception('Got exception on reformat excel spreadsheet to auto-size columns to data logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    print('\n Unable to resize excel columns to fit data')
+    write_log('\n Unable to resize excel columns to fit data',logfile)
+    logging.exception('Got exception on resize excel columns to fit data logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
 
