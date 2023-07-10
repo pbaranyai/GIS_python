@@ -338,21 +338,26 @@ new_df.to_excel(ExcelOutput, 'Items', index=False)
 
 # Access exported excel workbook, and auto-size columns for easier read
 try:
+    print("\n Resizing excel columns to autofit columns")
+    write_log("\n Resizing excel columns to autofit columns",logfile)
     wb = load_workbook(ExcelOutput)
     ws = wb['Items']
-    for letter in ['A','B','C','D','E','F','G','H','I','J']:
-        max_width = int(0)
-        for row_number in range(1,ws.max_row +1):
-            if len(ws[f'{letter}{row_number}'].value) > max_width:
-                max_width = len(ws[f'{letter}{row_number}'].value)
-        ws.column_dimensions[letter].width = max_width +1
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2) * 1.2
+        ws.column_dimensions[column_letter].width = adjusted_width
     wb.save(ExcelOutput)
-    print('Excel spreadsheet columns have been resized to fit data')
-    write_log('Excel spreadsheet columns have been resized to fit data',logfile)
 except:
-    print('\n Unable to reformat excel spreadsheet to auto-size columns to data')
-    write_log('\n Unable to reformat excel spreadsheet to auto-size columns to data',logfile)
-    logging.exception('Got exception on reformat excel spreadsheet to auto-size columns to data logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    print('\n Unable to resize excel columns to fit data')
+    write_log('\n Unable to resize excel columns to fit data',logfile)
+    logging.exception('Got exception on resize excel columns to fit data logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
     
