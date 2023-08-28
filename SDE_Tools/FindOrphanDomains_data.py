@@ -10,23 +10,41 @@
 # Created on: 2022-12-19 
 # Updated on 2022-12-19
 # ---------------------------------------------------------------------------
-
+print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of orphan domains")
+print("\nLoading python modules, please wait...")
 # import required modules
 import arcpy, os, logging, datetime
 from arcpy import env
+import pandas as pd
+from openpyxl import load_workbook
 
+### Uncomment for command run
+print("Enter SDE Connection below (no need to add _SDE/_GISDL/etc., the script will do this automatically): \n Example: **SDENAME** \n Leaving blank will run domain list for ALL 'SDE Connection'_*.sde connections in SDE_Connection folder")
+SDEConnection = input('Enter SDE Connection Name (not the path): ')
 
-# get the SDE connection as a variable
-SDEConnection = "SDE Connection Name"
-
+# This can be used in leiu of command window, need to comment out CMD window portions of script at top and bottom, then un-comment out Portal variable here. 
+#*********************************************************************************************************
+##SDEConnection = "GTWDSAFMPROD02"
+#**************************************************************************
 
 # Setup Date (and day/time)
 date = datetime.date.today().strftime("%Y%m%d")
 Day = time.strftime("%m-%d-%Y", time.localtime())
 Time = time.strftime("%I:%M:%S %p", time.localtime())
 
+# Setup export path to *script location* log folder
+try:
+    LogDirectory = os.getcwd()+"\\log"
+    logdirExists = os.path.exists(LogDirectory)
+    if not logdirExists:
+        os.makedirs(LogDirectory)
+        print(LogDirectory+" was not found, so it was created")
+except:
+    print('\n Unable to create log folder within '+os.getcwd()+' folder')
+    sys.exit()
+
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = r"\\LOG FILE PATH\\"+SDEConnection+"_OrphanDomains_Data.log"
+logfile = LogDirectory +"\\"+SDEConnection+"_OrphanDomains_List.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
@@ -35,8 +53,8 @@ def write_log(text, file):
     f.write("{}\n".format(text))  # write the text to the logfile and move to next line
     return
 
-arcpy.env.workspace = r"\\SDE CONNECTION FILE PATH\\SDEConnectionFiles"
-workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
+arcpy.env.workspace = r"\\wfsfile04\\GIS Analysts\\SDEConnectionFiles"
+workspaces = arcpy.ListWorkspaces(SDEConnection+"*.sde", "SDE")
 
 # create an empty list that we'll populate with the orphaned domains
 orphanedDomains = []
@@ -93,8 +111,7 @@ del domainObjects
 allFcsAndTables = []
 for WKSP in workspaces:
     env.workspace = WKSP
-    walk = arcpy.da.Walk(workspaces, datatype=["FeatureClass", "Table"])
-
+    walk = arcpy.da.Walk(WKSP, datatype=["FeatureClass", "Table"])
     for dirpath, dirname, filenames in walk:
         for filename in filenames:
             allFcsAndTables.append(os.path.join(dirpath, filename))
@@ -103,24 +120,33 @@ for WKSP in workspaces:
 del walk
 
 # go through the tables and feature classes and populate the list of applied domains
-for dSET in workspaces:
-    for item in allFcsAndTables:
-        usedDomains = ListAppliedDomains(item+" --> "+dSET)
-        for d in usedDomains:
-            appliedDomains.append(d)
+for item in allFcsAndTables:
+    usedDomains = ListAppliedDomains(item)
+    for d in usedDomains:
+        appliedDomains.append(d+" --> "+item)
 
 # populate the list of orphaned domains based on the 'all domains' that are not in applied domains
-for dSET in datasets:
-    for item in allDomains:
-        if item not in appliedDomains:
-            orphanedDomains.append(item+" --> "+dSET)
+for item in allDomains:
+    if item not in appliedDomains:
+        orphanedDomains.append(item)
 
-# report the result
-print("\n The following domains are NOT in use in your workspace!")
-write_log("\n The following domains are NOT in use in your workspace!", logfile)
+# report the Active domain result
+print("\n The following domains are CURRENTLY in use in your workspace!\n")
+write_log("\n The following domains are CURRENTLY in use in your workspace!\n", logfile)
+
+for item in appliedDomains:
+    appliedDomains.sort()
+    print(item)
+    write_log(item,logfile)
+
+
+# report the Orphan domain result
+print("\n The following domains are NOT in use in your workspace!\n")
+write_log("\n The following domains are NOT in use in your workspace!\n", logfile)
 
 
 for item in orphanedDomains:
+    orphanedDomains.sort()
     print(item)
     write_log(item,logfile)
 
@@ -135,8 +161,9 @@ print ("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+"
 write_log("Elapsed time: " + (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " +time.strftime("%I:%M:%S %p", time.localtime())), logfile)
 print ("===========================================================")
 write_log("===========================================================",logfile)
-
-
 write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#", logfile)
+# Uncomment for CMD run
+input("Press enter key to close program")
+
 del arcpy, logging, datetime, os
 sys.exit()
