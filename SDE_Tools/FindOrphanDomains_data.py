@@ -119,9 +119,9 @@ try:
         print(WKSP+" has {} domains.".format(str(len(domainObjects))))
         write_log(WKSP+" has {} domains.".format(str(len(domainObjects))),logfile)
 except:
-    print('\n Unable to list domain objects within SDE workspaces')
-    write_log('\n Unable to list domain objects within SDE workspaces',logfile)
-    logging.exception('Got exception on list domain objects within SDE workspaces logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
+    print('\n Unable to list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly.')
+    write_log('\n Unable to list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly.',logfile)
+    logging.exception('Got exception on list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly. logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
 
