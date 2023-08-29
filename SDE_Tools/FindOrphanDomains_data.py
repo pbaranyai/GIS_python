@@ -219,14 +219,15 @@ print(OrphanDomains_df)
 
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(SDEConnection)+'__Domain_Usage_report__'+str(date)+"_"+str(Time)+'.xlsx')
-XLWriter = pd.ExcelWriter(ExcelOutput)
+XLWriter = pd.ExcelWriter(ExcelOutput, engine='xlsxwriter')
 
 # Exporting Dataframe to excel
 try:
     print('\nExporting to Excel, located at: '+ExcelOutput)
     write_log('\nExporting to Excel, located at: '+ExcelOutput,logfile)
-    AppliedDomains_df.to_excel(ExcelOutput, sheet_name='Active Domains', index=False)
-    OrphanDomains_df.to_excel(ExcelOutput, sheet_name='Orphan Domains', index=False)
+    AppliedDomains_df.to_excel(XLWriter, sheet_name='Active Domains', index=False)
+    OrphanDomains_df.to_excel(XLWriter, sheet_name='Orphan Domains', index=False)
+    XLWriter.close()
 except:
     print('\n Unable to export dataframes to excel')
     write_log('\n Unable to export dataframes to excel',logfile)
