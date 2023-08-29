@@ -219,7 +219,7 @@ print(OrphanDomains_df)
 
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(SDEConnection)+'__Domain_Usage_report__'+str(date)+"_"+str(Time)+'.xlsx')
-XLWriter = pd.ExcelWriter(ExcelOutput, engine='xlsxwriter')
+XLWriter = pd.ExcelWriter(ExcelOutput)
 
 # Exporting Dataframe to excel
 try:
