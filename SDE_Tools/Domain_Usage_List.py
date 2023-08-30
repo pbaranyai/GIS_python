@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# FindOrphanDomains_data.py
+# Domain_Usage_List.py
 #
 # Description:
 # Once a database name is entered in the SDEConnection variable, an excel spreadsheet is created.
@@ -254,8 +254,6 @@ except:
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
-
-print("\n Exported list is located at: "+logfile)
 
 print ("==============================================================")
 print ("\n ORPHAN DOMAIN LIST WITHIN FC & TABLES HAS COMPLETED: " + str(Day) + " " + str(Time)+" hrs")
