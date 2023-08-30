@@ -2,9 +2,9 @@
 # FindOrphanDomains_data.py
 #
 # Description:
-# Once a database name is entered in the SDEConnection variable, a text log file is created for the following items.
+# Once a database name is entered in the SDEConnection variable, an excel spreadsheet is created.
 #
-# Finds orphan domains used in SDE feature classes and tables that are used in fields not registered as domains in Geodatabase
+# Finds active & orphan domains used in SDE feature classes and tables that are used in fields not registered as domains in Geodatabase
 #
 # Author: Phil Baranyai
 # Created on: 2022-12-19 
