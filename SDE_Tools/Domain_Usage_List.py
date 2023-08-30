@@ -55,13 +55,11 @@ try:
         print(ReportDirectory+" was not found, so it was created")
 except:
     print('\n Unable to establish Domain_Usage_Reports folder within '+os.getcwd()+' folder')
-    write_log('\n Unable to create Domain_Usage_Reports folder within '+os.getcwd()+' folder',logfile)
-    logging.exception('Got exception on create Domain_Usage_Reports folder within '+os.getcwd()+' folder logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
 
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = LogDirectory +"\\OrphanDomains_List.log"
+logfile = LogDirectory +"\\OrphanDomains_List_Log.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
