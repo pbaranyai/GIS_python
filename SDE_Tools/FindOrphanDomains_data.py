@@ -20,7 +20,7 @@ from openpyxl import load_workbook
 import logging
 
 ### Uncomment for command run
-print("Enter SDE Connection below (no need to add _SDE/_GISDL/etc., the script will do this automatically): \n Example: **SDENAME** \n Leaving blank will run domain list for ALL 'SDE Connection'_*.sde connections in SDE_Connection folder")
+print("Enter SDE Connection below): \n Example: **SDENAME** \n Leaving blank will run domain list for ALL '*.sde connections in SDE_Connection folder")
 SDEConnection = input('Enter SDE Connection Name (not the path): ')
 
 # This can be used in leiu of command window, need to comment out CMD window portions of script at top and bottom, then un-comment out Portal variable here. 
