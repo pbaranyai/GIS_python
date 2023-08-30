@@ -110,7 +110,7 @@ def ListAppliedDomains(table): # could also be a feature class
     return appliedDomains
 
 
-# Read all domains objects from SDE workspace, provide visual count
+# Read all domains objects from SDE workspace, provide visual count & append all domains to addDomains list
 try:
     for WKSP in workspaces:
         env.workspace = WKSP
