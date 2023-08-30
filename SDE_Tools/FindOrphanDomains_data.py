@@ -61,7 +61,7 @@ except:
     sys.exit()
 
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = LogDirectory +"\\"+SDEConnection+"_OrphanDomains_List.log"
+logfile = LogDirectory +"\\OrphanDomains_List.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
@@ -70,7 +70,7 @@ def write_log(text, file):
     f.write("{}\n".format(text))  # write the text to the logfile and move to next line
     return
 
-arcpy.env.workspace = r"\\wfsfile04\\GIS Analysts\\SDEConnectionFiles"
+arcpy.env.workspace = "PATH TO SDEConnectionFiles"
 workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
 
 # create an empty list that we'll populate with the orphaned domains
@@ -116,6 +116,8 @@ try:
         env.workspace = WKSP
         datasets = arcpy.ListDatasets()
         domainObjects = arcpy.da.ListDomains(WKSP)
+        for domain in domainObjects:
+            allDomains.append(domain.name)
         print(WKSP+" has {} domains.".format(str(len(domainObjects))))
         write_log(WKSP+" has {} domains.".format(str(len(domainObjects))),logfile)
 except:
@@ -125,16 +127,6 @@ except:
     raise
     sys.exit()
 
-# Append all domains found in previous step, to allDomains list
-try:
-    for domain in domainObjects:
-        allDomains.append(domain.name)
-except:
-    print('\n Unable to append full domain list into allDomains list')
-    write_log('\n Unable to append full domain list into allDomains list',logfile)
-    logging.exception('Got exception on append full domain list into allDomains list logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
-    raise
-    sys.exit()
 
 # clean up the list of domain objects now that we are done with it
 del domainObjects
