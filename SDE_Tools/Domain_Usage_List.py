@@ -117,6 +117,8 @@ try:
             allDomains.append(domain.name)
         print(WKSP+" has {} domains.".format(str(len(domainObjects))))
         write_log(WKSP+" has {} domains.".format(str(len(domainObjects))),logfile)
+    print("\n    Domains have been loaded into a list, starting to collect Feature Classes & Tables")
+    write_log("\n    Domains have been loaded into a list, starting to collect Feature Classes & Tables",logfile)
 except:
     print('\n Unable to list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly.')
     write_log('\n Unable to list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly.',logfile)
@@ -137,6 +139,8 @@ try:
         for dirpath, dirname, filenames in walk:
             for filename in filenames:
                 allFcsAndTables.append(os.path.join(dirpath, filename))
+    print("\n    Feature Classes & Tables have been loaded into a list, starting to identify domain usage")
+    write_log("\n    Feature Classes & Tables have been loaded into a list, starting to identify domain usage",logfile)
 except:
     print('\n Unable to list all feature classes and tables within SDE workspace')
     write_log('\n Unable to list all feature classes and tables within SDE workspace',logfile)
@@ -155,6 +159,8 @@ try:
         for d in usedDomains:
             appliedDomains.append(d)
             appliedDomainsDisplay.append(d+" --> "+item)
+    print("\n    Active domains captured")
+    write_log("\n    Active domains captured",logfile)
 except:
     print('\n Unable to iterate through each feature class/table, list domains used be each one, and append it to appliedDomains and appliedDomainsDisplay lists')
     write_log('\n Unable to iterate through each feature class/table, list domains used be each one, and append it to appliedDomains and appliedDomainsDisplay lists',logfile)
@@ -167,6 +173,8 @@ except:
 for item in allDomains:
     if item not in appliedDomains:
         orphanedDomains.append(item)
+print("\n    Orphan domains captured")
+write_log("\n    Orphan domains captured",logfile)
 
 # Alphabetically sort and print (within window) list of Actively used domains.
 print("\n The following domains are CURRENTLY in use in your workspace!\n")
