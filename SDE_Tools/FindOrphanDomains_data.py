@@ -8,7 +8,7 @@
 #
 # Author: Phil Baranyai
 # Created on: 2022-12-19 
-# Updated on 2022-12-19
+# Updated on 2023-08-30
 # ---------------------------------------------------------------------------
 print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of orphan domains")
 print("\nLoading python modules, please wait...")
