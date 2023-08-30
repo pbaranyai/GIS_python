@@ -70,7 +70,7 @@ def write_log(text, file):
     f.write("{}\n".format(text))  # write the text to the logfile and move to next line
     return
 
-arcpy.env.workspace = "PATH TO SDEConnectionFiles"
+arcpy.env.workspace = "PATH TO SDEConnectionFiles folder"
 workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
 
 # create an empty list that we'll populate with the orphaned domains
