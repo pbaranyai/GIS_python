@@ -55,7 +55,6 @@ try:
         print(ReportDirectory+" was not found, so it was created")
 except:
     print('\n Unable to establish Domain_Usage_Reports folder within '+os.getcwd()+' folder')
-    raise
     sys.exit()
 
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
