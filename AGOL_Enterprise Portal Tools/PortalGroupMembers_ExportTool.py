@@ -105,7 +105,7 @@ try:
         groupMembers = group.get_members()
         for member in groupMembers['users']:
             grpuser = gis.users.get(member)
-            group_members_list.append({'Group Name':group.title,'Username':member})
+            group_members_list.append({'Group Name':group.title,'Group Owner':group.owner,'Member Username':member})
 except:
     print('\n Unable to iterate through group to collect group/user names')
     write_log('\n Unable to iterate through group to collect group/user names',logfile)
