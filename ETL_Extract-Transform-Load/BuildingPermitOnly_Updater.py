@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # BuildingPermitOnly_Updater.py
 # Created on: 2019-05-09 
@@ -34,7 +33,7 @@ from arcpy import env
 arcpy.SetLogHistory(False)
 
 # Setup error logging
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\BuildingPermitOnly_Updater.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\BuildingPermitOnly_Updater.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -54,7 +53,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AST = Database_Connections + "\\AST@ccsde.sde"
@@ -63,8 +62,8 @@ AUTOWORKSPACE_AST = Database_Connections + "\\auto_workspace@ccsde.sde\\CCSDE.AU
 VISION_VIEW = Database_Connections + "\\Vision_Database.sde"
 CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
 PUBLIC_WEB = Database_Connections + "\\public_web@ccsde.sde"
-LOCATOR_WKSP = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
-AST_REPORTS_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
+LOCATOR_WKSP = r"\\FILELOCATION\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
+AST_REPORTS_FLDR = r"\\FILELOCATION\\GIS\\Assessment\\Reports"
 
 # Local variables:
 BLDG_PRMT_AST = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.Building_Permit_Base"
