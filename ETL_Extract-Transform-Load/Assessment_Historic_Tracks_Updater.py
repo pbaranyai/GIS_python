@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Assessment_Historic_Tracks_Updater.py
 # Created on: 2021-10-19 
@@ -27,7 +26,7 @@ import logging
 arcpy.SetLogHistory(False)
 
 # Setup error logging
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\Assessment_Historic_Tracks_Updater.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\Assessment_Historic_Tracks_Updater.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -48,7 +47,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AST = Database_Connections + "\\AST@ccsde.sde"
