@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # NortherTierCAD_DataExport_Export to Nothern Tier Server - Step 2.py
 #  
@@ -24,13 +23,12 @@ import traceback
 import logging
 import shutil
 import time
-import zipfile
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- doesn't overwrite with every run, allows for step 2 to be appended to step 1 for a complete log)
-logfile = r"R:\\GIS\\GIS_LOGS\\911\\NorthernTierCAD_DataExport.log"  # Run Log
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\911\\NorthernTierCAD_DataExport.log"  # Run Log
 logging.basicConfig(filename=logfile, filemode='a', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -50,11 +48,11 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 # Define Work Paths for FGDB:
-NORTHERN_TIER_CAD_FGDB = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_YYYYMMDD.gdb"
-NORTHERN_TIER_CAD_FLDR = "R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
+NORTHERN_TIER_CAD_FGDB = "\\FILELOCATION\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_YYYYMMDD.gdb"
+NORTHERN_TIER_CAD_FLDR = "\\FILELOCATION\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier"
 NWPS_STAGING_SVR = Database_Connections + "\\Staging@NWPSRPT.sde\\NWPS_GIS_Staging_ElkCo_PA.DBO.Crawford_County"
 
 # Local variables:
@@ -759,7 +757,7 @@ write_log("     Renaming Northern_Tier_County_Data_YYYYMMDD.gdb to Northern_Tier
 ##
 ##try:
 ##    # Once FGDB is compressed into ZIP, delete source FGDB
-##    if os.path.exists("R:\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_" + date + ".gdb.zip"):
+##    if os.path.exists("\\FILELOCATION\\GIS\\NorthernTierCAD_GIS\\Exported FGDB to NorthernTier\\Northern_Tier_County_Data_" + date + ".gdb.zip"):
 ##        arcpy.Delete_management(NTCurrentFGDB)
 ##        print ("\n   Deleting Northern_Tier_County_Data_" + date + ".gdb...")
 ##        write_log("   Deleting Northern_Tier_County_Data_" + date + ".gdb...",logfile)
