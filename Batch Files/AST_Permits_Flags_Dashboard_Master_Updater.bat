@@ -1,14 +1,14 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\BuildingPermit_Tracks_CAMATables_Updater_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\BuildingPermit_Tracks_CAMATables_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set ASTwrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
+::Set ASTwrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\BuildingPermit_Tracks_CAMATables_Updater_bat.log
 ::
