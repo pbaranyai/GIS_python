@@ -99,7 +99,7 @@ else:
 group_members_list = []
 
 # Establish a variable called groups (iterating through the established portal, and listing groups)
-groups = gis.groups.search('*', max_groups=1000)
+groups = gis.groups.search()
 
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'__Portal_Group_Members_report__'+str(date)+"_"+str(Time)+'.xlsx')
