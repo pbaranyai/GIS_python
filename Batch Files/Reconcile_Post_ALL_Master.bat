@@ -1,14 +1,14 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Reconcile_Post_All_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\Reconcile_Post_All_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept
-::Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept
+Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\GIS_Dept
+::Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\GIS_Dept
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\Reconcile_Post_All_bat.log
 ::
