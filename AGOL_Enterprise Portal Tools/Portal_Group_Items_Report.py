@@ -32,7 +32,7 @@ Portal = input('Enter Portal or AGOL URL: ')
 
 # Login to portal, use token as "gis variable"
 gis = GIS(Portal,UserName,Password)
-PortalName = Portal.replace('https://','',1).replace('.RESTOFYOURURL.com/arcgis','',1)
+PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
 print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
 write_log("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report",logfile)
 
