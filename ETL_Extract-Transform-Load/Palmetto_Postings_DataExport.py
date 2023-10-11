@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Palmetto_Postings_DataExport.py
 # Created on: 2021-07-05 
@@ -18,16 +17,14 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
-import builtins
 import shutil
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Treasurers\\TaxClaim_Data_Spreader.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Treasurers\\TaxClaim_Data_Spreader.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -57,9 +54,9 @@ write_log("Creating GIS deliverable for Palmetto Posting: "+ str(Day) + " " + st
 write_log("============================================================================", logfile)
 
 # Define Work Paths for FGDB:
-PALMETTO_POSTING_FLDR = r"R:\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\FGDB"
-PALMETTO_POSTING_DATA_XML = r"R:\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\XML\\PALMETTOPOSTING.XML"
-PALMETTO_POSTING_FGDB_OLD = r"R:\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\FGDB\\CrawfordCoPA_PalmettoPosting.gdb"
+PALMETTO_POSTING_FLDR = r"\\FILELOCATION\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\FGDB"
+PALMETTO_POSTING_DATA_XML = r"\\FILELOCATION\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\XML\\PALMETTOPOSTING.XML"
+PALMETTO_POSTING_FGDB_OLD = r"\\FILELOCATION\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\FGDB\\CrawfordCoPA_PalmettoPosting.gdb"
 
 print ("=====================================================================================================================")
 print ("Checking for existing PalmettoPosting FGDB, delete and rebuild fresh if exists.")
@@ -95,10 +92,10 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 # Define Work Paths for Databases:
-PALMETTO_POSTING_FLDR = r"R:\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\FGDB"
+PALMETTO_POSTING_FLDR = r"\\FILELOCATION\\GIS\\County office projects\\Treasurers_Office\\PalmettoPosting\\Workspace\\FGDB"
 PALMETTO_POSTING_FGDB = PALMETTO_POSTING_FLDR + "\\CrawfordCoPA_PalmettoPosting.gdb"
 GIS_DB = Database_Connections + "\\craw_internal@ccsde.sde"
 
