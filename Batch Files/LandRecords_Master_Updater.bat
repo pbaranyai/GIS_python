@@ -1,20 +1,20 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\LandRecords_Master_Updater_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\LandRecords_Master_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
-::Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept\Python
+Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\GIS_Dept\Python
+::Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\GIS_Dept\Python
 ::
-Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set ASTwrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set ASTwrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
+::Set ASTwrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
 ::
-Set PLANwrkspce=R:\GIS\ArcAutomations\Planning\Python
-::Set PLANwrkspce=R:\GIS\ArcAutomations\Planning\Python
+Set PLANwrkspce=\\FILELOCATION\GIS\ArcAutomations\Planning\Python
+::Set PLANwrkspce=\\FILELOCATION\GIS\ArcAutomations\Planning\Python
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\LandRecords_Master_Updater_bat.log
 ::
