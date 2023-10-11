@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Education_Data_Spreader.py
 # Created on: 2019-04-04 
@@ -20,14 +19,13 @@ import arcpy
 import sys
 import datetime
 import os
-import traceback
 import logging
 
 # Stop geoprocessing log history in metadata
 arcpy.SetLogHistory(False)
 
 # Setup error logging
-logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\Education_Data_Spreader.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\Education_Data_Spreader.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -47,7 +45,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 CRAW_INTERNAL = Database_Connections + "\\craw_internal@ccsde.sde"
