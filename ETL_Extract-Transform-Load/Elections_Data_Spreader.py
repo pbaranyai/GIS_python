@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Elections_Data_Spreader.py
 # Created on: 2019-03-05 
@@ -25,15 +24,14 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
-import builtins
+
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\Elections_Data_Spreader.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\Elections_Data_Spreader.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -53,7 +51,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 CRAW_INTERNAL = Database_Connections+ "\\craw_internal@ccsde.sde"
