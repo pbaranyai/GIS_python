@@ -1,14 +1,14 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Public_Safety_CAD_Master_Updater_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\Public_Safety_CAD_Master_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations
-::Set wrkspce=R:\GIS\ArcAutomations
+Set wrkspce=\\FILELOCATION\GIS\ArcAutomations
+::Set wrkspce=\\FILELOCATION\GIS\ArcAutomations
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\Public_Safety_CAD_Master_Updater_bat.log
 ::
