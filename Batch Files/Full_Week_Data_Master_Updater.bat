@@ -1,14 +1,14 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Full_Week_Master_Updater_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\Full_Week_Master_Updater_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set PYwrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set PYwrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set PYwrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
+::Set PYwrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\Full_Week_Master_Updater_bat.log
 ::
