@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Parcel_Builder.py
 # Created on: 2019-05-09 
@@ -21,13 +20,10 @@
 # ---------------------------------------------------------------------------
 
 # Import modules
-from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import arcpy
-import collections
 import datetime
 import os
-import traceback
 import logging
 from arcpy import env
 
@@ -40,7 +36,7 @@ except ImportError:
 arcpy.SetLogHistory(False)
 
 # Setup error logging
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\Parcel_Builder.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\Parcel_Builder.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -60,7 +56,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AST = Database_Connections + "\\AST@ccsde.sde"
