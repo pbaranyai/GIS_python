@@ -1,14 +1,14 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\SDE_Compress_Master_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\SDE_Compress_Master_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept
-::Set wrkspce=R:\GIS\ArcAutomations\GIS_Dept
+Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\GIS_Dept
+::Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\GIS_Dept
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\SDE_Compress_Master_bat.log
 ::
