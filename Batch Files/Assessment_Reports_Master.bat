@@ -1,14 +1,14 @@
-echo. > R:\GIS\GIS_LOGS\BatchLogs\Assessment_Reports_Master_bat.log
+echo. > \\FILELOCATION\GIS\GIS_LOGS\BatchLogs\Assessment_Reports_Master_bat.log
 ::  Comment Line
 :: 
 date=date /t
 time=time /t
 set STARTTIME=%TIME%
 ::
-Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
-::Set wrkspce=R:\GIS\ArcAutomations\Assessment\Python
+Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
+::Set wrkspce=\\FILELOCATION\GIS\ArcAutomations\Assessment\Python
 ::
-Set batLogwrkspce=R:\GIS\GIS_LOGS\BatchLogs
+Set batLogwrkspce=\\FILELOCATION\GIS\GIS_LOGS\BatchLogs
 ::
 Set batLog=%batLogwrkspce%\Assessment_Reports_Master_bat.log
 ::
