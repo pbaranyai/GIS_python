@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # COVID19_Data_Spreader.py
 # Created on: 2020-04-09 
@@ -19,16 +18,14 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
-#import __builtin__
-import builtins
+
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\COVID19_Data_Spreader.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\COVID19_Data_Spreader.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
