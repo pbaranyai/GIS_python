@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # PortalGroupMembers_ExportTool.py
 # Created on: 2023-05-25
-# Updated on: 2023-07-10
+# Updated on: 2023-10-11
 #
 # Author: Phil Baranyai/DLC
 #
@@ -12,6 +11,10 @@
 #
 # Works with Enterprise GIS & ArcGIS Online
 #
+########  ----> Designed to be run from CMD line
+########  ----> Right click on .py file and "Run with ArcGIS Pro"
+#
+#
 # ---------------------------------------------------------------------------
 print("This tool reads from portal URL entered below, lists all groups and members within by username, and export out results an excel report.")
 print("\nLoading python modules, please wait...")
@@ -20,6 +23,7 @@ import pandas as pd
 import os
 import datetime
 from openpyxl import load_workbook
+from openpyxl.worksheet.datavalidation import DataValidationList
 import logging
 
 # Comment out for manual run of script - Used for prompts within command window (Run with ArcGIS Pro)
@@ -97,56 +101,51 @@ group_members_list = []
 # Establish a variable called groups (iterating through the established portal, and listing groups)
 groups = gis.groups.search('*', max_groups=1000)
 
+# Set Excel spreadsheet output name
+ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'__Portal_Group_Members_report__'+str(date)+"_"+str(Time)+'.xlsx')
+
+# Create writer for dataframe to export to Excel
+writer = pd.ExcelWriter(ExcelOutput)
+
+# Create a pandas DataFrame to store the results
+df = pd.DataFrame(columns=['Group Name', 'Group Owner', 'Member Username'])
+print('\n Creating dataframe with column headings')
+write_log('\n Creating dataframe with column headings',logfile)
+
+
 # Iterate through groups list, establish variable called groupMembers (users from each group), append results to dictionary
 print("\n Iterating through group to collect group/user names")
 write_log("\n Iterating through group to collect group/user names",logfile)
+    
+
+# Function to interate through each group and create a list, enter into dataframe, and write out to excel
+def user_inventory(groupname):
+    # Create a pandas DataFrame to store the results
+    df = pd.DataFrame(columns=['Group Name', 'Group Owner', 'Member Username'])
+
+    for member in groupMembers['users']:
+        grpuser = gis.users.get(member)
+        df = df.append({
+            'Group Name':groupname.title,
+            'Group Owner':groupname.owner,
+            'Member Username':member
+            }, ignore_index=True)
+        GroupName = (groupname.title).replace(" ","")[:30]
+        df.to_excel(writer, sheet_name=GroupName, index=False)
+        print(str(groupname.title+' : '+member)+' created')
+        writer.save()
+
+# Call function from above, iterating each group through function to append each group's member list result to excel workbook
 try:
     for group in groups:
         groupMembers = group.get_members()
-        for member in groupMembers['users']:
-            grpuser = gis.users.get(member)
-            group_members_list.append({'Group Name':group.title,'Group Owner':group.owner,'Member Username':member})
+        user_inventory(group)
+    print('\n   Dataframe has been created with group members and exported to excel - spreadsheet cleanup is next')
+    write_log('\n   Dataframe has been created with group members and exported to excel - spreadsheet cleanup is next',logfile)
 except:
     print('\n Unable to iterate through group to collect group/user names')
     write_log('\n Unable to iterate through group to collect group/user names',logfile)
     logging.exception('Got exception on iterate through group to collect group/user names logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
-    raise
-    sys.exit()
-
-# Create dataframe from dictionary entries
-print("\n Creating and formating dataframe with group/user data")
-write_log("\n Creating and formating dataframe with group/user data",logfile)
-try:
-    # Establishing group_members_list as dataframe
-    predf = pd.DataFrame(group_members_list)
-    # Sorting by Group Name
-    srtdf = predf.sort_values(by=['Group Name'],ascending=[True])
-    # Reindexing dataframe
-    rstdf = srtdf.reset_index(drop=True)
-    # Creating maskt hat adds line of separate between each Group Name
-    mask = rstdf['Group Name'].ne(rstdf['Group Name'].shift(-1))
-    coldf = pd.DataFrame('',index=mask.index[mask]+.5, columns = predf.columns)
-    # Creating final version of dataframe for export
-    df = pd.concat([rstdf,coldf]).sort_index().reset_index(drop=True).iloc[:-1]
-except:
-    print('\n Unable to assemble dataframe to structure data')
-    write_log('\n Unable to assemble dataframe to structure data',logfile)
-    logging.exception('Got exception on assemble dataframe to structure data logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
-    raise
-    sys.exit()
-
-# Set Excel spreadsheet output name
-ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'__Portal_Group_Members_report__'+str(date)+"_"+str(Time)+'.xlsx')
-
-# Exporting Dataframe to excel
-try:
-    print('\nExporting to Excel, located at: '+ExcelOutput)
-    write_log('\nExporting to Excel, located at: '+ExcelOutput,logfile)
-    df.to_excel(ExcelOutput, 'Groups', index=False)
-except:
-    print('\n Unable to export dataframe to excel')
-    write_log('\n Unable to export dataframe to excel',logfile)
-    logging.exception('Got exception on export dataframe to excel logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
 
@@ -155,19 +154,22 @@ try:
     print("\n Resizing excel columns to autofit columns")
     write_log("\n Resizing excel columns to autofit columns",logfile)
     wb = load_workbook(ExcelOutput)
-    ws = wb['Groups']
-    for column in ws.columns:
-        max_length = 0
-        column_letter = column[0].column_letter
-        for cell in column:
-            try:
-                if len(str(cell.value)) > max_length:
-                    max_length = len(cell.value)
-            except:
-                pass
-        adjusted_width = (max_length + 2) * 1.2
-        ws.column_dimensions[column_letter].width = adjusted_width
+    for sheet in wb.worksheets:
+        for column in sheet.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2) * 1.2
+            sheet.column_dimensions[column_letter].width = adjusted_width
+            sheet.data_validations = DataValidationList()
     wb.save(ExcelOutput)
+    print('\n    Report exported out to: '+ExcelOutput)
+    write_log('\n    Report exported out to: '+ExcelOutput,logfile)
 except:
     print('\n Unable to resize excel columns to fit data')
     write_log('\n Unable to resize excel columns to fit data',logfile)
@@ -175,10 +177,14 @@ except:
     raise
     sys.exit()
 
+
 # Calculating run time and printing end statement
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() -start_time
-print("\nReporting process completed at " + str(end_time)+" taking "+time.strftime("%M minutes %S seconds", time.gmtime(elapsed_time)))
+print("\n     Group member report completed at " + str(end_time)+" taking "+time.strftime("%M minutes %S seconds", time.gmtime(elapsed_time)))
+write_log("\n     Group member report completed at " + str(end_time)+" taking "+time.strftime("%M minutes %S seconds", time.gmtime(elapsed_time)),logfile)
+print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+write_log("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+",logfile)
 
 # For command run, allows user to see all program print statements before closing the command window by pressing any key.
 input("Press enter key to close program")
