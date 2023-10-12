@@ -21,14 +21,11 @@
 # Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
 
-
-from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import arcpy
 from arcpy import env
 import datetime
 import os
-import traceback
 import logging
 
 try:
@@ -41,11 +38,11 @@ except ImportError:
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\SDE_Compress.log"
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\SDE_Compress.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Version logging (configure version logging location, type, and filemode -- overwrite every run)
-Version_logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\Version_Log.log"
+Version_logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\Version_Log.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -110,7 +107,7 @@ for DBConnection in DB_LIST:
     write_log(DBConnection, logfile)
 
 # Set the connections folder 
-DB_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"  
+DB_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"  
 
 # Set the workspaces
 arcpy.env.workspace = DB_Connections + '\\SDE@ccsde.sde'
@@ -880,18 +877,6 @@ write_log("\n Rebuild versions that existed prior to SDE compress", logfile)
 # Database Versions that are not currently used are commented out - as they were causing issues during the rebuild.  If they are used in the future, uncomment them out, also be sure to start the cursor with an "if", not an "elif"
 try:
     for version in versionList:
-##        if version.startswith("agol_edit"):
-##            arcpy.management.CreateVersion(AGOL_EDIT_CONNECTION,defaultVersion, version[10:], "PUBLIC")
-##            print ("Created version {0}".format(version))
-##            write_log("Created version {0}".format(version),logfile)
-##        elif version.startswith("agol_edit_pub"):
-##            arcpy.management.CreateVersion(AGOL_EDIT_PUB_CONNECTION,defaultVersion, version[14:], "PUBLIC")
-##            print ("Created version {0}".format(version))
-##            write_log("Created version {0}".format(version),logfile)
-##        elif version.startswith("CONSV_DIST"):
-##            arcpy.management.CreateVersion(CONSV_DIST_CONNECTION,defaultVersion, version[11:], "PUBLIC")
-##            print ("Created version {0}".format(version))
-##            write_log("Created version {0}".format(version),logfile)
         if version.startswith("GIS"):
             arcpy.management.CreateVersion(GIS_CONNECTION,defaultVersion, version[4:], "PUBLIC")
             print ("Created version {0}".format(version))
