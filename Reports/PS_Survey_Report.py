@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # PS_Survey_Report.py
 # Created on: 2019-07-01 
@@ -17,14 +16,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\911\\PS_SurveyReport.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\911\\PS_SurveyReport.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -44,11 +42,11 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AGOL_EDIT_PUB_PS = Database_Connections + "\\agol_edit_pub@ccsde.sde"
-PS_Report_Fldr = r"R:\\GIS\\Public Safety\\Reports"
+PS_Report_Fldr = r"\\FILELOCATION\\GIS\\Public Safety\\Reports"
 
 # Local variables:
 NEW_ADDR_REQUESTS = AGOL_EDIT_PUB_PS + "\\CCSDE.AGOL_EDIT_PUB.ADDRESS_NEW_REQUESTS_AGOL_EDIT_PUB"
@@ -92,13 +90,13 @@ except:
 
 try:
     # Export table to excel (export temporary table out as excel workbook)
-    BusinessDirectory_Excel = arcpy.TableToExcel_conversion(BusinessDirectory_TBL, "R:/GIS/Public Safety/Reports/Business_Directory.xls", "ALIAS", "DESCRIPTION")
-    print ("\n   Table exported out as R:/GIS/Public Safety/Reports/Business_Directory.xls")
-    write_log("\n   Table exported out as R:/GIS/Public Safety/Reports/Business_Directory.xls",logfile)
+    BusinessDirectory_Excel = arcpy.TableToExcel_conversion(BusinessDirectory_TBL, BusinessDirectory_Excel, "ALIAS", "DESCRIPTION")
+    print ("\n   Table exported out as "+BusinessDirectory_Excel)
+    write_log("\n   Table exported out as "+BusinessDirectory_Excel,logfile)
 except:
-    print ("\n Unable to export Business Directory table to excel in R:/GIS/Public Safety/Reports folder")
-    write_log("\n Unable to export Business Directory table to excel in R:/GIS/Public Safety/Reports folder", logfile)
-    logging.exception('Got exception on export Business Directory table to excel in R:/GIS/Public Safety/Reports folder logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to export Business Directory table to excel in "+PS_Report_Fldr+" folder")
+    write_log("\n Unable to export Business Directory table to excel in "+PS_Report_Fldr+" folder", logfile)
+    logging.exception('Got exception on export Business Directory table to excel in "+PS_Report_Fldr+" folder logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
