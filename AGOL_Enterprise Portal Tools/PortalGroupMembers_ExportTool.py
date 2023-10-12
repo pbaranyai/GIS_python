@@ -116,21 +116,37 @@ write_log('\n Creating dataframe with column headings',logfile)
 # Iterate through groups list, establish variable called groupMembers (users from each group), append results to dictionary
 print("\n Iterating through group to collect group/user names")
 write_log("\n Iterating through group to collect group/user names",logfile)
-    
+
+# Create a dataframe with a list of users (will be joined to group/user dataframe in user_inventory function for more informative reporting
+userdf = pd.DataFrame(columns=['Member Username', 'Full Name', 'Email', 'Role', 'Level'])
+portalusers = gis.users.search(max_users = 2000)
+for user in portalusers:
+                      userdf = userdf.append({
+                          'Member Username': user.username,
+                          'Full Name': user.fullName,
+                          'Email': user.email,
+                          'Role': user.role,
+                          'Level': user.level
+                          }, ignore_index=True)
 
 # Function to interate through each group and create a list, enter into dataframe, and write out to excel
 def user_inventory(groupname):
     # Create a pandas DataFrame to store the results
-    df = pd.DataFrame(columns=['Group Name', 'Group Owner', 'Member Username'])
-
+    grpdf = pd.DataFrame(columns=['Group Name', 'Group Owner', 'Member Username'])  
     for member in groupMembers['users']:
         grpuser = gis.users.get(member)
-        df = df.append({
+        grpdf = grpdf.append({
             'Group Name':groupname.title,
             'Group Owner':groupname.owner,
             'Member Username':member
             }, ignore_index=True)
         GroupName = (groupname.title).replace(" ","")[:30]
+        # Join user and group dataframes together on Member Username field
+        df = pd.merge(grpdf,userdf,on='Member Username')
+        # Replace level numbers with actual user level descriptions for ease of reading.
+        df['Level'].replace('2', 'Creator',inplace=True)
+        df['Level'].replace('11', 'Field Worker', inplace = True)
+        df['Level'].replace('1', 'Viewer', inplace = True)
         df.to_excel(writer, sheet_name=GroupName, index=False)
         print(str(groupname.title+' : '+member)+' created')
         writer.save()
