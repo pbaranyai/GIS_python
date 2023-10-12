@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Locator_Rebuilder.py
 # Created on: 2019-03-06 
@@ -51,7 +50,6 @@ import arcpy
 import sys
 import datetime
 import os
-import traceback
 import logging
 import pprint
 
@@ -59,7 +57,7 @@ import pprint
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Locator_Rebuilder.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Locator_Rebuilder.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Set up Time/Date
@@ -79,20 +77,19 @@ except:
     sys.exit ()
 
 # Machine running script
-#MACHINE = r"C:\\Users\\pbaranyai" #GIS01
-MACHINE = r"C:\\Users\\arcadmin" #CCORBWEAVER
+MACHINE = r"C:\\Users\\arcadmin"
 
 # Locator location
-Locators = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators"
+Locators = r"\\FILELOCATION\\GIS\\CurrentWebsites\\Locators"
 IntranetLocatorsWorkspace = Locators + "\\Intranet_Locators\\Locator_workspace"
 PublicLocatorsWorkspace = Locators + "\\Public_Locators\\Locator_workspace"
 IntranetLocators =  Locators + "\\Intranet_Locators"
 PublicLocators = Locators + "\\Public_Locators"
 
 # Staging location
-ArcServer_Admin = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections\\Servers\\arcgis on ccgis.crawfordcountypa.net MANAGER"
+ArcServer_Admin = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections\\Servers\\arcgis on ccgis.crawfordcountypa.net MANAGER"
 ArcServer_Staging = MACHINE + "\\AppData\\Local\\ESRI\\ArcGISPro\\Staging"#\\arcgis on ccgis.crawfordcountypa.net MANAGER"
-Draft_Staging = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Draft_Services"
+Draft_Staging = r"\\FILELOCATION\\GIS\\CurrentWebsites\\Locators\\Draft_Services"
 
 # Local variables:
 CC_Roads_Locator = IntranetLocators + "\\CC_Roads_Locator"
