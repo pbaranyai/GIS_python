@@ -16,14 +16,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\Active_GIS_Missing_VISION.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\Active_GIS_Missing_VISION.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -43,7 +42,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 VISION_VIEW = Database_Connections+ "\\Vision_Database.sde"
@@ -55,7 +54,6 @@ ASMT_TEMP_FGDB = ASMT_REPORT_WORKSPACE + "\\Assessment_GISReport_TempFGDB.gdb"
 # Local variables:
 REALMAST_VISION = VISION_VIEW + "\\VISION.REAL_PROP.REALMAST"
 TAX_PARCELS_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.TAX_PARCELS_INTERNAL"
-#BUILDING_ONLY_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.BUILDING_ONLY_JOINED_INTERNAL"
 TAX_PARCELS_AIR_INTERNAL = CRAW_INTERNAL + "\\CCSDE.CRAW_INTERNAL.Land_Records\\CCSDE.CRAW_INTERNAL.TaxParcel_Air_INTERNAL"
 ActiveGISRecords_Tbl = ASMT_TEMP_FGDB + "\\ActiveGISRecords"
 ActiveGIS_Not_In_VISION_Excel = ASMT_REPORT_FLDR + "\\Active_GIS_Not_In_VISION.xls"
@@ -222,20 +220,6 @@ except:
     logging.exception('Got exception on Export ActiveGISRecords_View out as Excel sheet in reports folder logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit ()
-
-##try:
-##    # Deleting temporary FGDB used in above processing
-##    if arcpy.Exists(ASMT_TEMP_FGDB):
-##        arcpy.Delete_management(ASMT_TEMP_FGDB)
-##        print ("ASMT_TEMP_FGDB found - FGDB deleted")
-##        write_log("ASMT_TEMP_FGDB found - FGDB deleted", logfile)
-##except:
-##    print ("\n Unable to delete ASMT_TEMP_FGDB, need to delete existing FGDB manually and/or close program locking the FGDB")
-##    write_log("Unable to delete ASMT_TEMP_FGDB, need to delete existing FGDB manually and/or close program locking the FGDB", logfile)
-##    logging.exception('Got exception on delete ASMT_TEMP_FGDB logged at:' + str(Day) + " " + str(Time))
-##    raise
-##    sys.exit ()
-
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
