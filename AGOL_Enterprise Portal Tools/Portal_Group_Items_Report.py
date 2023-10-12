@@ -130,6 +130,8 @@ def build_group_df(groupname):
             df.loc[ExperienceBuilder_mask, 'URL'] = Portal+'/apps/experiencebuilder/experience/?id='+ df['Item ID'].astype(str)
             Dashboard_mask = df['Type'] == 'Dashboard'
             df.loc[Dashboard_mask, 'URL'] = Portal+'/apps/opsdashboard/index.html#/'+ df['Item ID'].astype(str)
+            WebScene_mask = df['Type'] == 'Web Scene'
+            df.loc[WebScene_mask, 'URL'] = Portal+'/home/webscene/viewer.html?webscene='+ df['Item ID'].astype(str)
             No_URL_Other_mask = df['URL'] == 'N/A'
             df.loc[No_URL_Other_mask, 'Link to Item'] = 'N/A'
         else:
