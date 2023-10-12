@@ -27,12 +27,12 @@ import arcpy
 arcpy.SetLogHistory(False)
 
 # Set topology path
-SectionTopology = r"R:\\GIS\\Planning\\Zoning_Maps_Topology20190715.gdb\\Zoning\\Zoning_Topology"
+SectionTopology = r"\\FILELOCATION\\GIS\\Planning\\Zoning_Maps_Topology20190715.gdb\\Zoning\\Zoning_Topology"
 
 print ("Begining Export")
 
 # Export Topology Errors (set path-------------------->                                                             -----> and errors path)
-arcpy.ExportTopologyErrors_management(SectionTopology, r"R:\\GIS\\Planning\\Zoning_Maps_Topology20190715.gdb\\Zoning", "Zoning_Topology_errors")
+arcpy.ExportTopologyErrors_management(SectionTopology, r"\\FILELOCATION\\GIS\\Planning\\Zoning_Maps_Topology20190715.gdb\\Zoning", "Zoning_Topology_errors")
 
 print ("Export completed")
 
