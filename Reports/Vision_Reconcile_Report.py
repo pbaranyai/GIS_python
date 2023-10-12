@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Vision_Reconcile_Report.py
 # Created on: 2019-06-20
@@ -26,7 +25,7 @@ import logging
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\Vision_Reconcile_Report.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\Vision_Reconcile_Report.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -46,12 +45,12 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
 VISION_VIEW = Database_Connections + "\\Vision_Database.sde"
-ASMT_REPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
+ASMT_REPORT_FLDR = r"\\FILELOCATION\\GIS\\Assessment\\Reports"
 
 # Local variables:
 PARCEL_VISION = VISION_VIEW + "\\VISION.REAL_PROP.PARCEL"
@@ -67,12 +66,12 @@ start_time = time.time()
 
 print ("============================================================================")
 print ("Creating Total Assessment Reconcile Report: "+ str(Day) + " " + str(Time))
-print ("Located at: R:\GIS\Assessment\Assmt_Reconcile_Report")
+print ("Located at: "+ASMT_REPORT_FLDR)
 print ("Works in ArcGIS Pro")
 print ("============================================================================")
 write_log("============================================================================", logfile)
 write_log("Creating Total Assessment Reconcile Report: "+ str(Day) + " " + str(Time), logfile)
-write_log("Located at: R:\GIS\Assessment\Assmt_Reconcile_Report", logfile)
+write_log("Located at: "+ASMT_REPORT_FLDR, logfile)
 write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
@@ -208,8 +207,8 @@ except:
 print ("         Calculating TOTAL_ASSESSMENT_DIFFERENCE field in ASMT_RECONCILE_TBL in AUTOWORKSPACE, then removing records with zero or null value in that field completed")
 write_log("         Calculating TOTAL_ASSESSMENT_DIFFERENCE field in ASMT_RECONCILE_TBL in AUTOWORKSPACE, then removing records with zero or null value in that field completed", logfile)
 
-print ("\n Exporting update table to excel file at R:\GIS\Assessment\Reports")
-write_log("\n Exporting update table to excel file at R:\GIS\AssessmentReports",logfile)
+print ("\n Exporting update table to excel file at "+ASMT_REPORT_FLDR)
+write_log("\n Exporting update table to excel file at "+ASMT_REPORT_FLDR,logfile)
 
 try:
     # Delete excel report from prior run (delete excel workbook if it exists, as to not fill folder full of excel reports or cause the program to fail)
@@ -227,14 +226,14 @@ try:
     # Exporting ASMT_RECONCILE_TBL to excel in R:\GIS\Assessment\Assmt_Reconcile_Report folder
     arcpy.TableToExcel_conversion(ASMT_RECONCILE_TBL, ASMT_REPORT, "ALIAS", "CODE") 
 except:
-    print ("\n Unable to export ASMT_RECONCILE_TBL to excel in R:\GIS\Assessment\Reports folder")
-    write_log("\n Unable to export ASMT_RECONCILE_TBL to excel in R:\GIS\Assessment\Reports folder", logfile)
-    logging.exception('Got exception on export ASMT_RECONCILE_TBL to excel in R:\GIS\Assessment\Reports folder field logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to export ASMT_RECONCILE_TBL to excel in "+ASMT_REPORT_FLDR+" folder")
+    write_log("\n Unable to export ASMT_RECONCILE_TBL to excel in "+ASMT_REPORT_FLDR+" folder", logfile)
+    logging.exception('Got exception on export ASMT_RECONCILE_TBL to excel in "+ASMT_REPORT_FLDR+" folder field logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit()
 
-print ("         Exporting update table to excel file at R:\GIS\Assessment\Reports completed")
-write_log("         Exporting update table to excel file at R:\GIS\Assessment\Reports completed", logfile)
+print ("         Exporting update table to excel file at "+ASMT_REPORT_FLDR+" completed")
+write_log("         Exporting update table to excel file at "+ASMT_REPORT_FLDR+" completed", logfile)
 
 try:
     # Clean up temp files by deleting them (delete temp FGDB used in above steps as they are no longer needed)
