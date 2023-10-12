@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Active_VISION_Missing_GIS.py
 # Created on: 2021-07-19
@@ -18,14 +17,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\Active_VISION_Missing_GIS.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\Active_VISION_Missing_GIS.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -45,12 +43,12 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
-ASMT_REPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
-LOCATOR_WKSP = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
+ASMT_REPORT_FLDR = r"\\FILELOCATION\\GIS\\Assessment\\Reports"
+LOCATOR_WKSP = r"\\FILELOCATION\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
 
 # Local variables:
 MISSING_GIS_REPORT = ASMT_REPORT_FLDR + "\\Active_VISION_Missing_GIS.xls"
@@ -64,12 +62,12 @@ start_time = time.time()
 
 print ("============================================================================")
 print ("Creating Active VISION record missing from GIS Report: "+ str(Day) + " " + str(Time))
-print ("Located at: R:\GIS\Assessment\Reports")
+print ("Located at: \\FILELOCATION\GIS\Assessment\Reports")
 print ("Works in ArcGIS Pro")
 print ("============================================================================")
 write_log("============================================================================", logfile)
 write_log("Creating Active VISION record missing from GIS Report: "+ str(Day) + " " + str(Time), logfile)
-write_log("Located at: R:\GIS\Assessment\Reports", logfile)
+write_log("Located at: \\FILELOCATION\GIS\Assessment\Reports", logfile)
 write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
@@ -146,8 +144,8 @@ except:
 try:
     # Export unmatched records to excel
     arcpy.TableToExcel_conversion(Unmatched_Geocoded_VISION_Records, MISSING_GIS_REPORT, "ALIAS", "DESCRIPTION")
-    print ("\n Exporting unmatched records report to: R:\GIS\Assessment\Reports")
-    write_log("\n Exporting unmatched records report to: R:\GIS\Assessment\Reports", logfile)
+    print ("\n Exporting unmatched records report to: \\FILELOCATION\GIS\Assessment\Reports")
+    write_log("\n Exporting unmatched records report to: \\FILELOCATION\GIS\Assessment\Reports", logfile)
 except:
     print ("\n Unable to Export unmatched records to excel")
     write_log("\n Unable to Export unmatched records to excel", logfile)
@@ -155,8 +153,8 @@ except:
     raise
     sys.exit ()
 
-print ("         Exporting update table to excel file at R:\GIS\Assessment\Reports completed")
-write_log("         Exporting update table to excel file at R:\GIS\Assessment\Reports completed", logfile)
+print ("         Exporting update table to excel file at \\FILELOCATION\GIS\Assessment\Reports completed")
+write_log("         Exporting update table to excel file at \\FILELOCATION\GIS\Assessment\Reports completed", logfile)
 
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
