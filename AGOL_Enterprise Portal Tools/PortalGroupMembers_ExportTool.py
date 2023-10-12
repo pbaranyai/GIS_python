@@ -95,9 +95,6 @@ for url in Portal:
 else:
     print("Unable to login to "+str(Portal)+", check portal URL & password (if applicable) and try again, if portal URL is correct, ensure you have proper access via your login credentials")
 
-#Create empty list to store group members within
-group_members_list = []
-
 # Establish a variable called groups (iterating through the established portal, and listing groups)
 groups = gis.groups.search()
 
