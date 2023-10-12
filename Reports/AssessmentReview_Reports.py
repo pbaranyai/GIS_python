@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # AssessmentReview_Reports.py
 # Created on: 2019-08-21 
@@ -17,14 +16,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\AssessmentReview_Reports.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\AssessmentReview_Reports.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -44,17 +42,17 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
 AGOL_EDIT_PUB_ASMT = Database_Connections + "\\agol_edit_pub@ccsde.sde\\CCSDE.AGOL_EDIT_PUB.Assessment"
-ASMT_REPORT_FLDR = r"R:\\GIS\\Assessment\\Reports"
+ASMT_REPORT_FLDR = r"\\FILELOCATION\\GIS\\Assessment\\Reports"
 
 # Local variables:
 NEW_ASMT_REVIEW_REQUESTS = AGOL_EDIT_PUB_ASMT + "\\CCSDE.AGOL_EDIT_PUB.PUBLIC_ASSESSMENT_REVIEW_REQUEST_AGOL_EDIT"
 Asmt_Review_Excel = ASMT_REPORT_FLDR + "\\Assessment_Review_requests.xls"
 ASMT_TEMP_FGDB = ASMT_REPORT_FLDR + "\\ASMT_TempFGDB.gdb"
-Asmt_Review_Excel = "R:/GIS/Assessment/Reports/Assessment_Review_requests.xls"
+Asmt_Review_Excel = ASMT_REPORT_FLDR+"/Assessment_Review_requests.xls"
 
 start_time = time.time()
 
@@ -96,12 +94,12 @@ except:
 try:
     # Export ASMT_REVIEW_REQUEST_TBL table to excel (export temporary table out as excel workbook)
     Asmt_Review_Excel = arcpy.TableToExcel_conversion(ASMT_REVIEW_REQUEST_TBL, Asmt_Review_Excel, "ALIAS", "DESCRIPTION")
-    print ("\n   Table exported out as R:/GIS/Assessment/AssessmentReview_Reports/Assessment_Review_requests.xls")
-    write_log("\n   Table exported out as R:/GIS/Assessment/AssessmentReview_Reports/Assessment_Review_requests.xls",logfile)
+    print ("\n   Table exported out as "+Asmt_Review_Excel)
+    write_log("\n   Table exported out as "+Asmt_Review_Excel,logfile)
 except:
-    print ("\n Unable to export table to excel in R:/GIS/Assessment/AssessmentReview_Reports folder")
-    write_log("\n Unable to export table to excel in R:/GIS/Assessment/AssessmentReview_Reports folder", logfile)
-    logging.exception('Got exception on export table to excel in R:/GIS/Assessment/AssessmentReview_Reports folder logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to export table to excel in "+ASMT_REPORT_FLDR+" folder")
+    write_log("\n Unable to export table to excel in "+ASMT_REPORT_FLDR+" folder", logfile)
+    logging.exception('Got exception on export table to excel in "+ASMT_REPORT_FLDR+" folder logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
 
