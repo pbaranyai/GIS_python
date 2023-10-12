@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # TaxClaim_Data_Spreader.py
 # Created on: 2019-08-27 
@@ -21,15 +20,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
-import builtins
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\TaxClaim_Data_Spreader.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\TaxClaim_Data_Spreader.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -49,7 +46,7 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 # Database variables:
 AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
@@ -229,16 +226,6 @@ except:
 
 print ("           Delete records that are not in tax claim from TAX_CLAIM_PARCELS - AUTOWORKSPACE & TAX_CLAIM_AIRPARCELS - AUTOWORKSPACE completed")
 write_log("           Delete records that are not in tax claim from TAX_CLAIM_PARCELS - AUTOWORKSPACE & TAX_CLAIM_AIRPARCELS - AUTOWORKSPACE completed", logfile)
-
-##try:
-##    # Delete TAXCLAIM_TBL_TEMP
-##    arcpy.Delete_management(TAXCLAIM_TBL_TEMP)
-##except:
-##    print ("\n Unable to Delete TAXCLAIM_TBL_TEMP")
-##    write_log("Unable to Delete TAXCLAIM_TBL_TEMP", logfile)
-##    logging.exception('Got exception on Delete TAXCLAIM_TBL_TEMP logged at:' + str(Day) + " " + str(Time))
-##    raise
-##    sys.exit ()
 
 print ("\n Updating TAX_CLAIM_PARCELS_INTERNAL - CRAW_INTERNAL from AUTOWORKSPACE\TREASURERS")
 write_log("\n Updating TAX_CLAIM_PARCELS_INTERNAL - CRAW_INTERNAL from AUTOWORKSPACE\TREASURERS", logfile)
