@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # New_address_report.py
 # Created on: 2019-07-01 
@@ -16,15 +15,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
-import __builtin__
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\911\\New_address_report.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\911\\New_address_report.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -55,7 +52,7 @@ except:
 
 #Database variables:
 AGOL_EDIT_PUB_PS = "Database Connections\\agol_edit_pub@ccsde.sde"
-PS_Report_Fldr = r"R:\\GIS\\Public Safety\\Reports"
+PS_Report_Fldr = r"\\FILELOCATION\\GIS\\Public Safety\\Reports"
 
 # Local variables:
 NEW_ADDR_REQUESTS = AGOL_EDIT_PUB_PS + "\\CCSDE.AGOL_EDIT_PUB.ADDRESS_NEW_REQUESTS_AGOL_EDIT_PUB"
@@ -98,27 +95,14 @@ except:
 try:
     # Export table to excel (export temporary table out as excel workbook)
     Address_Excel = arcpy.TableToExcel_conversion(New_Address_Request_TBL, "R:/GIS/Public Safety/Reports/New_address_requests.xls", "ALIAS", "CODE")
-    print ("\n   Table exported out as R:/GIS/Public Safety/Reports/New_address_requests.xls")
-    write_log("\n   Table exported out as R:/GIS/Public Safety/Reports/New_address_requests.xls",logfile)
+    print ("\n   Table exported out as "+Address_Excel)
+    write_log("\n   Table exported out as "+Address_Excel,logfile)
 except:
-    print ("\n Unable to export table to excel in R:/GIS/Public Safety/Reports folder")
-    write_log("\n Unable to export table to excel in R:/GIS/Public Safety/Reports folder", logfile)
-    logging.exception('Got exception on export table to excel in R:/GIS/Public Safety/Reports folder logged at:' + str(Day) + " " + str(Time))
+    print ("\n Unable to export table to excel in "+PS_Report_Fldr+" folder")
+    write_log("\n Unable to export table to excel in "+PS_Report_Fldr+" folder", logfile)
+    logging.exception('Got exception on export table to excel in "+PS_Report_Fldr+" folder logged at:' + str(Day) + " " + str(Time))
     raise
     sys.exit ()
-
-##try:
-##    # Open R:/GIS/Public Safety/Reports folder (open folder where excel sheet it located for the user to access)
-##    print ("\n Opening "+PS_Report_Fldr)
-##    PS_Report_Fldr=os.path.realpath(PS_Report_Fldr)
-##    os.startfile(PS_Report_Fldr)
-##except:
-##    print ("\n Unable to open R:/GIS/Public Safety/Reports folder")
-##    write_log("\n Unable to open R:/GIS/Public Safety/Reports folder", logfile)
-##    logging.exception('Got exception on open R:/GIS/Public Safety/Reports folder logged at:' + str(Day) + " " + str(Time))
-##    raise
-##    sys.exit ()
-
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
