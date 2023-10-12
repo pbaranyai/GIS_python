@@ -2,8 +2,8 @@
 
 import arcpy
 
-Tool = 'R:\GIS\ArcAutomations\GIS_Dept\Python\TopologyExport.py'
-Report = 'R:\GIS\ArcAutomations\GIS_Dept\ArcProChecker.txt'
+Tool = '\\FILELOCATION\GIS\ArcAutomations\GIS_Dept\Python\TopologyExport.py'
+Report = '\\FILELOCATION\GIS\ArcAutomations\GIS_Dept\ArcProChecker.txt'
 
 arcpy.AnalyzeToolsForPro_management(Tool, Report)
 
