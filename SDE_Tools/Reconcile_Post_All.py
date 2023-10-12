@@ -11,14 +11,11 @@
 # Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
 
-
-from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import arcpy
 from arcpy import env
 import datetime
 import os
-import traceback
 import logging
 
 try:
@@ -31,11 +28,11 @@ except ImportError:
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\Reconcile_Post_All.log"
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\Reconcile_Post_All.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Version logging (configure version logging location, type, and filemode -- overwrite every run)
-Version_logfile = r"R:\\GIS\\GIS_LOGS\\GIS\\RPA_Version_Log.log"
+Version_logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\GIS\\RPA_Version_Log.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -100,7 +97,7 @@ for DBConnection in DB_LIST:
     write_log(DBConnection, logfile)
 
 # Set the connections folder 
-DB_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"  
+DB_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"  
 
 # Set the workspaces
 arcpy.env.workspace = DB_Connections + '\\SDE@ccsde.sde'
