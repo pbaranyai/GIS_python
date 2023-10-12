@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
 # Active_TaxClaim_Missing_GIS.py
 # Created on: 2022-01-21
@@ -18,14 +17,13 @@ import sys
 import arcpy
 import datetime
 import os
-import traceback
 import logging
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
 # Setup error logging (configure logging location, type, and filemode -- overwrite every run)
-logfile = r"R:\\GIS\\GIS_LOGS\\Assessment\\Active_TaxClaim_Missing_GIS.log"  
+logfile = r"\\FILELOCATION\\GIS\\GIS_LOGS\\Assessment\\Active_TaxClaim_Missing_GIS.log"  
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Setup Date (and day/time)
@@ -45,19 +43,18 @@ except:
     sys.exit ()
 
 #Database Connection Folder
-Database_Connections = r"\\CCFILE\\anybody\\GIS\\ArcAutomations\\Database_Connections"
+Database_Connections = r"\\FILELOCATION\\GIS\\ArcAutomations\\Database_Connections"
 
 #Database variables:
-ASMT_REPORT_WORKSPACE = r"\\CCFILE\\anybody\\GIS\\Assessment\\Workspace"
+ASMT_REPORT_WORKSPACE = r"\\FILELOCATION\\GIS\\Assessment\\Workspace"
 AUTOWORKSPACE = Database_Connections + "\\auto_workspace@ccsde.sde"
-ASMT_REPORT_FLDR = r"\\CCFILE\\anybody\\GIS\\Assessment\\Reports"
+ASMT_REPORT_FLDR = r"\\\FILELOCATION\\GIS\\Assessment\\Reports"
 GSS_DB = Database_Connections + "\\GSS_Database.sde"
-LOCATOR_WKSP = r"\\CCFILE\\anybody\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
+LOCATOR_WKSP = r"\\FILELOCATION\\GIS\\CurrentWebsites\\Locators\\Intranet_Locators"
 ASMT_TEMP_FGDB = ASMT_REPORT_WORKSPACE + "\\Assessment_TCReport_TempFGDB.gdb"
 
 # Local variables:
 MISSING_GIS_REPORT = ASMT_REPORT_FLDR + "\\Active_TaxClaim_Missing_GIS.xls"
-#MISSING_GIS_GEOCODE = AUTOWORKSPACE + "\\CCSDE.AUTO_WORKSPACE.Assessment\\CCSDE.AUTO_WORKSPACE.Active_VISION_Missing_GIS_Geocode"
 CC_PARCEL_LOC = LOCATOR_WKSP + "\\CAMA_PID_Locator"
 TaxClaim_TBL = GSS_DB + "\\dtaGSSCrawford.dbo.CollTaxSaleWeb"
 TaxClaim_TBL_GEOCODE = ASMT_TEMP_FGDB + "\\TaxClaim_TBL_GEOCODE"
@@ -85,7 +82,6 @@ try:
     # Delete excel file so it can be replaced
     if arcpy.Exists(MISSING_GIS_REPORT):
         os.remove(MISSING_GIS_REPORT)
-        #arcpy.Delete_management(MISSING_GIS_REPORT, "Table")
         print (MISSING_GIS_REPORT + " found - table deleted")
         write_log(MISSING_GIS_REPORT + " found - table deleted", logfile)
 except:
@@ -166,8 +162,8 @@ except:
 try:
     # Export unmatched records to excel
     arcpy.TableToExcel_conversion(Unmatched_Geocoded_TaxClaim_Records, MISSING_GIS_REPORT, "ALIAS", "DESCRIPTION")
-    print ("\n Exporting unmatched records report to: R:\GIS\Assessment\Reports")
-    write_log("\n Exporting unmatched records report to: R:\GIS\Assessment\Reports", logfile)
+    print ("\n Exporting unmatched records report to: \\FILELOCATION\GIS\Assessment\Reports")
+    write_log("\n Exporting unmatched records report to: \\FILELOCATION\GIS\Assessment\Reports", logfile)
 except:
     print ("\n Unable to Export unmatched records to excel")
     write_log("\n Unable to Export unmatched records to excel", logfile)
@@ -175,8 +171,8 @@ except:
     raise
     sys.exit ()
 
-print ("         Exporting update table to excel file at R:\GIS\Assessment\Reports completed")
-write_log("         Exporting update table to excel file at R:\GIS\Assessment\Reports completed", logfile)
+print ("         Exporting update table to excel file at \\FILELOCATION\GIS\Assessment\Reports completed")
+write_log("         Exporting update table to excel file at \\FILELOCATION\GIS\Assessment\Reports completed", logfile)
 
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
