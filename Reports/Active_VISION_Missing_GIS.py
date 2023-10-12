@@ -62,12 +62,12 @@ start_time = time.time()
 
 print ("============================================================================")
 print ("Creating Active VISION record missing from GIS Report: "+ str(Day) + " " + str(Time))
-print ("Located at: \\FILELOCATION\GIS\Assessment\Reports")
+print ("Located at: "+ASMT_REPORT_FLDR)
 print ("Works in ArcGIS Pro")
 print ("============================================================================")
 write_log("============================================================================", logfile)
 write_log("Creating Active VISION record missing from GIS Report: "+ str(Day) + " " + str(Time), logfile)
-write_log("Located at: \\FILELOCATION\GIS\Assessment\Reports", logfile)
+write_log("Located at: "+ASMT_REPORT_FLDR, logfile)
 write_log("Works in ArcGIS Pro", logfile)
 write_log("============================================================================", logfile)
 
@@ -153,8 +153,8 @@ except:
     raise
     sys.exit ()
 
-print ("         Exporting update table to excel file at \\FILELOCATION\GIS\Assessment\Reports completed")
-write_log("         Exporting update table to excel file at \\FILELOCATION\GIS\Assessment\Reports completed", logfile)
+print ("         Exporting update table to excel file at "+ASMT_REPORT_FLDR+" completed")
+write_log("         Exporting update table to excel file at "+ASMT_REPORT_FLDR+" completed", logfile)
 
 
 end_time = time.strftime("%I:%M:%S %p", time.localtime())
