@@ -181,6 +181,7 @@ try:
             adjusted_width = (max_length + 2) * 1.2
             sheet.column_dimensions[column_letter].width = adjusted_width
             sheet.data_validations = DataValidationList()
+            sheet.auto_filter.ref = sheet.dimensions
     wb.save(ExcelOutput)
     print('\n    Report exported out to: '+ExcelOutput)
     write_log('\n    Report exported out to: '+ExcelOutput,logfile)
