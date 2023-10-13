@@ -360,6 +360,7 @@ try:
                 pass
         adjusted_width = (max_length + 2) * 1.2
         ws.column_dimensions[column_letter].width = adjusted_width
+        ws.auto_filter.ref = ws.dimensions
     wb.save(ExcelOutput)
 except:
     print('\n Unable to resize excel columns to fit data')
