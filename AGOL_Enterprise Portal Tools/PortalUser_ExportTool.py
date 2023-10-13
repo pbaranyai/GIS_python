@@ -28,6 +28,7 @@ import logging
 
 # Comment out for manual run of script - Used for prompts within command window (Run with ArcGIS Pro)
 print("Enter portal URL below: | Example: https://PORTALNAME.com/arcgis")
+print("\n  You MUST login with an administrator account to run this report")
 Portal = input('Enter URL here: ')
 PortalUserName = input('Enter username for '+str(Portal)+'here: ')
 
