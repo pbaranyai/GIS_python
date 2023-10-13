@@ -119,6 +119,7 @@ write_log("\n Iterating through group to collect users and details",logfile)
 for user in portalusers:
                       df = df.append({
                           'Full Name': user.fullName,
+                          'User Name': user.username,
                           'Email': user.email,
                           'Last Login Date': user.lastLogin,
                           'Role': user.role,
