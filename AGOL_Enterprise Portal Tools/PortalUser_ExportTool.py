@@ -106,7 +106,7 @@ ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'__Portal_User_Member
 writer = pd.ExcelWriter(ExcelOutput)
 
 # Create a pandas DataFrame to store the results
-df = pd.DataFrame(columns=['Full Name', 'First Name', 'Last Name', 'User Name', 'Email', 'Last Login', 'Role','Level','Description', 'Identity Provider','Group Membership'])
+df = pd.DataFrame(columns=['Full Name', 'User Name', 'Email', 'Last Login Date', 'Role','Level','Description', 'Identity Provider','Group Membership'])
 print('\n Creating dataframe with column headings')
 write_log('\n Creating dataframe with column headings',logfile)
 
@@ -118,10 +118,8 @@ write_log("\n Iterating through group to collect users and details",logfile)
 for user in portalusers:
                       df = df.append({
                           'Full Name': user.fullName,
-                          'First Name': user.firstName,
-                          'Last Name': user.lastName,
                           'Email': user.email,
-                          'Last Login': user.lastLogin,
+                          'Last Login Date': user.lastLogin,
                           'Role': user.role,
                           'Level': user.level,
                           'Description': user.description,
@@ -134,11 +132,11 @@ df['Level'].replace('2', 'Creator',inplace=True)
 df['Level'].replace('11', 'Field Worker', inplace = True)
 df['Level'].replace('1', 'Viewer', inplace = True)
 # Calculate from UNIX Epoch time value to readable time (calculate into new column, copy values to original column, remove new column)
-df['Last Login - New']=(pd.to_datetime(df['Last Login'],unit='ms'))
-df['Last Login'] = df['Last Login - New']
+df['Last Login - New']=(pd.to_datetime(df['Last Login Date'],unit='ms'))
+df['Last Login Date'] = df['Last Login - New']
 df = df.drop('Last Login - New',axis=1)
 # New Last Login column is created at end of dataframe, reorganizing columns to original order
-df = df.reindex(columns=['Full Name', 'First Name', 'Last Name', 'User Name', 'Email', 'Last Login', 'Role','Level','Description', 'Identity Provider','Group Membership'])
+df = df.reindex(columns=['Full Name', 'User Name', 'Email', 'Last Login Date', 'Role','Level','Description', 'Identity Provider','Group Membership'])
 df.sort_values('Full Name')
 df.to_excel(writer, sheet_name='User List', index=False)
 writer.save()
@@ -161,6 +159,7 @@ try:
             adjusted_width = (max_length + 2) * 1.2
             sheet.column_dimensions[column_letter].width = adjusted_width
             sheet.data_validations = DataValidationList()
+            sheet.auto_filter.ref = sheet.dimensions
     wb.save(ExcelOutput)
     print('\n    Report exported out to: '+ExcelOutput)
     write_log('\n    Report exported out to: '+ExcelOutput,logfile)
