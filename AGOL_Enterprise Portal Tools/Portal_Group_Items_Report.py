@@ -28,6 +28,7 @@ from openpyxl.worksheet.datavalidation import DataValidationList
 import logging
 
 print("Enter Portal or AGOL URL below: | Example: https://ORGANIZATIONALURL/arcgis")
+print("\n  You MUST login with an administrator account to run this report")
 Portal = input('Enter Portal or AGOL URL: ')
 
 # Login to portal, use token as "gis variable"
