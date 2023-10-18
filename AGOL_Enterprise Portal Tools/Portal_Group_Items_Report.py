@@ -103,7 +103,7 @@ def build_group_df(groupname):
     # Get the group items
     items = groupname.content()
     # Create a pandas DataFrame to store the results
-    df = pd.DataFrame(columns=['Group Name', 'Title', 'Item ID', 'Type', 'URL','Link to Item'])
+    df = pd.DataFrame(columns=['Group Name', 'Title', 'Item ID', 'Type','Sharing Level', 'URL','Link to Item'])
     print('\n Creating dataframe for '+str(groupname.title)+' group')
     write_log('\n Creating dataframe for '+str(groupname.title)+' group',logfile)
     
@@ -118,6 +118,7 @@ def build_group_df(groupname):
                 'Title': item.title,
                 'Item ID': item.id,
                 'Type': item.type,
+                'Sharing Level': item.shared_with,
                 'URL': find_url
             }, ignore_index=True)
             GroupName = (groupname.title).replace(" ","")[:30]
