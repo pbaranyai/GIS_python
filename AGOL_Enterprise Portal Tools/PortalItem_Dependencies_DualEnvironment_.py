@@ -132,16 +132,16 @@ ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+' - '+str(Portal2Name
 print('\nCollecting Item Data...')
 write_log('\nCollecting Item Data...',logfile)
 
-ItemList = ['Administrative Report', 'Apache Parquet', 'CAD Drawing', 'CSV', 'Color Set', 'Content Category Set',
-            'Document Link', 'Esri Classifier Definition', 'Export Package', 'Feature Collection',
+ItemList = ['Administrative Report', 'Apache Parquet', 'CAD Drawing', 'Color Set', 'Content Category Set', 'CSV',
+            'Document Link', 'Earth configuration', 'Esri Classifier Definition', 'Export Package', 'Feature Collection',
             'Feature Collection Template', 'Feature Service', 'File Geodatabase', 'GeoJson', 'GML', 'GeoPackage',
-            'Geocoding Service', 'Geodata Service', 'Geometry Service', 'Geoprocessing Service', 'Globe Service',
-            'Image', 'KML', 'KML CollectionMap Service', 'Microsoft Excel', 'Microsoft Powerpoint',
-            'Microsoft Word', 'Network Analysis Service', 'OGCFeatureServer', 'Oriented Imagery Catalog', 'PDF',
-            'Relational Database Connection', 'Relational Database Connection', 'Report Template', 'SQLite Geodatabase',
-            'Scene Service', 'Shapefile', 'Statistical Data Collection', 'StoryMap Theme',
-            'Style', 'Symbol SetImage Service', 'Vector Tile Service', 'Visio Document', 'WFS', 'WMS', 'WMTS',
-            'Workflow Manager Service', 'iWork Keynote', 'iWork Numbers', 'iWork Pages']
+            'Geocoding Service', 'Geodata Service', 'Geometry Service', 'Geoprocessing Service', 'Globe Service', 'Group Layer',
+            'Image', 'iWork Keynote', 'iWork Numbers', 'iWork Pages', 'Image Service', 'KML', 'KML Collection', 'Map Service', 'Map Image Layer',
+            'Microsoft Excel', 'Microsoft Powerpoint','Microsoft Word', 'Network Analysis Service', 'OGCFeatureServer', 'Oriented Imagery Catalog',
+            'PDF','Relational Database Connection', 'Relational Database Connection', 'Report Template', 'SQLite Geodatabase',
+            'Scene Service', 'Service Definition' ,'Shapefile', 'SQLite Geodatabase', 'Statistical Data Collection', 'StoryMap Theme',
+            'Style', 'Symbol Set', 'Tile Layer','Vector Tile Service', 'Visio Document', 'WFS', 'WMS', 'WMTS',
+            'Workflow Manager Service']
 
 
 
@@ -152,10 +152,10 @@ AppList = ['360 VR Experience', 'AppBuilder Extension', 'AppBuilder Widget Packa
            'GeoBIM Application', 'GeoBIM Project', 'Hub Event', 'Hub Initiative', 'Hub Initiative Template', 'Hub Page',
            'Hub Project', 'Hub Site Application', 'Insights Data Engineering Model',
            'Insights Data Engineering Workbook', 'Insights Model', 'Insights Page', 'Insights Theme',
-           'Insights Workbook', 'Insights Workbook Package', 'Investigation', 'Mission', 'Mobile Application',
+           'Insights Workbook', 'Insights Workbook Package', 'Investigation', 'Knowledge Studio Project', 'Mission', 'Mobile Application',
            'Native Application', 'Native Application Installer', 'Notebook', 'Notebook Code Snippet Library',
            'Operation View', 'Operations Dashboard Add In', 'Operations Dashboard Extension', 'Ortho Mapping Project',
-           'Ortho Mapping Template', 'Pro Map', 'StoryMap', 'Web AppBuilder WidgetSolution', 'Web Experience',
+           'Ortho Mapping Template', 'Pro Map','Solution', 'StoryMap', 'Web AppBuilder Widget', 'Web Experience',
            'Web Experience Template', 'Web Map', 'Web Mapping Application', 'Web Scene', 'Workforce Project']
 
 # Creating empty lists for combining all Item/App types into a lists per type/portal
