@@ -305,8 +305,18 @@ except:
     raise
     sys.exit()
 
-# Establish dataframe
+# Establish dataframe & using dataframe masking, add URLs for items without URLs from portal.
 df = pd.DataFrame(FuncResults)
+WebMap_mask = df['Item Type'] == 'Web Map'
+df.loc[WebMap_mask, 'Item Url'] = Portal+'/home/webmap/viewer.html?webmap='+ df['Item ID'].astype(str)
+Form_mask = df['Item Type'] == 'Form'
+df.loc[Form_mask, 'Item Url'] = 'https://survey123.arcgis.com/share/' + df['Item ID'].astype(str)+"?"+ Portal + '&open=native'
+ExperienceBuilder_mask = df['Item Type'] == 'Web Experience'
+df.loc[ExperienceBuilder_mask, 'Item Url'] = Portal+'/apps/experiencebuilder/experience/?id='+ df['Item ID'].astype(str)
+Dashboard_mask = df['Item Type'] == 'Dashboard'
+df.loc[Dashboard_mask, 'Item Url'] = Portal+'/apps/opsdashboard/index.html#/'+ df['Item ID'].astype(str)
+WebScene_mask = df['Item Type'] == 'Web Scene'
+df.loc[WebScene_mask, 'Item Url'] = Portal+'/home/webscene/viewer.html?webscene='+ df['Item ID'].astype(str)
 # Sorting by Url with Portal items on top of AGOL
 df1 = df.sort_values(by=['Item Url', 'Environment'], ascending=[True,False])
 # Reindexing
