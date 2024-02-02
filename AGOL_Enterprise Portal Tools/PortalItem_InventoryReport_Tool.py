@@ -122,6 +122,12 @@ for item in ItemList:
         item_title = item_info.title
         item_owner = item_info.owner
         item_type = item_info.type
+        item_created = item_info.created
+        item_created_formatted = datetime.datetime.fromtimestamp(item_created / 1000).strftime("%Y-%m-%d")
+        item_modified = item_info.modified
+        item_modified_formatted = datetime.datetime.fromtimestamp(item_modified / 1000).strftime("%Y-%m-%d")
+        item_viewcount = item_info.numViews
+        item_sharing = item_info.shared_with
 
         # If item has content status, write it into dictionary, if not, write N/A
         if hasattr(item, 'content_status'):
@@ -134,7 +140,11 @@ for item in ItemList:
                             'Item ID': find_id,
                             'Item Url': find_url,
                             'Item Owner': item_owner,
-                            'Item Status': item_status})
+                            'Item Status': item_status,
+                            'Item Created Date': item_created_formatted,
+                            'Item Modified Date': item_modified_formatted,
+                            'Item View Count': item_viewcount,
+                            'Item Sharing Level': item_sharing})
         # Provides a visual indication on screen that it's working
         print("Captured: {} | {}".format(item_title,item_type))
                   
@@ -165,11 +175,11 @@ WebMap_mask = inventory_df['Item Type'] == 'Web Map'
 inventory_df.loc[WebMap_mask, 'Item Url'] = Portal+'/home/webmap/viewer.html?webmap='+ inventory_df['Item ID'].astype(str)
 Form_mask = inventory_df['Item Type'] == 'Form'
 inventory_df.loc[Form_mask, 'Item Url'] = 'https://survey123.arcgis.com/share/' + inventory_df['Item ID'].astype(str)+"?"+ Portal + '&open=native'
-ExperienceBuilder_mask = df['Item Type'] == 'Web Experience'
+ExperienceBuilder_mask = inventory_df['Item Type'] == 'Web Experience'
 inventory_df.loc[ExperienceBuilder_mask, 'Item Url'] = Portal+'/apps/experiencebuilder/experience/?id='+ inventory_df['Item ID'].astype(str)
-Dashboard_mask = df['Item Type'] == 'Dashboard'
+Dashboard_mask = inventory_df['Item Type'] == 'Dashboard'
 inventory_df.loc[Dashboard_mask, 'Item Url'] = Portal+'/apps/opsdashboard/index.html#/'+ inventory_df['Item ID'].astype(str)
-WebScene_mask = df['Item Type'] == 'Web Scene'
+WebScene_mask = inventory_df['Item Type'] == 'Web Scene'
 inventory_df.loc[WebScene_mask, 'Item Url'] = Portal+'/home/webscene/viewer.html?webscene='+ inventory_df['Item ID'].astype(str)
 
 # Sorting dataframe by Url
