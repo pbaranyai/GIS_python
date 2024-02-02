@@ -160,6 +160,18 @@ except:
     raise
     sys.exit()   
 
+# Using dataframe masking, add URLs for items without URLs from portal.
+WebMap_mask = inventory_df['Item Type'] == 'Web Map'
+inventory_df.loc[WebMap_mask, 'Item Url'] = Portal+'/home/webmap/viewer.html?webmap='+ inventory_df['Item ID'].astype(str)
+Form_mask = inventory_df['Item Type'] == 'Form'
+inventory_df.loc[Form_mask, 'Item Url'] = 'https://survey123.arcgis.com/share/' + inventory_df['Item ID'].astype(str)+"?"+ Portal + '&open=native'
+ExperienceBuilder_mask = df['Item Type'] == 'Web Experience'
+inventory_df.loc[ExperienceBuilder_mask, 'Item Url'] = Portal+'/apps/experiencebuilder/experience/?id='+ inventory_df['Item ID'].astype(str)
+Dashboard_mask = df['Item Type'] == 'Dashboard'
+inventory_df.loc[Dashboard_mask, 'Item Url'] = Portal+'/apps/opsdashboard/index.html#/'+ inventory_df['Item ID'].astype(str)
+WebScene_mask = df['Item Type'] == 'Web Scene'
+inventory_df.loc[WebScene_mask, 'Item Url'] = Portal+'/home/webscene/viewer.html?webscene='+ inventory_df['Item ID'].astype(str)
+
 # Sorting dataframe by Url
 inventory_df1 = inventory_df.sort_values(by=['Item Name'], ascending=[True])
 # Reindexing dataframe
