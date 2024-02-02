@@ -157,7 +157,8 @@ for item in ItemList:
         continue
 
 # Provides final item count
-print('\nYou have ' + str(len(PortalItems)) + ' items in '+Portal+'.')
+print('\nYou have ' + str(len(PortalItems)) + ' items in '+Portal+' that have been inventoried.')
+write_log('\nYou have ' + str(len(PortalItems)) + ' items in '+Portal+' that have been inventoried.',logfile)
 
 # Create a dataframe from dictionary within PortalItems list
 try:
