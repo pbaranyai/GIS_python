@@ -142,8 +142,8 @@ for item in ItemList:
                             'Item Owner': item_owner,
                             'Item Status': item_status,
                             'Item Created Date': item_created_formatted,
-                            'Item Modified Date': item_modified_formatted,
-                            'Item View Count': item_viewcount,
+                            'Item Last Modified Date': item_modified_formatted,
+                            'Item Lifetime View Count': item_viewcount,
                             'Item Sharing Level': item_sharing})
         # Provides a visual indication on screen that it's working
         print("Captured: {} | {}".format(item_title,item_type))
