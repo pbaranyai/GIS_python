@@ -2,7 +2,7 @@
 # SDEDataInventory.py
 #
 # Description:
-# Once a database name is entered in the SDEConnection variable, a text log file is created for the following items.
+# Once a database name is entered in the SDEConnection variable, an excel file is created for the following items.
 #
 # Datasets types:
 #   Coverages, Feature, Geometric Network, Mosaic, Network, Parcel Fabric, Raster, Schematic, Terrain, TIN, & Topology
