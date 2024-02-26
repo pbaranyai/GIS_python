@@ -135,13 +135,13 @@ for WKSP in workspaces:
 
     # Checks for tables            
     for tbl in tbls:
-        SDE_Items.append({'Table': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+tbl})
-        print('\t', 'Table: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',tbl)
+        SDE_Items.append({'Tables': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+tbl})
+        print('\t', 'Tables: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',tbl)
 
     # Checks for standalone rasters (not within raster datasets)    
     for rasters in rst:
-        SDE_Items.append({'Raster': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+rasters})
-        print('\t', 'Raster: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',rasters)
+        SDE_Items.append({'Rasters': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+rasters})
+        print('\t', 'Rasters: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',rasters)
 
 # Create a dataframe from dictionary within SDE_Items list
 try:
