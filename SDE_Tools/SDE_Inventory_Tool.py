@@ -115,8 +115,8 @@ for WKSP in workspaces:
     
     # Processes feature/raster datasets
     for data in datasets:
-        SDE_Items.append({'Feature/Raster Dataset': WKSP+' | '+data})
-        print('\t', 'Feature/Raster Dataset: ',WKSP,' | ',data)
+        SDE_Items.append({'Feature/Raster Dataset': WKSP.lstrip('\\wfsfile04\\GIS Analysts\\SDEConnectionFiles\\').rstrip('.sde')+' | '+data})
+        print('\t', 'Feature/Raster Dataset: ',WKSP.lstrip('\\wfsfile04\\GIS Analysts\\SDEConnectionFiles\\').rstrip('.sde'),' | ',data)
 
         # Processes feature classes & rasters within feature datasets, displays data as nested within dataset
         FCdatasetname=arcpy.ListFeatureClasses()
