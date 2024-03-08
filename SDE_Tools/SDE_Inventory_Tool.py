@@ -124,8 +124,8 @@ for WKSP in workspaces:
 
     # Checks for tables            
     for tbl in tbls:
-        SDE_Items.append({'Tables': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+tbl})
-        print('\t', 'Tables: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',tbl)
+        SDE_Items.append({'Tables': WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+tbl})
+        print('\t', 'Tables: ',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',tbl)
 
     # Checks for standalone rasters (not within raster datasets)    
     for rasters in rst:
