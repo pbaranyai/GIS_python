@@ -120,8 +120,8 @@ for WKSP in workspaces:
         print('\t', 'Feature/Raster Dataset: ',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',ds_name)
 
         # Processes feature classes & rasters within feature datasets, displays data as nested within dataset
-        FC_in_DS=arcpy.ListFeatureClasses()
-        RST_in_DS=arcpy.ListRasters()
+        FC_in_DS=arcpy.ListFeatureClasses(feature_dataset=ds_name)
+        RST_in_DS=arcpy.ListRasters(raster_type=ds_name)
         for fc_ds_data in FC_in_DS:
             SDE_Items.append({'Feature Classes within Dataset':'Feature Class within '+WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+ds_name+' dataset '+fc_ds_data})
             print('\t', 'Feature Class within '+WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',ds_name,' dataset: ',fc_ds_data)   
