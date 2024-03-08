@@ -93,7 +93,8 @@ write_log ("====================================================================
 arcpy.SetLogHistory(False)
 
 # Path to SDE connectionfiles
-arcpy.env.workspace = r"\\PATHNAME\\SDEConnectionFiles"
+SDEConnectionFilePath = r"\\PATHNAME\\SDEConnectionFiles"
+arcpy.env.workspace = SDEConnectionFilePath
 workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
 
 # Set Excel spreadsheet output name
@@ -105,7 +106,7 @@ SDE_Items = []
 # Iterate through each workspace (_SDE connection) within database instance, load items into SDE_Items list 
 for WKSP in workspaces:
     env.workspace = WKSP
-    print('\n Collecting items within SDE connection:',WKSP)
+    print('\n Collecting items within SDE connection:',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'))
 
     # Get lists of datasets, feature classes, tables, and rasters
     datasets = arcpy.ListDatasets()
@@ -114,24 +115,24 @@ for WKSP in workspaces:
     rst = arcpy.ListRasters()
     
     # Processes feature/raster datasets
-    for data in datasets:
-        SDE_Items.append({'Feature/Raster Dataset': WKSP.lstrip('\\wfsfile04\\GIS Analysts\\SDEConnectionFiles\\').rstrip('.sde')+' | '+data})
-        print('\t', 'Feature/Raster Dataset: ',WKSP.lstrip('\\wfsfile04\\GIS Analysts\\SDEConnectionFiles\\').rstrip('.sde'),' | ',data)
+    for ds_name in datasets:
+        SDE_Items.append({'Feature/Raster Dataset': WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+ds_name})
+        print('\t', 'Feature/Raster Dataset: ',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',ds_name)
 
         # Processes feature classes & rasters within feature datasets, displays data as nested within dataset
-        FCdatasetname=arcpy.ListFeatureClasses()
-        RSTdatasetname=arcpy.ListRasters()
-        for fc_ds in FCdatasetname:
-            SDE_Items.append({'Feature Classes within Dataset':'Feature Class within '+WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+data+' dataset '+fc_ds})
-            print('\t', 'Feature Class within '+WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',data,' dataset: ',fc_ds)   
-        for rst_ds in RSTdatasetname:
-            SDE_Items.append({'Raster within Dataset':'Raster within '+WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+data+' dataset '+rst_ds})
-            print('\t', 'Raster within '+WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',data,' dataset: ',rst_ds)
+        FC_in_DS=arcpy.ListFeatureClasses()
+        RST_in_DS=arcpy.ListRasters()
+        for fc_ds_data in FC_in_DS:
+            SDE_Items.append({'Feature Classes within Dataset':'Feature Class within '+WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+ds_name+' dataset '+fc_ds_data})
+            print('\t', 'Feature Class within '+WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',ds_name,' dataset: ',fc_ds_data)   
+        for rst_ds_data in RST_in_DS:
+            SDE_Items.append({'Raster within Dataset':'Raster within '+WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+ds_name+' dataset '+rst_ds_data})
+            print('\t', 'Raster within '+WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',ds_name,' dataset: ',rst_ds_data)
 
     # Checks for standalone feature classes (not within feature datasets)    
     for fc in fcs:
-        SDE_Items.append({'Standalone Feature Class': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+fc})
-        print('\t', 'Standalone Feature Class: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',fc)
+        SDE_Items.append({'Standalone Feature Class': WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+fc})
+        print('\t', 'Standalone Feature Class: ',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',fc)
 
     # Checks for tables            
     for tbl in tbls:
@@ -140,8 +141,8 @@ for WKSP in workspaces:
 
     # Checks for standalone rasters (not within raster datasets)    
     for rasters in rst:
-        SDE_Items.append({'Rasters': WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde')+' | '+rasters})
-        print('\t', 'Rasters: ',WKSP.lstrip('\\SDE_CONNECTION_FILES_PATH\\').rstrip('.sde'),' | ',rasters)
+        SDE_Items.append({'Rasters': WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+' | '+rasters})
+        print('\t', 'Rasters: ',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',rasters)
 
 # Create a dataframe from dictionary within SDE_Items list
 try:
