@@ -4,21 +4,9 @@
 # Description:
 # Once a database name is entered in the SDEConnection variable, an excel file is created for the following items.
 #
-# Datasets types:
-#   Coverages, Feature, Geometric Network, Mosaic, Network, Parcel Fabric, Raster, Schematic, Terrain, TIN, & Topology
-#  
-# Feature Class types:
-#   Annotation, Arc, Dimension, Edge, Junction, Label, Line, Multipatch, Multipoint, Node, Point, Polygon, Polyline, Region, Route, & Tic
-# 
-# Table types:
-#   dBASE & INFO
-#
-# Raster types:
-#   BMP, GIF, IMG, JP2, JPG, PNG, TIF, & GRID
-#
 # Author: Phil Baranyai
 # Created on: 2022-12-16 
-# Updated on 2024-02-26
+# Updated on 2024-03-08
 # ---------------------------------------------------------------------------
 
 print("This tool will iterate through the user provided SDE connection, and provide a report of all items, within it.")
