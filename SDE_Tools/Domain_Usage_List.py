@@ -5,10 +5,11 @@
 # Once a database name is entered in the SDEConnection variable, an excel spreadsheet is created.
 #
 # Finds active & orphan domains used in SDE feature classes and tables that are used in fields not registered as domains in Geodatabase
+# Currently - does NOT work on subtypes
 #
 # Author: Phil Baranyai
 # Created on: 2022-12-19 
-# Updated on 2023-08-30
+# Updated on 2024-03-11
 # ---------------------------------------------------------------------------
 print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of active/orphan domains")
 print("\nLoading python modules, please wait...")
@@ -135,12 +136,49 @@ try:
     allFcsAndTables = []
     for WKSP in workspaces:
         env.workspace = WKSP
-        walk = arcpy.da.Walk(WKSP, datatype=["FeatureClass", "Table"])
-        for dirpath, dirname, filenames in walk:
-            for filename in filenames:
-                allFcsAndTables.append(os.path.join(dirpath, filename))
-    print("\n    Feature Classes & Tables have been loaded into a list, starting to identify domain usage")
-    write_log("\n    Feature Classes & Tables have been loaded into a list, starting to identify domain usage",logfile)
+        print('\n Collecting items within SDE connection:',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'))
+
+        # Get lists of datasets, feature classes, tables, and rasters
+        datasets = arcpy.ListDatasets()
+        fcs = arcpy.ListFeatureClasses()
+        tbls = arcpy.ListTables()
+        
+        # Processes feature/raster datasets
+        for ds_name in datasets:
+            print('\t', 'Processing data within Feature Dataset: ',WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde'),' | ',ds_name)
+
+            # Processes feature classes & rasters within datasets, displays data as nested within dataset
+            FC_in_DS=arcpy.ListFeatureClasses(feature_dataset=ds_name)
+            for fc_ds_data in FC_in_DS:
+                    list_domains_by_subtype(fc_ds_data)
+                    usedDomains = ListAppliedDomains(fc_ds_data)
+                    for ud_ds in usedDomains:
+                        appliedDomains.append(ud_ds)
+                        appliedDomainsDisplay.append(f"{ud_ds} --> {ds_name} dataset: {fc_ds_data}")
+                        print('\t', f"{ud_ds} --> Within {ds_name} dataset: {fc_ds_data}")
+                    else:
+                        pass
+
+        # Checks for standalone feature classes (not within feature datasets)    
+        for fc in fcs:
+            usedDomains = ListAppliedDomains(fc)
+            for ud_fc in usedDomains: 
+                appliedDomains.append(ud_fc)
+                appliedDomainsDisplay.append(f"{ud_fc} --> {fc}")
+                print('\t', f"{ud_fc} --> {fc}")
+            else:
+                pass
+#            list_domains_by_subtype(fc_ds_data)
+
+        # Checks for tables            
+        for tbl in tbls:
+            usedDomains = ListAppliedDomains(tbl)
+            for ud_tbl in usedDomains:
+                appliedDomains.append(ud_tbl)
+                appliedDomainsDisplay.append(f"{ud_tbl} --> {tbl}")
+                print('\t', f"{ud_tbl} --> {tbl}")
+            else:
+                pass
 except:
     print('\n Unable to list all feature classes and tables within SDE workspace')
     write_log('\n Unable to list all feature classes and tables within SDE workspace',logfile)
@@ -148,33 +186,11 @@ except:
     raise
     sys.exit()
 
-# clean up the walk object
-del walk
-
-# Iterate through each collected feature class/table and list domains used by each.  Append domains only to appliedDomains list (for comparison to allDomains list)
-# & append domain and feature class/table to appliedDomainsDisplay list (for reporting)
-try:
-    for item in allFcsAndTables:
-        usedDomains = ListAppliedDomains(item)
-        for d in usedDomains:
-            appliedDomains.append(d)
-            appliedDomainsDisplay.append(d+" --> "+item)
-    print("\n    Active domains captured")
-    write_log("\n    Active domains captured",logfile)
-except:
-    print('\n Unable to iterate through each feature class/table, list domains used be each one, and append it to appliedDomains and appliedDomainsDisplay lists')
-    write_log('\n Unable to iterate through each feature class/table, list domains used be each one, and append it to appliedDomains and appliedDomainsDisplay lists',logfile)
-    logging.exception('Got exception on iterate through each feature class/table, list domains used be each one, and append it to appliedDomains and appliedDomainsDisplay lists logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
-    raise
-    sys.exit()
-
 # Compare domain values from allDomains list (all domains in connection) and appliedDomains list (only used domains).  If values exist in allDomains list that were not accounted 
 # for in appliedDomains list append extra domain values into orphanedDomains list
-for item in allDomains:
-    if item not in appliedDomains:
-        orphanedDomains.append(item)
-print("\n    Orphan domains captured")
-write_log("\n    Orphan domains captured",logfile)
+for od in allDomains:
+    if od not in appliedDomains:
+        orphanedDomains.append(od)
 
 # Alphabetically sort and print (within window) list of Actively used domains.
 print("\n The following domains are CURRENTLY in use in your workspace!\n")
