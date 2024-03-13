@@ -5,7 +5,6 @@
 # Once a database name is entered in the SDEConnection variable, an excel spreadsheet is created.
 #
 # Finds active & orphan domains used in SDE feature classes and tables that are used in fields not registered as domains in Geodatabase
-# Currently - does NOT work on subtypes
 #
 # Author: Phil Baranyai
 # Created on: 2022-12-19 
