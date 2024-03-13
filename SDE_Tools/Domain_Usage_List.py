@@ -9,7 +9,7 @@
 #
 # Author: Phil Baranyai
 # Created on: 2022-12-19 
-# Updated on 2024-03-11
+# Updated on 2024-03-13
 # ---------------------------------------------------------------------------
 print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of active/orphan domains")
 print("\nLoading python modules, please wait...")
@@ -99,6 +99,7 @@ def ListAppliedDomains(table): # could also be a feature class
     """
     # create empty list for domain names
     appliedDomains = []
+    applied_domains_display = []
 
     # add any applied domains to the list
     for f in arcpy.ListFields(table):
@@ -107,6 +108,24 @@ def ListAppliedDomains(table): # could also be a feature class
 
     return appliedDomains
 
+def list_domains_by_subtype(fc):
+
+    # Check if featuer class has subtypes
+    subtypes = arcpy.da.ListSubtypes(fc)
+    if subtypes:
+        # Loop through each subtype
+        for subtype_code, subtype_properties in subtypes.items():
+            # Get field value dictionary for each subtype
+            field_values = subtype_properties["FieldValues"]
+            # Loop through  field value pairs
+            for field_name, field_domain in field_values.items():
+                # Check if domain is assigned
+                if field_domain[1] is not None:
+                    appliedDomains.append(field_domain[1].name)
+                    appliedDomainsDisplay.append(f"Subtype {fc} Field: {field_name} uses domain: {field_domain[1].name}")
+                    print('\t', f"Subtype {fc} Field: {field_name} uses domain: {field_domain[1].name}")
+    else:
+        print(f" {fc} has no subtypes")
 
 # Read all domains objects from SDE workspace, provide visual count & append all domains to addDomains list
 try:
@@ -116,10 +135,8 @@ try:
         domainObjects = arcpy.da.ListDomains(WKSP)
         for domain in domainObjects:
             allDomains.append(domain.name)
-        print(WKSP+" has {} domains.".format(str(len(domainObjects))))
-        write_log(WKSP+" has {} domains.".format(str(len(domainObjects))),logfile)
-    print("\n    Domains have been loaded into a list, starting to collect Feature Classes & Tables")
-    write_log("\n    Domains have been loaded into a list, starting to collect Feature Classes & Tables",logfile)
+        print(WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+" has {} domains.".format(str(len(domainObjects))))
+        write_log(WKSP.lstrip(SDEConnectionFilePath).rstrip('.sde')+" has {} domains.".format(str(len(domainObjects))),logfile)
 except:
     print('\n Unable to list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly.')
     write_log('\n Unable to list domain objects within SDE workspaces - check to make sure you have access to the SDE connection and/or the connection is spelled correctly.',logfile)
@@ -150,7 +167,7 @@ try:
             # Processes feature classes & rasters within datasets, displays data as nested within dataset
             FC_in_DS=arcpy.ListFeatureClasses(feature_dataset=ds_name)
             for fc_ds_data in FC_in_DS:
-                    list_domains_by_subtype(fc_ds_data)
+                    list_domains_by_subtype(WKSP+"\\\\"+ds_name+"\\\\"+fc_ds_data)
                     usedDomains = ListAppliedDomains(fc_ds_data)
                     for ud_ds in usedDomains:
                         appliedDomains.append(ud_ds)
@@ -161,6 +178,7 @@ try:
 
         # Checks for standalone feature classes (not within feature datasets)    
         for fc in fcs:
+            list_domains_by_subtype(WKSP+"\\\\"+fc)
             usedDomains = ListAppliedDomains(fc)
             for ud_fc in usedDomains: 
                 appliedDomains.append(ud_fc)
@@ -168,7 +186,6 @@ try:
                 print('\t', f"{ud_fc} --> {fc}")
             else:
                 pass
-#            list_domains_by_subtype(fc_ds_data)
 
         # Checks for tables            
         for tbl in tbls:
@@ -225,10 +242,8 @@ except:
     
 # Creating Actively Used domains dataframe
 AppliedDomains_df = pd.DataFrame({'Active Domains - These domains are in use within '+SDEConnection: appliedDomainsDisplay})
-print(AppliedDomains_df)
 # Creating Orphan domains dataframe
 OrphanDomains_df = pd.DataFrame({'Orphan Domains - These domains are not in use within '+SDEConnection: orphanedDomains})
-print(OrphanDomains_df)
 
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(SDEConnection)+'__Domain_Usage_report__'+str(date)+"_"+str(Time)+'.xlsx')
@@ -274,12 +289,11 @@ except:
     raise
     sys.exit()
 
-end_time = time.strftime("%I:%M:%S %p", time.localtime())
 elapsed_time = time.time() - start_time
 
 print ("==============================================================")
-print ("\n ORPHAN DOMAIN LIST WITHIN FC & TABLES HAS COMPLETED: " + str(Day) + " " + str(Time)+" hrs")
-write_log("\n ORPHAN DOMAIN LIST WITHIN FC & TABLES HAS COMPLETED: " + str(Day) + " " + str(Time)+" hrs", logfile)
+print ("\n DOMAIN USAGE LIST WITHIN FC & TABLES HAS COMPLETED: " + str(Day) + " " + str(Time)+" hrs")
+write_log("\n DOMAIN USAGE LIST WITHIN FC & TABLES HAS COMPLETED: " + str(Day) + " " + str(Time)+" hrs", logfile)
 
 print ("Elapsed time: " + time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: "  +time.strftime("%I:%M %p", time.localtime())+" hrs")
 write_log("Elapsed time: " + (time.strftime("%H:%M:%S", time.gmtime(elapsed_time))+" // Program completed: " +time.strftime("%I:%M %p", time.localtime())+ "hrs"), logfile)
