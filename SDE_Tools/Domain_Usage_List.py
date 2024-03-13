@@ -120,8 +120,8 @@ def list_domains_by_subtype(fc):
             for field_name, field_domain in field_values.items():
                 # Check if domain is assigned
                 if field_domain[1] is not None:
-                    appliedDomains.append(field_domain[1].name)
-                    appliedDomainsDisplay.append(f"Subtype {fc} Field: {field_name} uses domain: {field_domain[1].name}")
+                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> Within subtype {fc.lstrip(SDEConnectionFilePath)} Field: {field_name}")
+                    print('\t', f"{field_domain[1].name} --> within subtype {fc.lstrip(SDEConnectionFilePath)} Field: {field_name}")
                     print('\t', f"Subtype {fc} Field: {field_name} uses domain: {field_domain[1].name}")
     else:
         print(f" {fc} has no subtypes")
