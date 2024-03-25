@@ -30,7 +30,7 @@
 print("This tool will clone ALL items (as provided by user entered IDs) from origin portal to target portal via URLs provided below.")
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
-import os
+import os,time,sys
 import datetime
 import logging
 
@@ -75,14 +75,13 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Confirm portal access was successful for Portal 1
 try:
     for url in Portal:
-        print("Attempting login on: "+str(url)+" | Password required for "+str(PortalUserName))
-        gis = GIS(url,PortalUserName)
+        print("Attempting login on: "+str(url))
+        gis = GIS(url)
         LoggedInAs = gis.properties.user.username
         # Clean up Portal url for usable name in print statements and excel file name
         PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
@@ -100,8 +99,8 @@ except:
 # Confirm portal access was successful for Portal 2
 try:
     for url2 in Portal2:
-        print("Attempting login on: "+str(url2)+" | Password required for "+str(Portal2UserName))
-        gis2 = GIS(url2,Portal2UserName)
+        print("Attempting login on: "+str(url2))
+        gis2 = GIS(url2)
         LoggedInAs = gis2.properties.user.username
         # Clean up Portal url for usable name in print statements and excel file name
         Portal2Name = Portal2.replace('https://','',1).replace('.com/arcgis','',1)
@@ -143,4 +142,3 @@ write_log("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+",logfil
 # For command run, allows user to see all program print statements before closing the command window by pressing any key.
 input("Press enter key to close program")
 sys.exit()
-
