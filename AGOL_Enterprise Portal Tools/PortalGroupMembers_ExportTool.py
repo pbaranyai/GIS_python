@@ -3,7 +3,7 @@
 # Created on: 2023-05-25
 # Updated on: 2023-10-11
 #
-# Author: Phil Baranyai/DLC
+# Author: Phil Baranyai
 #
 # Description:
 # List all groups in portal/AGOL and provide output list of groups and members within.
@@ -70,7 +70,6 @@ try:
 except:
     print ("\n Unable to write log file")
     sys.exit ()
-
 
 # Setup export path to *script location* PortalGroupMembers_Reports folder
 try:
