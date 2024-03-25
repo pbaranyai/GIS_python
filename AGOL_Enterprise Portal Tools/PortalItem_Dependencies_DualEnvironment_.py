@@ -19,7 +19,7 @@ print("This tool will load layers and applications (listed in script) from both 
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
-import os
+import os,time,sys
 import datetime
 from openpyxl import load_workbook
 import logging
@@ -57,9 +57,9 @@ try:
 except:
     print('\n Unable to create log folder within '+os.getcwd()+' folder')
     sys.exit()
- 
+
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = ReportDirectory + "\\PortalDependencies_Reports_log.log"
+logfile = LogDirectory + "\\PortalItem_Dependencies_DualEnvironment_Report.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
@@ -70,7 +70,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Setup export path to *script location* PortalDependencies_Reports folder
@@ -87,7 +86,7 @@ except:
     logging.exception('Got exception on create PortalDependencies_Reports folder within '+os.getcwd()+' folder logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
-    
+
 # Confirm portal access was successful for Portal 1
 try:
     for url in Portal:
