@@ -11,7 +11,7 @@
 
 print("This tool will iterate through the user provided SDE connection, and provide a report of all items, within it.")
 print("\nLoading python modules, please wait...")
-import arcpy, os, sys, logging, datetime
+import arcpy, os, sys, logging, datetime,time
 import pandas as pd
 from openpyxl import load_workbook
 from arcpy import env
@@ -52,7 +52,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Setup export path to *script location* SDEInventory_Reports folder
