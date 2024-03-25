@@ -17,7 +17,7 @@ print("This tool will load layers and applications (listed in script) from both 
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
-import os
+import os,time,sys
 import datetime
 from openpyxl import load_workbook
 import logging
@@ -65,7 +65,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Setup export path to *script location* PortalItemInventory_Reports folder
