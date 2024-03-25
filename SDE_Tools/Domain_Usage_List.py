@@ -13,7 +13,7 @@
 print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of active/orphan domains")
 print("\nLoading python modules, please wait...")
 # import required modules
-import arcpy, os, logging, datetime
+import arcpy, os, logging, datetime,time,sys
 from arcpy import env
 import pandas as pd
 from openpyxl import load_workbook
@@ -67,6 +67,7 @@ def write_log(text, file):
     f.write("{}\n".format(text))  # write the text to the logfile and move to next line
     return
 
+SDEConnectionFilePath = "PATH TO SDEConnectionFiles folder"
 arcpy.env.workspace = "PATH TO SDEConnectionFiles folder"
 workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
 
@@ -302,6 +303,4 @@ write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#
 
 # Uncomment for CMD run
 input("Press enter key to close program")
-
-del arcpy, logging, datetime, os
 sys.exit()
