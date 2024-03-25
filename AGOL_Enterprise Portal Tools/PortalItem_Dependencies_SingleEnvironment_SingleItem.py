@@ -19,7 +19,7 @@ print("This tool will load layers and applications (listed in script) from both 
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
-import os
+import os,time,sys
 import datetime
 from openpyxl import load_workbook
 import logging
@@ -57,7 +57,7 @@ except:
     sys.exit()
 
 # Setup error logging (configure error logging location, type, and filemode -- overwrite every run)
-logfile = ReportDirectory + "\\PortalDependencies_Reports_log.log"
+logfile = LogDirectory + "\\PortalDependencies_Reports_log.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
 # Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
@@ -88,8 +88,8 @@ except:
 # Confirm portal access was successful
 try:
     for url in Portal:
-        print("Attempting login on: "+str(url)+" | Password required for "+str(PortalUserName))
-        gis = GIS(url,PortalUserName)
+        print("Attempting login on: "+str(url))
+        gis = GIS(url)
         LoggedInAs = gis.properties.user.username
         # Clean up Portal url for usable name in print statements and excel file name
         PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
@@ -299,7 +299,7 @@ except:
     sys.exit()
 
 # Set Excel spreadsheet output name
-ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+' - '+str(Portal2Name)+'__Dependencies_report for '+str(item_title)+'__'+str(date)+"_"+str(Time)+'.xlsx')
+ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'__Single_Item_Dependencies_report__'+str(date)+"_"+str(Time)+'.xlsx')
 
 # Exporting Dataframe to excel
 try:
