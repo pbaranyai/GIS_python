@@ -3,7 +3,7 @@
 # Created on: 2023-10-09
 # Updated on: 2023-10-11
 #
-# Author: Phil Baranyai / DLC
+# Author: Phil Baranyai
 #
 # Description:
 # Provides excel export report of all items within each group in portal/AGOL
