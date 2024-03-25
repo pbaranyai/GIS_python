@@ -20,7 +20,7 @@ print("This tool reads from portal URL entered below, lists all groups and membe
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
-import os
+import os,time,sys
 import datetime
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidationList
@@ -61,6 +61,17 @@ except:
 logfile = LogDirectory + "\\PortalGroupMembers_Export_Reports_log.log"
 logging.basicConfig(filename= logfile, filemode='w', level=logging.DEBUG)
 
+# Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
+try:
+    def write_log(text, file):
+        f = open(file, 'a')           # 'a' will append to an existing file if it exists
+        f.write("{}\n".format(text))  # write the text to the logfile and move to next line
+        return
+except:
+    print ("\n Unable to write log file")
+    sys.exit ()
+
+
 # Setup export path to *script location* PortalGroupMembers_Reports folder
 try:
     ReportDirectory = os.getcwd()+"\\PortalGroupMembers_Reports"
@@ -74,16 +85,6 @@ except:
     logging.exception('Got exception on create PortalGroupMembers_Reports folder within '+os.getcwd()+' folder logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
-
-# Write Logfile (define logfile write process, each step will append to the log, if program is started over, it will wipe the log and re-start fresh)
-try:
-    def write_log(text, file):
-        f = open(file, 'a')           # 'a' will append to an existing file if it exists
-        f.write("{}\n".format(text))  # write the text to the logfile and move to next line
-        return
-except:
-    print ("\n Unable to write log file")
-    sys.exit ()
 
 # Confirm portal access was successful for Portal
 for url in Portal:
