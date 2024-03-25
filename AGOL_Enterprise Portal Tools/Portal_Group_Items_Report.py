@@ -3,7 +3,7 @@
 # Created on: 2023-10-09
 # Updated on: 2023-10-11
 #
-# Author: Phil Baranyai
+# Author: Phil Baranyai / DLC
 #
 # Description:
 # Provides excel export report of all items within each group in portal/AGOL
@@ -21,7 +21,7 @@ print("\nLoading python modules, please wait...")
 
 from arcgis.gis import GIS
 import pandas as pd
-import os
+import os,time,sys
 import datetime
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidationList
@@ -30,12 +30,6 @@ import logging
 print("Enter Portal or AGOL URL below: | Example: https://ORGANIZATIONALURL/arcgis")
 print("\n  You MUST login with an administrator account to run this report")
 Portal = input('Enter Portal or AGOL URL: ')
-
-# Login to portal, use token as "gis variable"
-gis = GIS(Portal,UserName,Password)
-PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
-print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
-write_log("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report",logfile)
 
 # Setup Date/time variables
 date = datetime.date.today().strftime("%Y%m%d")
@@ -67,7 +61,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Setup export path to *script location* PortalDependencies_Reports folder
@@ -84,6 +77,12 @@ except:
     logging.exception('Got exception on create Portal_Group_Items_Reports folder within '+os.getcwd()+' folder logged at:' + time.strftime("%I:%M:%S %p", time.localtime()))
     raise
     sys.exit()
+
+# Login to portal, use token as "gis variable"
+gis = GIS(Portal,UserName,Password)
+PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
+print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
+write_log("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report",logfile)
 
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'_GroupItems'+str(date)+"_"+str(Time)+'.xlsx')
