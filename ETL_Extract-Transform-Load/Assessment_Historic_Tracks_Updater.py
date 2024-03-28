@@ -18,8 +18,7 @@
 import arcpy
 import sys
 import datetime
-import os
-import traceback
+import time,sys
 import logging
 
 # Stop geoprocessing log history in metadata
