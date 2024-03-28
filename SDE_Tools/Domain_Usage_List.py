@@ -121,9 +121,9 @@ def list_domains_by_subtype(fc):
             for field_name, field_domain in field_values.items():
                 # Check if domain is assigned
                 if field_domain[1] is not None:
-                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
-                    print('\t', f"{field_domain[1].name} --> within Feature Class {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
-                    print('\t', f"Feature Class {fc} Field: {field_name} uses domain: {field_domain[1].name}")
+                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
+                    print('\t', f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
+                    print('\t', f"Feature Class/Table {fc} Field: {field_name} uses domain: {field_domain[1].name}")
     else:
         print(f" {fc} has no subtypes")
 
@@ -181,6 +181,7 @@ try:
 
         # Checks for tables            
         for tbl in tbls:
+            list_domains_by_subtype(WKSP+"\\\\"+tbl)
             usedDomains = ListAppliedDomains(tbl)
         else:
             pass
