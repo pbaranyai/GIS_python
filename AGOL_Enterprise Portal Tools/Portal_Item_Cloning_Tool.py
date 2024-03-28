@@ -30,9 +30,7 @@
 print("This tool will clone ALL items (as provided by user entered IDs) from origin portal to target portal via URLs provided below.")
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
-import os,time,sys
-import datetime
-import logging
+import os,time,sys,datetime,logging
 
 # For command window run, requests user imput for portal URL
 print("Enter portal URL below: | Example: https://PORTALNAME.com/arcgis")
