@@ -13,11 +13,10 @@
 print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of active/orphan domains")
 print("\nLoading python modules, please wait...")
 # import required modules
-import arcpy, os, logging, datetime,time,sys
+import arcpy, os, logging, datetime,time,sys,logging
 from arcpy import env
 import pandas as pd
 from openpyxl import load_workbook
-import logging
 
 ### Uncomment for command run
 print("Enter SDE Connection below): \n Example: **SDENAME** \n Leaving blank will run domain list for ALL '*.sde connections in SDE_Connection folder")
