@@ -21,18 +21,7 @@
 # Works in ArcGIS Pro
 # ---------------------------------------------------------------------------
 
-import sys
-import arcpy
-from arcpy import env
-import datetime
-import os
-import logging
-
-try:
-    import urllib2  # Python 2
-except ImportError:
-    import urllib.request as urllib2  # Python 3
-
+import sys,arcpy, datetime,os,logging,time
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -58,7 +47,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 try:
