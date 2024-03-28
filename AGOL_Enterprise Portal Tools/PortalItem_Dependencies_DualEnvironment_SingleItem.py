@@ -18,10 +18,8 @@ print("This tool will load layers and applications (listed in script) from both 
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
-import os,time,sys
-import datetime
+import os,time,sys,datetime,logging
 from openpyxl import load_workbook
-import logging
 
 # For command window run, requests user imput for portal URL (layer URL can be from either portal)
 print("Enter Portal/AGOL URLs below: | Example: https://PORTALNAME.com/arcgis")
