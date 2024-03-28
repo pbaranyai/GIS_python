@@ -13,9 +13,7 @@
 # ---------------------------------------------------------------------------
 
 # Import modules
-import sys,time,logging
-import arcpy
-import datetime
+import sys,time,logging,arcpy,datetime
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
