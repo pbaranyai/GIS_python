@@ -21,11 +21,9 @@ print("\nLoading python modules, please wait...")
 
 from arcgis.gis import GIS
 import pandas as pd
-import os,time,sys
-import datetime
+import os,time,sys,datetime,logging
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidationList
-import logging
 
 print("Enter Portal or AGOL URL below: | Example: https://ORGANIZATIONALURL/arcgis")
 print("\n  You MUST login with an administrator account to run this report")
@@ -79,10 +77,10 @@ except:
     sys.exit()
 
 # Login to portal, use token as "gis variable"
-gis = GIS(Portal,UserName,Password)
+gis = GIS(Portal)
 PortalName = Portal.replace('https://','',1).replace('.com/arcgis','',1)
-print("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report")
-write_log("\nLogged into "+str(PortalName)+" as "+str(LoggedInAs)+" at "+str(Time)+" hrs, beginning report",logfile)
+print("\nLogged into "+str(PortalName)+" at "+str(Time)+" hrs, beginning report")
+write_log("\nLogged into "+str(PortalName)+" at "+str(Time)+" hrs, beginning report",logfile)
 
 # Set Excel spreadsheet output name
 ExcelOutput = os.path.join(ReportDirectory,str(PortalName)+'_GroupItems'+str(date)+"_"+str(Time)+'.xlsx')
