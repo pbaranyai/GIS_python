@@ -20,17 +20,7 @@
 # ---------------------------------------------------------------------------
 
 # Import modules
-import sys
-import arcpy
-import datetime
-import os
-import logging
-from arcpy import env
-
-try:
-    import urllib2  # Python 2
-except ImportError:
-    import urllib.request as urllib2  # Python 3
+import sys,arcpy,datetime,logging,time
 
 # Stop geoprocessing log history in metadata
 arcpy.SetLogHistory(False)
@@ -52,7 +42,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 #Database Connection Folder
