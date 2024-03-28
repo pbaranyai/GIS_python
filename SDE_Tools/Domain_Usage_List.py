@@ -120,7 +120,10 @@ def list_domains_by_subtype(fc):
             # Loop through  field value pairs
             for field_name, field_domain in field_values.items():
                 # Check if domain is assigned
-                if field_domain[1] is not None:
+                if field_domain[1] is not None and subtype_code > 0:
+                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name} --> with Subtype code: {subtype_code}")
+                    print('\t', f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name} --> with Subtype code: {subtype_code}")
+                if field_domain[1] is not None and subtype_code == 0:
                     appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
                     print('\t', f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
     else:
