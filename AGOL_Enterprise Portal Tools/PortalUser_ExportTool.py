@@ -20,11 +20,9 @@ print("This tool reads from portal URL entered below, lists all users and detail
 print("\nLoading python modules, please wait...")
 from arcgis.gis import GIS
 import pandas as pd
-import os,time,sys
-import datetime
+import os,time,sys,datetime,logging
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidationList
-import logging
 
 # Comment out for manual run of script - Used for prompts within command window (Run with ArcGIS Pro)
 print("Enter portal URL below: | Example: https://PORTALNAME.com/arcgis")
