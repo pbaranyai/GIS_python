@@ -46,12 +46,7 @@
 # ---------------------------------------------------------------------------
 
 # import modules
-import arcpy
-import sys
-import datetime
-import os
-import logging
-import pprint
+import arcpy,sys,datetime,time,logging,pprint
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -73,7 +68,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Machine running script
