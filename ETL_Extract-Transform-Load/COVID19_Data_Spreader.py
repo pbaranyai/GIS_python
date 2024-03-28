@@ -14,12 +14,7 @@
 # ---------------------------------------------------------------------------
 
 # Import modules
-import sys
-import arcpy
-import datetime
-import os
-import logging
-
+import sys, arcpy,time,logging,datetime
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -41,18 +36,7 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
-
-try:
-    # Set the necessary product code (sets neccesary ArcGIS product license needed for tools running)
-    import arceditor
-except:
-    print ("No ArcEditor (ArcStandard) license available")
-    write_log("!!No ArcEditor (ArcStandard) license available!!", logfile)
-    logging.exception('Got exception on importing ArcEditor (ArcStandard) license logged at:' + str(Day) + " " + str(Time))
-    raise
-    sys.exit()
 
 # Database variables:
 AGOL_EDIT_PUB = "Database Connections\\agol_edit_pub@ccsde.sde"
@@ -61,7 +45,6 @@ PUBLIC_WEB = "Database Connections\\public_web@ccsde.sde"
 # Local variables:
 COVID_SURVEY = AGOL_EDIT_PUB + "\\CCSDE.AGOL_EDIT_PUB.Special_Events\\CCSDE.AGOL_EDIT_PUB.BUSINESS_STATUS_COVID_SURVEY"
 COVID_WEB = PUBLIC_WEB + "\\CCSDE.PUBLIC_WEB.Special_Events\\CCSDE.PUBLIC_WEB.BUSINESS_STATUS_COVID19"
-
 
 start_time = time.time()
 
