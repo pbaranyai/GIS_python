@@ -9,17 +9,13 @@
 # Updated on 2023-03-25
 # ---------------------------------------------------------------------------
 
-import arcpy, os, sys
-import time
+import arcpy, os, sys,time,logging
 from arcpy import env
-import logging
 from datetime import datetime
 import pandas as pd
 from openpyxl import load_workbook
 
-
 SDEConnection = "SDEConnectionName"
-
 
 # Setup Date (and day/time)
 date = datetime.today().strftime("%Y%m%d")
@@ -50,7 +46,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 # Setup export path to *script location* SDEInventory_Reports folder
