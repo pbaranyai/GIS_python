@@ -121,9 +121,9 @@ def list_domains_by_subtype(fc):
             for field_name, field_domain in field_values.items():
                 # Check if domain is assigned
                 if field_domain[1] is not None:
-                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> Within subtype {fc.lstrip(SDEConnectionFilePath)} Field: {field_name}")
-                    print('\t', f"{field_domain[1].name} --> within subtype {fc.lstrip(SDEConnectionFilePath)} Field: {field_name}")
-                    print('\t', f"Subtype {fc} Field: {field_name} uses domain: {field_domain[1].name}")
+                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
+                    print('\t', f"{field_domain[1].name} --> within Feature Class {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
+                    print('\t', f"Feature Class {fc} Field: {field_name} uses domain: {field_domain[1].name}")
     else:
         print(f" {fc} has no subtypes")
 
@@ -169,33 +169,21 @@ try:
             for fc_ds_data in FC_in_DS:
                     list_domains_by_subtype(WKSP+"\\\\"+ds_name+"\\\\"+fc_ds_data)
                     usedDomains = ListAppliedDomains(fc_ds_data)
-                    for ud_ds in usedDomains:
-                        appliedDomains.append(ud_ds)
-                        appliedDomainsDisplay.append(f"{ud_ds} --> {ds_name} dataset: {fc_ds_data}")
-                        print('\t', f"{ud_ds} --> Within {ds_name} dataset: {fc_ds_data}")
-                    else:
-                        pass
+            else:
+                pass
 
         # Checks for standalone feature classes (not within feature datasets)    
         for fc in fcs:
             list_domains_by_subtype(WKSP+"\\\\"+fc)
             usedDomains = ListAppliedDomains(fc)
-            for ud_fc in usedDomains: 
-                appliedDomains.append(ud_fc)
-                appliedDomainsDisplay.append(f"{ud_fc} --> {fc}")
-                print('\t', f"{ud_fc} --> {fc}")
-            else:
-                pass
+        else:
+            pass
 
         # Checks for tables            
         for tbl in tbls:
             usedDomains = ListAppliedDomains(tbl)
-            for ud_tbl in usedDomains:
-                appliedDomains.append(ud_tbl)
-                appliedDomainsDisplay.append(f"{ud_tbl} --> {tbl}")
-                print('\t', f"{ud_tbl} --> {tbl}")
-            else:
-                pass
+        else:
+            pass
 except:
     print('\n Unable to list all feature classes and tables within SDE workspace')
     write_log('\n Unable to list all feature classes and tables within SDE workspace',logfile)
