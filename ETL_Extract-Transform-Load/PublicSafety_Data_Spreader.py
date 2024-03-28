@@ -27,11 +27,7 @@
 # ---------------------------------------------------------------------------
 
 # Import modules
-import sys
-import arcpy
-import datetime
-import os
-import logging
+import sys,arcpy,time,datetime,logging
 
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
@@ -53,7 +49,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 #Database Connection Folder
