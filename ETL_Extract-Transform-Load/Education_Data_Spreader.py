@@ -15,11 +15,7 @@
 #   All processes have general components, delete rows, append from another source - due to most layers are connected to services
 # ---------------------------------------------------------------------------
 
-import arcpy
-import sys
-import datetime
-import os
-import logging
+import arcpy,sys,datetime,logging,time
 
 # Stop geoprocessing log history in metadata
 arcpy.SetLogHistory(False)
@@ -41,7 +37,6 @@ try:
         return
 except:
     print ("\n Unable to write log file")
-    write_log("Unable to write log file", logfile)
     sys.exit ()
 
 #Database Connection Folder
