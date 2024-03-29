@@ -8,24 +8,20 @@
 #
 # Author: Phil Baranyai
 # Created on: 2022-12-19 
-# Updated on 2024-03-13
+# Updated on 2024-03-29
 # ---------------------------------------------------------------------------
-print("This tool will check all domains within the SDE connection workspaces entered below, and provide a list of active/orphan domains")
+print("This tool will check all domains within the SDE connection workspace entered below, and provide a list of active/orphan domains")
 print("\nLoading python modules, please wait...")
+
 # import required modules
-import arcpy, os, logging, datetime,time,sys,logging
+import arcpy, os, logging, datetime,sys,time
 from arcpy import env
 import pandas as pd
 from openpyxl import load_workbook
 
-### Uncomment for command run
+# Allows user to enter SDE connection name
 print("Enter SDE Connection below): \n Example: **SDENAME** \n Leaving blank will run domain list for ALL '*.sde connections in SDE_Connection folder")
 SDEConnection = input('Enter SDE Connection Name (not the path): ')
-
-# This can be used in leiu of command window, need to comment out CMD window portions of script at top and bottom, then un-comment out Portal variable here. 
-#*********************************************************************************************************
-##SDEConnection = "SDENAME"
-#**************************************************************************
 
 # Setup Date (and day/time)
 date = datetime.date.today().strftime("%Y%m%d")
@@ -66,17 +62,18 @@ def write_log(text, file):
     f.write("{}\n".format(text))  # write the text to the logfile and move to next line
     return
 
-SDEConnectionFilePath = "PATH TO SDEConnectionFiles folder"
-arcpy.env.workspace = "PATH TO SDEConnectionFiles folder"
+# Establish variables for SDE connection file folder, arcpy environment workspace, and workspace list (to iterate through)
+SDEConnectionFilePath = r"\\wfsfile04\\GIS Analysts\\SDEConnectionFiles"
+arcpy.env.workspace = SDEConnectionFilePath
 workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
 
-# create an empty list that we'll populate with the orphaned domains
+# Create an empty list to populate with the orphaned domains
 orphanedDomains = []
 
-# create an empty list that we'll populate with all the domains in your workspace
+# Create an empty list to populate with all the domains in each workspace (database connection)
 allDomains = []
 
-# create an empty list that we'll populate with the applied (non-orphaned) domains in your workspace
+# Create an empty list to populate with the applied (non-orphaned) domains in each workspace (database connection)
 appliedDomains = []
 appliedDomainsDisplay = []
 
@@ -91,7 +88,7 @@ write_log ("====================================================================
 # Stop geoprocessing log history in metadata (stops program from filling up geoprocessing history in metadata with every run)
 arcpy.SetLogHistory(False)
 
-# Define a function to list the domain names applied to a table or FC
+# Define a function to list all domains in use and a printable one for the report
 def ListAppliedDomains(table): # could also be a feature class
     """
     Returns a list of domain names applied in the FC or table
@@ -107,9 +104,9 @@ def ListAppliedDomains(table): # could also be a feature class
 
     return appliedDomains
 
+# Define a function to list the domain names applied to each table or FC (to include subtypes)
 def list_domains_by_subtype(fc):
-
-    # Check if featuer class has subtypes
+    # Check if feature class has subtypes
     subtypes = arcpy.da.ListSubtypes(fc)
     if subtypes:
         # Loop through each subtype
@@ -120,15 +117,17 @@ def list_domains_by_subtype(fc):
             for field_name, field_domain in field_values.items():
                 # Check if domain is assigned
                 if field_domain[1] is not None and subtype_code > 0:
-                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name} --> with Subtype code: {subtype_code}")
-                    print('\t', f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name} --> with Subtype code: {subtype_code}")
+                    appliedDomains.append(field_domain[1].name)
+                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table: {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name} --> within Subtype code: {subtype_code}")
+                    print('\t', f"{field_domain[1].name} --> within Feature Class/Table: {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name} --> within Subtype code: {subtype_code}")
                 if field_domain[1] is not None and subtype_code == 0:
-                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
-                    print('\t', f"{field_domain[1].name} --> within Feature Class/Table {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
+                    appliedDomains.append(field_domain[1].name)
+                    appliedDomainsDisplay.append(f"{field_domain[1].name} --> within Feature Class/Table: {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
+                    print('\t', f"{field_domain[1].name} --> within Feature Class/Table: {fc.lstrip(SDEConnectionFilePath)} --> within Field: {field_name}")
     else:
         print(f" {fc} has no subtypes")
 
-# Read all domains objects from SDE workspace, provide visual count & append all domains to addDomains list
+# Read all domains objects from SDE workspace(s), provide visual count & append all domains to addDomains list
 try:
     for WKSP in workspaces:
         env.workspace = WKSP
@@ -145,11 +144,11 @@ except:
     raise
     sys.exit()
 
-
-# clean up the list of domain objects now that we are done with it
+# Clean up the list of domain objects now that we are done with it to free up memory in script
 del domainObjects
 
-# Find all the feature classes and tables in your SDE workspace and append to allFcsAndTables list
+# Iterate through each workspace in workspaces list, in each workspace, find all datasets (and feature classes within), feature classes (in root), and tables
+# For each feature class/table, examine with 'list_domains_by_subtype' function from above.  Write any domains in use to 'usedDomains' list.
 try:
     allFcsAndTables = []
     for WKSP in workspaces:
@@ -239,7 +238,7 @@ OrphanDomains_df = pd.DataFrame({'Orphan Domains - These domains are not in use 
 ExcelOutput = os.path.join(ReportDirectory,str(SDEConnection)+'__Domain_Usage_report__'+str(date)+"_"+str(Time)+'.xlsx')
 XLWriter = pd.ExcelWriter(ExcelOutput)
 
-# Exporting Dataframe to excel
+# Exporting Actively Used domains dataframe & Orphan domains dataframe to excel
 try:
     print('\nExporting to Excel, located at: '+ExcelOutput)
     write_log('\nExporting to Excel, located at: '+ExcelOutput,logfile)
@@ -279,6 +278,7 @@ except:
     raise
     sys.exit()
 
+# Provide elapsed time calculation for completed statement below.
 elapsed_time = time.time() - start_time
 
 print ("==============================================================")
@@ -291,6 +291,6 @@ print ("===========================================================")
 write_log("===========================================================",logfile)
 write_log("\n           +#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#+#", logfile)
 
-# Uncomment for CMD run
+# Close program by depressing enter key on keyboard
 input("Press enter key to close program")
 sys.exit()
