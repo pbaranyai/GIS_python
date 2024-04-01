@@ -63,7 +63,7 @@ def write_log(text, file):
     return
 
 # Establish variables for SDE connection file folder, arcpy environment workspace, and workspace list (to iterate through)
-SDEConnectionFilePath = r"\\wfsfile04\\GIS Analysts\\SDEConnectionFiles"
+SDEConnectionFilePath = r"\\FILEPATH\\SDEConnectionFiles"
 arcpy.env.workspace = SDEConnectionFilePath
 workspaces = arcpy.ListWorkspaces(SDEConnection+"*_SDE.sde", "SDE")
 
